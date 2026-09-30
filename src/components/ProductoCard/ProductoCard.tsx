@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import type { ProductoResumen } from "../../types/producto";
+import type { ProductoResumen } from "../../services/productos";
 
 const formatoPrecio = new Intl.NumberFormat("es-AR", {
   style: "currency",

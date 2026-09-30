@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import ProductoCard from "../../components/ProductoCard/ProductoCard";
-import { obtenerPaginaProductos } from "../../services/productos";
-import type { ProductoResumen } from "../../types/producto";
+import { obtenerPaginaProductos, type ProductoResumen } from "../../services/productos";
 
 export default function Productos() {
   const [productos, setProductos] = useState<ProductoResumen[]>([]);
