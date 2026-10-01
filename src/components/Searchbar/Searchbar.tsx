@@ -2,6 +2,14 @@ import { useState } from "react";
 
 export default function SearchBar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [precioMin, setPrecioMin] = useState("");
+  const [precioMax, setPrecioMax] = useState("");
+
+  // Solo se aceptan dígitos: así no se pueden cargar negativos (ni "e", "+", etc.)
+  const soloPositivos = (valor: string) => valor.replace(/[^0-9]/g, "");
+  const bloquearTeclas = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (["-", "+", "e", "E", ".", ","].includes(e.key)) e.preventDefault();
+  };
 
   return (
     <div className="w-full bg-surface-alt p-4 rounded-lg shadow-md">
@@ -52,12 +60,22 @@ export default function SearchBar() {
         <div className="flex gap-2 items-center">
           <input
             type="number"
+            min={0}
+            inputMode="numeric"
+            value={precioMin}
+            onChange={(e) => setPrecioMin(soloPositivos(e.target.value))}
+            onKeyDown={bloquearTeclas}
             placeholder="Precio mín."
             className="w-32 px-2 py-2 border border-line rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           />
           <span>-</span>
           <input
             type="number"
+            min={0}
+            inputMode="numeric"
+            value={precioMax}
+            onChange={(e) => setPrecioMax(soloPositivos(e.target.value))}
+            onKeyDown={bloquearTeclas}
             placeholder="Precio máx."
             className="w-32 px-2 py-2 border border-line rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           />
@@ -66,6 +84,10 @@ export default function SearchBar() {
         {/* Botón limpiar */}
         <button
           type="button"
+          onClick={() => {
+            setPrecioMin("");
+            setPrecioMax("");
+          }}
           className="px-4 py-2 border border-line rounded-md hover:bg-surface transition"
         >
           Limpiar filtros
