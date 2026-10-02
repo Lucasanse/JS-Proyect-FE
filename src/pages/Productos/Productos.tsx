@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import ProductoCard from "../../components/ProductoCard/ProductoCard";
-import { obtenerPaginaProductos, type ProductoResumen } from "../../services/productos";
+import {
+  obtenerPaginaProductos,
+  type ProductoResumen,
+} from "../../services/productos";
+import SearchBar from "../../components/Searchbar/Searchbar";
 
 export default function Productos() {
   const [productos, setProductos] = useState<ProductoResumen[]>([]);
@@ -22,7 +26,11 @@ export default function Productos() {
       })
       .catch((e: unknown) => {
         if (controller.signal.aborted) return;
-        setError(e instanceof Error ? e.message : "No se pudieron cargar los productos");
+        setError(
+          e instanceof Error
+            ? e.message
+            : "No se pudieron cargar los productos",
+        );
       })
       .finally(() => {
         if (!controller.signal.aborted) setCargando(false);
@@ -58,6 +66,7 @@ export default function Productos() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <SearchBar></SearchBar>
       <h1 className="text-3xl font-bold text-primary">Productos</h1>
 
       {!cargando && !error && productos.length === 0 && (
@@ -76,7 +85,9 @@ export default function Productos() {
       </div>
 
       <div ref={finDeLista} />
-      {cargando && <p className="mt-6 text-center text-muted">Cargando productos...</p>}
+      {cargando && (
+        <p className="mt-6 text-center text-muted">Cargando productos...</p>
+      )}
       {error && <p className="mt-6 text-center text-primary">{error}</p>}
     </section>
   );
