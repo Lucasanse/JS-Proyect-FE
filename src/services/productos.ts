@@ -38,7 +38,7 @@ export interface FiltrosProductos {
   marca?: string;
   precioMin?: string;
   precioMax?: string;
-  conStock?: "true"; // solo productos con stock
+  conStock?: string; // "true" = solo productos con stock
 }
 
 export interface Categoria {

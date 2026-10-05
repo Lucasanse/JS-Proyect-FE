@@ -60,6 +60,7 @@ export default function SearchBar({ filtros, onChange }: Props) {
       marca: borrarMarca ? "" : valor("marca"),
       precioMin,
       precioMax,
+      conStock: datos.get("conStock") ? "true" : "",
     };
     onChange(
       Object.fromEntries(Object.entries(nuevos).filter(([, v]) => v !== "")),
@@ -166,6 +167,19 @@ export default function SearchBar({ filtros, onChange }: Props) {
             className={`min-w-0 flex-1 md:w-32 md:flex-none ${inputClass}`}
           />
         </div>
+
+        {/* Switch "En stock": se aplica apenas se cambia */}
+        <label className="flex cursor-pointer items-center gap-2 select-none">
+          <input
+            type="checkbox"
+            name="conStock"
+            defaultChecked={filtros.conStock === "true"}
+            onChange={(e) => aplicar(e.currentTarget.form!)}
+            className="peer sr-only"
+          />
+          <span className="relative h-6 w-11 shrink-0 rounded-full bg-line transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-surface after:shadow after:transition-transform peer-checked:bg-primary peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-primary" />
+          <span className="text-ink">En stock</span>
+        </label>
 
         <button
           type="button"
