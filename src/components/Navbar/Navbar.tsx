@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import jsLogo from "../../assets/js-logo.png";
+import { useSession } from "../../services/auth-client";
 
 // Links principales del menú (desktop y mobile). Para agregar uno nuevo, sumalo acá.
 const NAV_LINKS = [
@@ -10,15 +11,16 @@ const NAV_LINKS = [
 ];
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `rounded-lg px-3 py-2 text-[15px] font-medium transition-colors ${isActive
-    ? "bg-primary-light text-primary"
-    : "text-ink hover:bg-surface-alt hover:text-primary"
+  `rounded-lg px-3 py-2 text-[15px] font-medium transition-colors ${
+    isActive
+      ? "bg-primary-light text-primary"
+      : "text-ink hover:bg-surface-alt hover:text-primary"
   }`;
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
-
+  const { data: session, isPending } = useSession();
   return (
     <header className="sticky top-0 z-50 w-full border-b-4 border-primary bg-surface shadow-sm">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-2.5 sm:px-6 lg:px-8">
@@ -54,18 +56,34 @@ export default function Navbar() {
             <BellIcon />
           </button>
 
-          <Link
-            to="/login"
-            onClick={close}
-            className="group flex items-center gap-2 text-sm font-semibold text-primary"
-          >
-            <span className="hidden whitespace-nowrap group-hover:underline sm:inline">
-              Iniciar sesión
-            </span>
-            <span className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-surface-alt text-muted ring-1 ring-line">
-              <UserIcon />
-            </span>
-          </Link>
+          <div className="flex items-center gap-4">
+            {isPending ? (
+              <span className="text-sm text-muted">Cargando...</span>
+            ) : session ? (
+              // SI HAY SESIÓN INICIADA: Muestra su nombre y el botón para ir a /logout (o Mi Cuenta)
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-ink">
+                  Hola,{" "}
+                  <strong className="text-primary">{session.user.name}</strong>
+                </span>
+
+                <Link
+                  to="/logout"
+                  className="rounded-lg border border-line bg-surface-alt px-4 py-2 text-sm font-semibold text-ink hover:bg-line transition-colors"
+                >
+                  Cerrar sesión
+                </Link>
+              </div>
+            ) : (
+              // SI NO HAY SESIÓN: Muestra el botón normal de Iniciar sesión
+              <Link
+                to="/login"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-surface hover:bg-primary-dark transition-colors"
+              >
+                Iniciar sesión
+              </Link>
+            )}
+          </div>
 
           <Link
             to="/carrito"
@@ -94,7 +112,15 @@ export default function Navbar() {
 
 function MenuIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    >
       <path d="M4 7h16M4 12h16M4 17h16" />
     </svg>
   );
@@ -102,7 +128,15 @@ function MenuIcon() {
 
 function CloseIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    >
       <path d="M6 6l12 12M18 6L6 18" />
     </svg>
   );
