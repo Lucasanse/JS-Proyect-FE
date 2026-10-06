@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import jsLogo from "../../assets/js-logo.png";
 import { useSession } from "../../services/auth-client";
+import { useCarrito } from "../CarritoProvider/carritoContext";
 
 // Links principales del menú (desktop y mobile). Para agregar uno nuevo, sumalo acá.
 const NAV_LINKS = [
@@ -21,6 +22,8 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
   const { data: session, isPending } = useSession();
+  const { carrito } = useCarrito();
+  const cantidadCarrito = carrito?.cantidadTotal ?? 0;
   return (
     <header className="sticky top-0 z-50 w-full border-b-4 border-primary bg-surface shadow-sm">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-2.5 sm:px-6 lg:px-8">
@@ -89,9 +92,14 @@ export default function Navbar() {
             to="/carrito"
             onClick={close}
             aria-label="Carrito"
-            className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-primary text-secondary transition-colors hover:bg-primary-dark"
+            className="relative flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-primary text-secondary transition-colors hover:bg-primary-dark"
           >
             <CartIcon />
+            {cantidadCarrito > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold text-white">
+                {cantidadCarrito > 99 ? "99+" : cantidadCarrito}
+              </span>
+            )}
           </Link>
         </div>
       </div>

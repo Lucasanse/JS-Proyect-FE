@@ -26,6 +26,22 @@
   --color-surface: #ffffff;        /* fondo general */
   --color-surface-alt: #f7f4f5;    /* fondos alternativos */
   --color-dark: #241b1e;           /* footer / secciones oscuras */
+
+  /* Animaciones: generan las clases animate-XXX */
+  --animate-aviso-entrada: aviso-entrada 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --animate-aviso-tiempo: aviso-tiempo linear forwards;
+
+  /* Sube desde abajo con un pequeño rebote */
+  @keyframes aviso-entrada {
+    from { opacity: 0; transform: translateY(120%) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Barra de tiempo restante del aviso */
+  @keyframes aviso-tiempo {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+  }
 }
 
 /* Contenedor de la app: ocupa toda la pantalla */
