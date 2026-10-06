@@ -4,7 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import {
   obtenerProductoPorId,
   type ProductoDetalle,
-} from "../../services/productoDetalle.ts"; // <-- Ajustá el nombre de tu archivo en services si se llama distinto
+} from "../../services/productoDetalle.ts";
 
 export default function Detalles() {
   const { id } = useParams<{ id: string }>();
@@ -87,7 +87,7 @@ export default function Detalles() {
     );
   }
 
-  // 3. VISTA PRINCIPAL DEL PRODUCTO
+  //VISTA PRINCIPAL DEL PRODUCTO
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Breadcrumb / Navegación superior */}
