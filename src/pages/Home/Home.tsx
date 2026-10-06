@@ -18,7 +18,8 @@ export default function Home() {
 
   useEffect(() => {
     const controller = new AbortController();
-    obtenerPaginaProductos(1, controller.signal)
+    // En el inicio solo se muestran productos con stock
+    obtenerPaginaProductos(1, controller.signal, { conStock: "true" })
       .then((body) => setProductos(body.data.slice(0, CANTIDAD_EN_INICIO)))
       .catch(() => {}); // si falla, la sección simplemente no se muestra
     return () => controller.abort();
