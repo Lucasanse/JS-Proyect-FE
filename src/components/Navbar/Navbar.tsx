@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import jsLogo from "../../assets/js-logo.png";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../CarritoProvider/carritoContext";
+import { SwitchLenguaje } from "../SwitchLenguaje/SwitchLenguaje";
 
-// Links principales del menú (desktop y mobile). Para agregar uno nuevo, sumalo acá.
+// Guardamos la clave de traducción (labelKey) en lugar del texto fijo
 const NAV_LINKS = [
-  { to: "/productos", label: "Productos" },
-  { to: "/armar-pc", label: "Armá tu PC" },
-  { to: "/servicio-tecnico", label: "Servicio técnico" },
-];
+  { to: "/productos", labelKey: "nav.productos" },
+  { to: "/armar-pc", labelKey: "nav.armarPc" },
+  { to: "/servicio-tecnico", labelKey: "nav.servicioTecnico" },
+] as const;
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   `rounded-lg px-3 py-2 text-[15px] font-medium transition-colors ${
@@ -21,16 +23,18 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+  const { t } = useTranslation();
   const { data: session, isPending } = useSession();
   const { carrito } = useCarrito();
   const cantidadCarrito = carrito?.cantidadTotal ?? 0;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b-4 border-primary bg-surface shadow-sm">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-2.5 sm:px-6 lg:px-8">
         {/* Menú hamburguesa (solo mobile) */}
         <button
           type="button"
-          aria-label="Abrir menú"
+          aria-label={open ? t("nav.cerrarMenu") : t("nav.abrirMenu")}
           aria-expanded={open}
           onClick={() => setOpen(!open)}
           className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-ink hover:bg-surface-alt md:hidden"
@@ -38,14 +42,19 @@ export default function Navbar() {
           {open ? <CloseIcon /> : <MenuIcon />}
         </button>
 
-        <Link to="/" onClick={close} className="shrink-0" aria-label="Inicio">
+        <Link
+          to="/"
+          onClick={close}
+          className="shrink-0"
+          aria-label={t("nav.inicio")}
+        >
           <img src={jsLogo} alt="JS" className="h-11 w-11 object-contain" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
           {NAV_LINKS.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass}>
-              {l.label}
+              {t(l.labelKey)}
             </NavLink>
           ))}
         </nav>
@@ -53,7 +62,7 @@ export default function Navbar() {
         <div className="ml-auto flex items-center gap-3 sm:gap-5">
           <button
             type="button"
-            aria-label="Notificaciones"
+            aria-label={t("nav.notificaciones")}
             className="relative flex cursor-pointer text-muted hover:text-primary"
           >
             <BellIcon />
@@ -61,12 +70,11 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4">
             {isPending ? (
-              <span className="text-sm text-muted">Cargando...</span>
+              <span className="text-sm text-muted">{t("nav.cargando")}</span>
             ) : session ? (
-              // SI HAY SESIÓN INICIADA: Muestra su nombre y el botón para ir a /logout (o Mi Cuenta)
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-ink">
-                  Hola,{" "}
+                  {t("nav.hola")}{" "}
                   <strong className="text-primary">{session.user.name}</strong>
                 </span>
 
@@ -74,16 +82,15 @@ export default function Navbar() {
                   to="/logout"
                   className="rounded-lg border border-line bg-surface-alt px-4 py-2 text-sm font-semibold text-ink hover:bg-line transition-colors"
                 >
-                  Cerrar sesión
+                  {t("nav.cerrarSesion")}
                 </Link>
               </div>
             ) : (
-              // SI NO HAY SESIÓN: Muestra el botón normal de Iniciar sesión
               <Link
                 to="/login"
                 className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-surface hover:bg-primary-dark transition-colors"
               >
-                Iniciar sesión
+                {t("nav.iniciarSesion")}
               </Link>
             )}
           </div>
@@ -91,7 +98,7 @@ export default function Navbar() {
           <Link
             to="/carrito"
             onClick={close}
-            aria-label="Carrito"
+            aria-label={t("nav.carrito")}
             className="relative flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-primary text-secondary transition-colors hover:bg-primary-dark"
           >
             <CartIcon />
@@ -101,6 +108,8 @@ export default function Navbar() {
               </span>
             )}
           </Link>
+
+          <SwitchLenguaje />
         </div>
       </div>
 
@@ -109,7 +118,7 @@ export default function Navbar() {
         <nav className="flex flex-col gap-1 border-t border-line px-4 py-3 md:hidden">
           {NAV_LINKS.map((l) => (
             <NavLink key={l.to} to={l.to} onClick={close} className={linkClass}>
-              {l.label}
+              {t(l.labelKey)}
             </NavLink>
           ))}
         </nav>
@@ -158,7 +167,6 @@ function BellIcon() {
   );
 }
 
-// Silueta genérica de usuario (sin sesión iniciada)
 function UserIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
