@@ -1,6 +1,8 @@
 // src/pages/Detalles.tsx
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useSession } from "../../services/auth-client";
+import { useCarrito } from "../../components/CarritoProvider/carritoContext";
 import {
   obtenerProductoPorId,
   type ProductoDetalle,
@@ -13,6 +15,29 @@ export default function Detalles() {
   const [cargando, setCargando] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [cantidad, setCantidad] = useState<number>(1);
+  const [agregando, setAgregando] = useState(false);
+  const [errorCarrito, setErrorCarrito] = useState("");
+  const navigate = useNavigate();
+  const { data: session } = useSession();
+  const { agregar, cantidadEnCarrito } = useCarrito();
+
+  const handleAgregar = async () => {
+    if (!producto) return;
+    if (!session) {
+      navigate("/login");
+      return;
+    }
+    setErrorCarrito("");
+    setAgregando(true);
+    try {
+      await agregar(producto.id, cantidad);
+      setCantidad(1);
+    } catch (e) {
+      setErrorCarrito(e instanceof Error ? e.message : "No se pudo agregar");
+    } finally {
+      setAgregando(false);
+    }
+  };
 
   useEffect(() => {
     const idNumero = Number(id);
@@ -212,7 +237,12 @@ export default function Detalles() {
                   <button
                     type="button"
                     onClick={() =>
-                      setCantidad((c) => Math.min(producto.stock, c + 1))
+                      setCantidad((c) =>
+                        Math.min(
+                          Math.max(producto.stock - cantidadEnCarrito(producto.id), 1),
+                          c + 1,
+                        ),
+                      )
                     }
                     className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:bg-white hover:shadow-sm transition font-bold"
                   >
@@ -224,7 +254,8 @@ export default function Detalles() {
               {/* Botón Agregar al Carrito */}
               <button
                 type="button"
-                disabled={!producto.disponible}
+                onClick={handleAgregar}
+                disabled={!producto.disponible || agregando}
                 className="flex-1 inline-flex items-center justify-center gap-2 bg-indigo-600 text-white py-3.5 px-6 rounded-xl font-semibold hover:bg-indigo-700 active:scale-[0.99] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transition shadow-sm"
               >
                 <svg
@@ -240,9 +271,16 @@ export default function Detalles() {
                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                {producto.disponible ? "Agregar al carrito" : "Sin stock"}
+                {!producto.disponible
+                  ? "Sin stock"
+                  : agregando
+                    ? "Agregando..."
+                    : "Agregar al carrito"}
               </button>
             </div>
+            {errorCarrito && (
+              <p className="mt-2 text-sm text-red-600">{errorCarrito}</p>
+            )}
           </div>
         </div>
       </div>
