@@ -70,7 +70,9 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
         )}
         <button
           type="button"
-          aria-label={esFavorito ? "Quitar de favoritos" : "Agregar a favoritos"}
+          aria-label={
+            esFavorito ? "Quitar de favoritos" : "Agregar a favoritos"
+          }
           aria-pressed={esFavorito}
           onClick={() => onToggleFavorito(producto.id)}
           className={`absolute right-1.5 top-1.5 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-surface/90 shadow-sm transition-colors ${esFavorito ? "text-primary" : "text-muted hover:text-primary"}`}
@@ -80,12 +82,17 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
       </div>
 
       <h3 className="line-clamp-2 text-sm font-bold leading-snug text-ink">
-        <Link to={`/productos/${producto.id}`} className="after:absolute after:inset-0 after:rounded-xl hover:text-primary">
+        <Link
+          to={`/detalleProducto/${producto.id}`}
+          className="after:absolute after:inset-0 after:rounded-xl hover:text-primary"
+        >
           {producto.nombre}
         </Link>
       </h3>
 
-      <p className="mt-auto text-xl font-semibold text-ink">{formatoPrecio.format(producto.precio)}</p>
+      <p className="mt-auto text-xl font-semibold text-ink">
+        {formatoPrecio.format(producto.precio)}
+      </p>
 
       {/* flex-wrap: si la card es angosta, el botón baja a otra línea en vez de desbordarse */}
       <div className="relative z-10 flex flex-wrap items-center gap-2">
@@ -138,7 +145,15 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
 
 function HeartIcon({ filled }: { filled: boolean }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinejoin="round"
+    >
       <path d="M12 20.5s-7.5-4.6-9.2-9.4C1.7 7.9 3.9 4.5 7.3 4.5c2 0 3.6 1.1 4.7 2.8 1.1-1.7 2.7-2.8 4.7-2.8 3.4 0 5.6 3.4 4.5 6.6-1.7 4.8-9.2 9.4-9.2 9.4z" />
     </svg>
   );
