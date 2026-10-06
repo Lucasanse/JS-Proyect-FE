@@ -1,9 +1,11 @@
 // src/pages/Login.tsx
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { signIn, useSession } from "../../services/auth-client";
 
 export default function Login() {
+  const { t } = useTranslation();
   const { data: session } = useSession();
   if (session) return <Navigate to="/logout" replace />;
   const navigate = useNavigate();
@@ -21,7 +23,7 @@ export default function Login() {
     setCargando(false);
 
     if (error) {
-      setErrorMsg(error.message || "Credenciales incorrectas");
+      setErrorMsg(error.message || t("login.credencialesIncorrectas"));
       return;
     }
 
@@ -32,10 +34,10 @@ export default function Login() {
     <section className="flex min-h-screen items-center justify-center bg-surface-alt px-4">
       <div className="w-full max-w-md rounded-xl border border-line bg-surface shadow-lg p-8">
         <h1 className="text-3xl font-bold text-primary text-center">
-          Iniciar sesión
+          {t("login.titulo")}
         </h1>
         <p className="mt-2 text-muted text-center">
-          Bienvenido, ingresa tus credenciales
+          {t("login.bienvenida")}
         </p>
 
         {errorMsg && (
@@ -47,11 +49,11 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-ink mb-1">
-              Email
+              {t("login.email")}
             </label>
             <input
               type="email"
-              placeholder="tuemail@ejemplo.com"
+              placeholder={t("login.placeholderEmail")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -62,7 +64,7 @@ export default function Login() {
 
           <div>
             <label className="block text-sm font-medium text-ink mb-1">
-              Contraseña
+              {t("login.contrasena")}
             </label>
             <input
               type="password"
@@ -81,14 +83,14 @@ export default function Login() {
             className="w-full rounded-lg bg-primary text-surface py-2 font-semibold 
                        hover:bg-primary-dark transition-colors disabled:opacity-50 cursor-pointer"
           >
-            {cargando ? "Entrando..." : "Entrar"}
+            {cargando ? t("login.entrando") : t("login.entrar")}
           </button>
         </form>
 
         <p className="mt-4 text-center text-sm text-muted">
-          ¿No tienes cuenta?{" "}
+          {t("login.sinCuenta")}{" "}
           <Link to="/register" className="text-secondary-dark hover:underline">
-            Regístrate aquí
+            {t("login.registrate")}
           </Link>
         </p>
       </div>
