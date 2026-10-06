@@ -13,7 +13,6 @@
     "iniciarSesion": "Iniciar sesión",
     "carrito": "Carrito"
   },
-
   "detalle": {
     "idInvalido": "El ID del producto no es válido.",
     "errorCarga": "No se pudo cargar el producto.",
@@ -48,5 +47,134 @@
       "tecnicoTitulo": "Servicio técnico",
       "tecnicoTexto": "Reparación y mantenimiento de tus equipos."
     }
+  },
+  "footer": {
+    "descripcion": "Hardware, componentes y servicio técnico.",
+    "tienda": "Tienda",
+    "ayuda": "Ayuda",
+    "cuenta": "Cuenta",
+    "productos": "Productos",
+    "armarPc": "Armá tu PC",
+    "carrito": "Carrito",
+    "servicioTecnico": "Servicio técnico",
+    "faq": "Preguntas frecuentes",
+    "contacto": "Contacto",
+    "iniciarSesion": "Iniciar sesión",
+    "misPedidos": "Mis pedidos"
+  },
+  "armarPc": {
+    "titulo": "Armá tu PC",
+    "enConstruccion": "Página en construcción."
+  },
+  "servicioTecnico": {
+    "titulo": "Servicio técnico",
+    "enConstruccion": "Página en construcción."
+  },
+  "aviso": {
+    "agregado": "Agregado al carrito",
+    "verCarrito": "Ver carrito"
+  },
+  "buscador": {
+    "placeholder": "Buscar productos...",
+    "buscar": "Buscar",
+    "filtros": "Filtros",
+    "categoria": "Categoría",
+    "todasCategorias": "Todas las categorías",
+    "marca": "Marca",
+    "todasMarcas": "Todas las marcas",
+    "precioMin": "Precio mín.",
+    "precioMax": "Precio máx.",
+    "enStock": "En stock",
+    "limpiar": "Limpiar filtros"
+  },
+  "carrito": {
+    "titulo": "Carrito",
+    "cargando": "Cargando...",
+    "sesionAntes": "Tenés que",
+    "sesionLink": "iniciar sesión",
+    "sesionDespues": "para ver tu carrito.",
+    "vacio": "Tu carrito está vacío.",
+    "verProductos": "Ver productos",
+    "sinImagen": "Sin imagen",
+    "sinStock": "Sin stock",
+    "soloQuedan": "Solo quedan {{count}}",
+    "stockDisponible": "Stock disponible",
+    "cantidad": "Cantidad",
+    "confirmar": "Confirmar",
+    "eliminar": "Eliminar",
+    "errorGenerico": "Ocurrió un error",
+    "resumen": "Resumen",
+    "subtotal": "Subtotal",
+    "totalPagar": "Total a pagar en {{moneda}}",
+    "ajustarCantidades": "Ajustá las cantidades de los productos sin stock suficiente.",
+    "confirmarPedido": "Confirmar pedido",
+    "eliminarPedido": "Eliminar pedido",
+    "confirmarEliminar": "¿Querés eliminar todos los productos del carrito?",
+    "errorEliminar": "No se pudo eliminar el pedido"
+  },
+  "login": {
+    "titulo": "Iniciar sesión",
+    "bienvenida": "Bienvenido, ingresa tus credenciales",
+    "email": "Email",
+    "placeholderEmail": "tuemail@ejemplo.com",
+    "contrasena": "Contraseña",
+    "entrar": "Entrar",
+    "entrando": "Entrando...",
+    "sinCuenta": "¿No tienes cuenta?",
+    "registrate": "Regístrate aquí",
+    "credencialesIncorrectas": "Credenciales incorrectas"
+  },
+  "register": {
+    "titulo": "Crear cuenta",
+    "subtitulo": "Completa tus datos para registrarte",
+    "nombre": "Nombre completo",
+    "placeholderNombre": "Tu nombre",
+    "email": "Email",
+    "placeholderEmail": "tuemail@ejemplo.com",
+    "contrasena": "Contraseña",
+    "placeholderContrasena": "Mínimo 8 caracteres",
+    "direccion": "Dirección",
+    "placeholderDireccion": "Av. Roca 123",
+    "telefono": "Teléfono",
+    "placeholderTelefono": "2984123456",
+    "registrarme": "Registrarme",
+    "registrando": "Registrando...",
+    "yaCuenta": "¿Ya tienes cuenta?",
+    "iniciaSesion": "Inicia sesión aquí",
+    "error": "Error al crear la cuenta"
+  },
+  "logout": {
+    "verificando": "Verificando sesión...",
+    "titulo": "Mi Cuenta",
+    "sesionComo": "Has iniciado sesión como",
+    "email": "Email:",
+    "rol": "Rol:",
+    "direccion": "Dirección:",
+    "telefono": "Teléfono:",
+    "noEspecificada": "No especificada",
+    "noEspecificado": "No especificado",
+    "cerrarSesion": "Cerrar sesión",
+    "cerrando": "Cerrando sesión..."
+  },
+  "productos": {
+    "titulo": "Productos",
+    "sinResultadosFiltros": "No encontramos productos con esos filtros.",
+    "sinProductos": "No hay productos para mostrar.",
+    "cargando": "Cargando productos...",
+    "errorCarga": "No se pudieron cargar los productos"
+  },
+  "card": {
+    "sinImagen": "Sin imagen",
+    "quitarFavoritos": "Quitar de favoritos",
+    "agregarFavoritos": "Agregar a favoritos",
+    "restar": "Restar uno",
+    "sumar": "Sumar uno",
+    "cantidad": "Cantidad",
+    "topeAlcanzado": "Ya agregaste todo el stock disponible",
+    "sinStock": "Sin stock",
+    "enCarrito": "En carrito",
+    "agregando": "Agregando...",
+    "agregar": "Agregar",
+    "errorAgregar": "No se pudo agregar"
   }
 }

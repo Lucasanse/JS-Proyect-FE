@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   obtenerCategorias,
   obtenerMarcas,
@@ -15,6 +16,7 @@ const inputClass =
   "px-4 py-2 border border-line rounded-md bg-surface focus:outline-none focus:ring-2 focus:ring-primary";
 
 export default function SearchBar({ filtros, onChange }: Props) {
+  const { t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [marcas, setMarcas] = useState<string[]>([]);
@@ -86,14 +88,14 @@ export default function SearchBar({ filtros, onChange }: Props) {
           type="search"
           name="q"
           defaultValue={filtros.q}
-          placeholder="Buscar productos..."
+          placeholder={t("buscador.placeholder")}
           className={`min-w-0 flex-1 ${inputClass}`}
         />
         <button
           type="submit"
           className="px-6 py-2 bg-primary text-surface rounded-md hover:bg-primary-dark transition cursor-pointer"
         >
-          Buscar
+          {t("buscador.buscar")}
         </button>
         <button
           type="button"
@@ -101,7 +103,7 @@ export default function SearchBar({ filtros, onChange }: Props) {
           onClick={() => setMobileOpen(!mobileOpen)}
           className="md:hidden px-4 py-2 border border-line rounded-md cursor-pointer"
         >
-          Filtros
+          {t("buscador.filtros")}
         </button>
       </div>
 
@@ -113,12 +115,12 @@ export default function SearchBar({ filtros, onChange }: Props) {
             Usan "value" (y no defaultValue) porque las opciones llegan después de la API. */}
         <select
           name="categoria"
-          aria-label="Categoría"
+          aria-label={t("buscador.categoria")}
           value={filtros.categoria ?? ""}
           onChange={(e) => aplicar(e.currentTarget.form!, true)}
           className={inputClass}
         >
-          <option value="">Todas las categorías</option>
+          <option value="">{t("buscador.todasCategorias")}</option>
           {categorias.map((c) => (
             <option key={c.id} value={c.id}>
               {c.nombre}
@@ -128,12 +130,12 @@ export default function SearchBar({ filtros, onChange }: Props) {
 
         <select
           name="marca"
-          aria-label="Marca"
+          aria-label={t("buscador.marca")}
           value={filtros.marca ?? ""}
           onChange={(e) => aplicar(e.currentTarget.form!)}
           className={inputClass}
         >
-          <option value="">Todas las marcas</option>
+          <option value="">{t("buscador.todasMarcas")}</option>
           {marcas.map((m) => (
             <option key={m} value={m}>
               {m}
@@ -151,7 +153,7 @@ export default function SearchBar({ filtros, onChange }: Props) {
             defaultValue={filtros.precioMin}
             onInput={soloPositivos}
             onKeyDown={bloquearTeclas}
-            placeholder="Precio mín."
+            placeholder={t("buscador.precioMin")}
             className={`min-w-0 flex-1 md:w-32 md:flex-none ${inputClass}`}
           />
           <span>-</span>
@@ -163,7 +165,7 @@ export default function SearchBar({ filtros, onChange }: Props) {
             defaultValue={filtros.precioMax}
             onInput={soloPositivos}
             onKeyDown={bloquearTeclas}
-            placeholder="Precio máx."
+            placeholder={t("buscador.precioMax")}
             className={`min-w-0 flex-1 md:w-32 md:flex-none ${inputClass}`}
           />
         </div>
@@ -178,7 +180,7 @@ export default function SearchBar({ filtros, onChange }: Props) {
             className="peer sr-only"
           />
           <span className="relative h-6 w-11 shrink-0 rounded-full bg-line transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-surface after:shadow after:transition-transform peer-checked:bg-primary peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-primary" />
-          <span className="text-ink">En stock</span>
+          <span className="text-ink">{t("buscador.enStock")}</span>
         </label>
 
         <button
@@ -187,7 +189,7 @@ export default function SearchBar({ filtros, onChange }: Props) {
           disabled={!hayFiltros}
           className="px-4 py-2 border border-line rounded-md hover:bg-surface transition cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Limpiar filtros
+          {t("buscador.limpiar")}
         </button>
       </div>
     </form>

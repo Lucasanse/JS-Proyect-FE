@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import ProductoCard from "../../components/ProductoCard/ProductoCard";
 import {
   obtenerPaginaProductos,
@@ -9,6 +10,7 @@ import {
 import SearchBar from "../../components/Searchbar/Searchbar";
 
 export default function Productos() {
+  const { t } = useTranslation();
   // Los filtros viven en la URL (?q=...&marca=...), así se pueden compartir o recargar la página
   const [searchParams, setSearchParams] = useSearchParams();
   const filtros: FiltrosProductos = Object.fromEntries(searchParams);
@@ -30,7 +32,7 @@ export default function Productos() {
         filtros={filtros}
         onChange={(nuevos) => setSearchParams(nuevos as Record<string, string>)}
       />
-      <h1 className="mt-8 text-3xl font-bold text-primary">Productos</h1>
+      <h1 className="mt-8 text-3xl font-bold text-primary">{t("productos.titulo")}</h1>
 
       {/* La key hace que la lista arranque de cero (página 1) cada vez que cambian los filtros */}
       <ListaProductos
@@ -51,6 +53,10 @@ interface ListaProps {
 
 // Lista con scroll infinito para un conjunto de filtros fijo
 function ListaProductos({ filtros, favoritos, onToggleFavorito }: ListaProps) {
+  const { t } = useTranslation();
+  // Ref para que cambiar de idioma no vuelva a disparar el pedido de productos
+  const tRef = useRef(t);
+  tRef.current = t;
   const [productos, setProductos] = useState<ProductoResumen[]>([]);
   const [pagina, setPagina] = useState(1);
   const [hayMas, setHayMas] = useState(true);
@@ -73,7 +79,7 @@ function ListaProductos({ filtros, favoritos, onToggleFavorito }: ListaProps) {
         setError(
           e instanceof Error
             ? e.message
-            : "No se pudieron cargar los productos",
+            : tRef.current("productos.errorCarga"),
         );
       })
       .finally(() => {
@@ -106,8 +112,8 @@ function ListaProductos({ filtros, favoritos, onToggleFavorito }: ListaProps) {
       {!cargando && !error && productos.length === 0 && (
         <p className="mt-6 text-muted">
           {hayFiltros
-            ? "No encontramos productos con esos filtros."
-            : "No hay productos para mostrar."}
+            ? t("productos.sinResultadosFiltros")
+            : t("productos.sinProductos")}
         </p>
       )}
 
@@ -124,7 +130,7 @@ function ListaProductos({ filtros, favoritos, onToggleFavorito }: ListaProps) {
 
       <div ref={finDeLista} />
       {cargando && (
-        <p className="mt-6 text-center text-muted">Cargando productos...</p>
+        <p className="mt-6 text-center text-muted">{t("productos.cargando")}</p>
       )}
       {error && <p className="mt-6 text-center text-primary">{error}</p>}
     </>

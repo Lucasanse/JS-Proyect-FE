@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import type { ProductoResumen } from "../../services/productos";
 
 interface Props {
@@ -13,6 +14,7 @@ const DURACION_MS = 3000;
 // Aviso que sube desde abajo de la pantalla al agregar un producto al carrito.
 // Se cierra solo después de DURACION_MS.
 export default function AvisoCarrito({ producto, cantidad, onCerrar }: Props) {
+  const { t } = useTranslation();
   useEffect(() => {
     const timer = setTimeout(onCerrar, DURACION_MS);
     return () => clearTimeout(timer);
@@ -34,7 +36,7 @@ export default function AvisoCarrito({ producto, cantidad, onCerrar }: Props) {
 
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-1 text-sm font-semibold text-primary">
-            <CheckIcon /> Agregado al carrito
+            <CheckIcon /> {t("aviso.agregado")}
           </p>
           <p className="truncate text-sm text-ink">
             {cantidad > 1 && `${cantidad} × `}
@@ -47,7 +49,7 @@ export default function AvisoCarrito({ producto, cantidad, onCerrar }: Props) {
           onClick={onCerrar}
           className="shrink-0 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-surface transition-colors hover:bg-primary-dark"
         >
-          Ver carrito
+          {t("aviso.verCarrito")}
         </Link>
 
         {/* Barra que se va vaciando mientras el aviso está visible */}

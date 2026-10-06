@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../../components/CarritoProvider/carritoContext";
 import type { ItemCarrito } from "../../services/carrito";
@@ -14,22 +15,23 @@ const formatoPrecio = new Intl.NumberFormat("es-AR", {
 });
 
 export default function Carrito() {
+  const { t } = useTranslation();
   const { data: session, isPending } = useSession();
   const { carrito, cargando } = useCarrito();
 
   if (isPending || cargando) {
-    return <Contenedor><p className="text-muted">Cargando...</p></Contenedor>;
+    return <Contenedor><p className="text-muted">{t("carrito.cargando")}</p></Contenedor>;
   }
 
   if (!session) {
     return (
       <Contenedor>
         <Aviso>
-          Tenés que{" "}
+          {t("carrito.sesionAntes")}{" "}
           <Link to="/login" className="font-semibold text-primary hover:underline">
-            iniciar sesión
+            {t("carrito.sesionLink")}
           </Link>{" "}
-          para ver tu carrito.
+          {t("carrito.sesionDespues")}
         </Aviso>
       </Contenedor>
     );
@@ -39,9 +41,9 @@ export default function Carrito() {
     return (
       <Contenedor>
         <Aviso>
-          Tu carrito está vacío.{" "}
+          {t("carrito.vacio")}{" "}
           <Link to="/productos" className="font-semibold text-primary hover:underline">
-            Ver productos
+            {t("carrito.verProductos")}
           </Link>
         </Aviso>
       </Contenedor>
@@ -64,10 +66,11 @@ export default function Carrito() {
 }
 
 function Contenedor({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   return (
     <section className="w-full flex-1 bg-surface-alt">
       <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="mb-6 text-3xl font-bold text-ink">Carrito</h1>
+        <h1 className="mb-6 text-3xl font-bold text-ink">{t("carrito.titulo")}</h1>
         {children}
       </div>
     </section>
@@ -79,6 +82,7 @@ function Aviso({ children }: { children: React.ReactNode }) {
 }
 
 function FilaCarrito({ item }: { item: ItemCarrito }) {
+  const { t } = useTranslation();
   const { cambiarCantidad, quitar } = useCarrito();
   const { producto, cantidad, subtotal } = item;
   const sinStock = producto.stock <= 0;
@@ -93,7 +97,7 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
     try {
       await accion();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Ocurrió un error");
+      setError(e instanceof Error ? e.message : t("carrito.errorGenerico"));
     } finally {
       setOcupado(false);
     }
@@ -125,7 +129,7 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
           {producto.imagenUrl ? (
             <img src={producto.imagenUrl} alt={producto.nombre} className="h-full w-full object-contain p-1" />
           ) : (
-            <span className="text-xs text-muted">Sin imagen</span>
+            <span className="text-xs text-muted">{t("carrito.sinImagen")}</span>
           )}
         </div>
 
@@ -133,14 +137,14 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
           <p className="line-clamp-2 text-[15px] font-medium text-ink">{producto.nombre}</p>
           <p className={`flex items-center gap-1.5 text-sm ${sinStock || superaStock ? "text-primary" : "text-secondary-dark"}`}>
             <span className="h-2 w-2 rounded-full bg-current" />
-            {sinStock ? "Sin stock" : superaStock ? `Solo quedan ${producto.stock}` : "Stock disponible"}
+            {sinStock ? t("carrito.sinStock") : superaStock ? t("carrito.soloQuedan", { count: producto.stock }) : t("carrito.stockDisponible")}
           </p>
         </div>
 
         <div className="flex flex-col items-start gap-1">
           <input
             type="number"
-            aria-label="Cantidad"
+            aria-label={t("carrito.cantidad")}
             min={1}
             max={producto.stock}
             value={valor}
@@ -160,7 +164,7 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
               className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-ink hover:text-primary disabled:opacity-40"
             >
               <CheckIcon />
-              Confirmar
+              {t("carrito.confirmar")}
             </button>
           ) : (
             <button
@@ -170,7 +174,7 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
               className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-ink hover:text-primary disabled:opacity-40"
             >
               <TrashIcon />
-              Eliminar
+              {t("carrito.eliminar")}
             </button>
           )}
         </div>
@@ -189,6 +193,7 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
 }
 
 function Resumen() {
+  const { t } = useTranslation();
   const { carrito, vaciar } = useCarrito();
   const [error, setError] = useState("");
   if (!carrito) return null;
@@ -197,32 +202,32 @@ function Resumen() {
   const hayProblemasDeStock = carrito.items.some((i) => i.cantidad > i.producto.stock);
 
   const eliminarPedido = async () => {
-    if (!window.confirm("¿Querés eliminar todos los productos del carrito?")) return;
+    if (!window.confirm(t("carrito.confirmarEliminar"))) return;
     setError("");
     try {
       await vaciar();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "No se pudo eliminar el pedido");
+      setError(e instanceof Error ? e.message : t("carrito.errorEliminar"));
     }
   };
 
   return (
     <aside className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-5 shadow-sm lg:w-96">
-      <h2 className="text-xl font-bold text-ink">Resumen</h2>
+      <h2 className="text-xl font-bold text-ink">{t("carrito.resumen")}</h2>
 
       <dl className="divide-y divide-line text-[15px]">
         <div className="flex justify-between py-3">
-          <dt className="text-ink">Subtotal</dt>
+          <dt className="text-ink">{t("carrito.subtotal")}</dt>
           <dd className="font-semibold text-ink">{formatoPrecio.format(carrito.total)}</dd>
         </div>
         <div className="flex justify-between py-3">
-          <dt className="font-bold text-ink">Total a pagar en {MONEDA}</dt>
+          <dt className="font-bold text-ink">{t("carrito.totalPagar", { moneda: MONEDA })}</dt>
           <dd className="font-bold text-ink">{formatoPrecio.format(carrito.total)}</dd>
         </div>
       </dl>
 
       {hayProblemasDeStock && (
-        <p className="text-sm text-primary">Ajustá las cantidades de los productos sin stock suficiente.</p>
+        <p className="text-sm text-primary">{t("carrito.ajustarCantidades")}</p>
       )}
       {error && <p className="text-sm text-primary">{error}</p>}
 
@@ -232,14 +237,14 @@ function Resumen() {
           disabled={hayProblemasDeStock}
           className="h-11 cursor-pointer rounded-lg bg-primary font-semibold text-surface transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
         >
-          Confirmar pedido
+          {t("carrito.confirmarPedido")}
         </button>
         <button
           type="button"
           onClick={eliminarPedido}
           className="h-11 cursor-pointer rounded-lg bg-surface-alt font-semibold text-muted transition-colors hover:bg-line hover:text-ink"
         >
-          Eliminar pedido
+          {t("carrito.eliminarPedido")}
         </button>
       </div>
     </aside>
