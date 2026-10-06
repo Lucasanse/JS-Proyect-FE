@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { ProductoResumen } from "../../services/productos";
+import { useSession } from "../../services/auth-client";
+import { useCarrito } from "../CarritoProvider/carritoContext";
 
 const formatoPrecio = new Intl.NumberFormat("es-AR", {
   style: "currency",
@@ -14,19 +16,41 @@ interface Props {
   onToggleFavorito: (id: number) => void;
 }
 
-export default function ProductoCard({
-  producto,
-  esFavorito,
-  onToggleFavorito,
-}: Props) {
-  const { stock } = producto;
-  const sinStock = stock <= 0;
+export default function ProductoCard({ producto, esFavorito, onToggleFavorito }: Props) {
+  const navigate = useNavigate();
+  const { data: session } = useSession();
+  const { agregar, cantidadEnCarrito } = useCarrito();
+  // Lo que todavía se puede agregar = stock menos lo que ya está en el carrito
+  const enCarrito = cantidadEnCarrito(producto.id);
+  const stock = Math.max(producto.stock - enCarrito, 0);
+  const sinStock = producto.stock <= 0;
+  const topeAlcanzado = !sinStock && stock === 0;
+  const deshabilitado = sinStock || topeAlcanzado;
   const [cantidad, setCantidad] = useState(1);
+  const [agregando, setAgregando] = useState(false);
+  const [error, setError] = useState("");
 
   // La cantidad siempre queda entre 1 y el stock disponible
   const cambiarCantidad = (valor: number) => {
     if (Number.isNaN(valor)) return;
     setCantidad(Math.min(Math.max(valor, 1), stock));
+  };
+
+  const handleAgregar = async () => {
+    if (!session) {
+      navigate("/login");
+      return;
+    }
+    setError("");
+    setAgregando(true);
+    try {
+      await agregar(producto.id, Math.min(cantidad, stock));
+      setCantidad(1);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "No se pudo agregar");
+    } finally {
+      setAgregando(false);
+    }
   };
 
   return (
@@ -70,13 +94,14 @@ export default function ProductoCard({
         {formatoPrecio.format(producto.precio)}
       </p>
 
-      <div className="relative z-10 flex items-center gap-2">
+      {/* flex-wrap: si la card es angosta, el botón baja a otra línea en vez de desbordarse */}
+      <div className="relative z-10 flex flex-wrap items-center gap-2">
         <div className="flex h-9 items-center rounded-lg border border-line bg-surface">
           <button
             type="button"
             aria-label="Restar uno"
             onClick={() => cambiarCantidad(cantidad - 1)}
-            disabled={sinStock || cantidad <= 1}
+            disabled={deshabilitado || cantidad <= 1}
             className="h-full w-7 cursor-pointer text-muted hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
           >
             −
@@ -86,8 +111,8 @@ export default function ProductoCard({
             aria-label="Cantidad"
             min={1}
             max={stock}
-            value={sinStock ? 0 : cantidad}
-            disabled={sinStock}
+            value={deshabilitado ? 0 : Math.min(cantidad, stock)}
+            disabled={deshabilitado}
             onChange={(e) => cambiarCantidad(e.target.valueAsNumber)}
             className="h-full w-8 [appearance:textfield] bg-transparent text-center text-sm text-ink outline-none disabled:opacity-40 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
@@ -95,7 +120,7 @@ export default function ProductoCard({
             type="button"
             aria-label="Sumar uno"
             onClick={() => cambiarCantidad(cantidad + 1)}
-            disabled={sinStock || cantidad >= stock}
+            disabled={deshabilitado || cantidad >= stock}
             className="h-full w-7 cursor-pointer text-muted hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
           >
             +
@@ -104,13 +129,16 @@ export default function ProductoCard({
 
         <button
           type="button"
-          disabled={sinStock}
-          className="flex h-9 flex-1 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-primary px-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
+          onClick={handleAgregar}
+          disabled={deshabilitado || agregando}
+          title={topeAlcanzado ? "Ya agregaste todo el stock disponible" : undefined}
+          className="flex h-9 grow basis-28 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-primary px-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
         >
           <CartIcon />
-          {sinStock ? "Sin stock" : "Agregar"}
+          {sinStock ? "Sin stock" : topeAlcanzado ? "En carrito" : agregando ? "Agregando..." : "Agregar"}
         </button>
       </div>
+      {error && <p className="relative z-10 text-xs text-primary">{error}</p>}
     </article>
   );
 }
