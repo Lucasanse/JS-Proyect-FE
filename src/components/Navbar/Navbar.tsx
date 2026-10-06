@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import jsLogo from "../../assets/js-logo.png";
+import { SwitchLenguaje } from "../SwitchLenguaje/SwitchLenguaje";
 
 // Links principales del menú (desktop y mobile). Para agregar uno nuevo, sumalo acá.
 const NAV_LINKS = [
@@ -10,9 +11,10 @@ const NAV_LINKS = [
 ];
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `rounded-lg px-3 py-2 text-[15px] font-medium transition-colors ${isActive
-    ? "bg-primary-light text-primary"
-    : "text-ink hover:bg-surface-alt hover:text-primary"
+  `rounded-lg px-3 py-2 text-[15px] font-medium transition-colors ${
+    isActive
+      ? "bg-primary-light text-primary"
+      : "text-ink hover:bg-surface-alt hover:text-primary"
   }`;
 
 export default function Navbar() {
@@ -75,6 +77,7 @@ export default function Navbar() {
           >
             <CartIcon />
           </Link>
+          <SwitchLenguaje></SwitchLenguaje>
         </div>
       </div>
 
@@ -94,7 +97,15 @@ export default function Navbar() {
 
 function MenuIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    >
       <path d="M4 7h16M4 12h16M4 17h16" />
     </svg>
   );
@@ -102,7 +113,15 @@ function MenuIcon() {
 
 function CloseIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    >
       <path d="M6 6l12 12M18 6L6 18" />
     </svg>
   );

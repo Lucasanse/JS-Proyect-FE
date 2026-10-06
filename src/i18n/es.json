@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "catalogo": "Catálogo",
+    "carrito": "Carrito"
+  },
+  "detalle": {
+    "volver": "Volver al catálogo",
+    "enStock": "En stock ({{count}} disponibles)",
+    "sinStock": "Sin stock disponible",
+    "agregarCarrito": "Agregar al carrito",
+    "especificaciones": "Especificaciones Técnicas",
+    "consumo": "Consumo estimado",
+    "noEncontrado": "Producto no encontrado"
+  }
+}

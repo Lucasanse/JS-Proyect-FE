@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "catalogo": "Catalog",
+    "carrito": "Cart"
+  },
+  "detalle": {
+    "volver": "Back to catalog",
+    "enStock": "In stock ({{count}} available)",
+    "sinStock": "Out of stock",
+    "agregarCarrito": "Add to cart",
+    "especificaciones": "Technical Specifications",
+    "consumo": "Estimated power",
+    "noEncontrado": "Product not found"
+  }
+}

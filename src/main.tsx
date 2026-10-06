@@ -8,6 +8,7 @@ import Carrito from "./pages/Carrito/Carrito.tsx";
 import Login from "./pages/Login/Login.tsx";
 import ArmarPc from "./pages/ArmarPc/ArmarPc.tsx";
 import ServicioTecnico from "./pages/ServicioTecnico/ServicioTecnico.tsx";
+import i18n from "./i18n/index.ts";
 
 // Todas las rutas hijas se muestran dentro de MainLayout (Navbar + Footer)
 const router = createBrowserRouter([
