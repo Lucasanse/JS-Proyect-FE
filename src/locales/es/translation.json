@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "productos": "Productos",
+    "armarPc": "Armá tu PC",
+    "servicioTecnico": "Servicio técnico",
+    "abrirMenu": "Abrir menú",
+    "cerrarMenu": "Cerrar menú",
+    "inicio": "Inicio",
+    "notificaciones": "Notificaciones",
+    "cargando": "Cargando...",
+    "hola": "Hola,",
+    "cerrarSesion": "Cerrar sesión",
+    "iniciarSesion": "Iniciar sesión",
+    "carrito": "Carrito"
+  },
+
+  "detalle": {
+    "idInvalido": "El ID del producto no es válido.",
+    "errorCarga": "No se pudo cargar el producto.",
+    "errorAgregar": "No se pudo agregar",
+    "noEncontradoTitulo": "No encontramos este producto",
+    "noEncontradoTexto": "El producto que buscas no existe o fue eliminado.",
+    "volverCatalogo": "← Volver al catálogo",
+    "catalogo": "Catálogo",
+    "sinImagen": "Sin imagen disponible",
+    "impuestosIncluidos": "Precio final con impuestos incluidos",
+    "stockDisponible": "Stock disponible ({{count}} u.)",
+    "agotado": "Agotado temporalmente",
+    "descripcionTitulo": "Descripción del producto",
+    "sinStock": "Sin stock",
+    "agregando": "Agregando...",
+    "agregarCarrito": "Agregar al carrito",
+    "especificacionesTitulo": "Especificaciones Técnicas",
+    "atributosPara": "Atributos de compatibilidad y rendimiento para",
+    "consumoRequerido": "Consumo requerido: {{watts}} W",
+    "sinAtributos": "No hay atributos técnicos adicionales registrados para este componente."
+  },
+  "home": {
+    "heroTitulo": "La tecnología que buscás,",
+    "heroTituloDestacado": "al mejor precio",
+    "heroDescripcion": "Placas de video, procesadores, periféricos y mucho más de las mejores marcas y al mejor precio.",
+    "verProductos": "Ver productos",
+    "verMas": "Ver más →",
+    "seccionProductos": "Productos",
+    "servicios": {
+      "armadoTitulo": "Armado de PC",
+      "armadoTexto": "Elegí cada componente y armamos tu equipo a medida.",
+      "tecnicoTitulo": "Servicio técnico",
+      "tecnicoTexto": "Reparación y mantenimiento de tus equipos."
+    }
+  }
+}

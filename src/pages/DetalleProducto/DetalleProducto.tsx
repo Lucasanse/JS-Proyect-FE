@@ -1,6 +1,7 @@
 // src/pages/Detalles.tsx
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../../components/CarritoProvider/carritoContext";
 import {
@@ -10,6 +11,8 @@ import {
 
 export default function Detalles() {
   const { id } = useParams<{ id: string }>();
+  const { t, i18n } = useTranslation();
+  const lang = (i18n.resolvedLanguage || i18n.language || "es").slice(0, 2);
 
   const [producto, setProducto] = useState<ProductoDetalle | null>(null);
   const [cargando, setCargando] = useState<boolean>(true);
@@ -33,7 +36,9 @@ export default function Detalles() {
       await agregar(producto.id, cantidad);
       setCantidad(1);
     } catch (e) {
-      setErrorCarrito(e instanceof Error ? e.message : "No se pudo agregar");
+      setErrorCarrito(
+        e instanceof Error ? e.message : t("detalle.errorAgregar"),
+      );
     } finally {
       setAgregando(false);
     }
@@ -42,7 +47,7 @@ export default function Detalles() {
   useEffect(() => {
     const idNumero = Number(id);
     if (!id || isNaN(idNumero) || idNumero <= 0) {
-      setError("El ID del producto no es válido.");
+      setError(t("detalle.idInvalido"));
       setCargando(false);
       return;
     }
@@ -59,12 +64,12 @@ export default function Detalles() {
       })
       .catch((err: Error) => {
         if (err.name === "AbortError") return;
-        setError(err.message || "No se pudo cargar el producto.");
+        setError(err.message || t("detalle.errorCarga"));
         setCargando(false);
       });
 
     return () => controller.abort();
-  }, [id]);
+  }, [id, lang, t]);
 
   // CARGA (Skeleton animado)
   if (cargando) {
@@ -87,7 +92,7 @@ export default function Detalles() {
     );
   }
 
-  //404
+  // 404
   if (error || !producto) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center">
@@ -96,29 +101,29 @@ export default function Detalles() {
             !
           </div>
           <h2 className="text-xl font-bold text-slate-900 mb-2">
-            No encontramos este producto
+            {t("detalle.noEncontradoTitulo")}
           </h2>
           <p className="text-slate-500 mb-6">
-            {error ?? "El producto que buscas no existe o fue eliminado."}
+            {error ?? t("detalle.noEncontradoTexto")}
           </p>
           <Link
             to="/"
             className="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-indigo-700 transition"
           >
-            ← Volver al catálogo
+            {t("detalle.volverCatalogo")}
           </Link>
         </div>
       </div>
     );
   }
 
-  //VISTA PRINCIPAL DEL PRODUCTO
+  // VISTA PRINCIPAL DEL PRODUCTO
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Breadcrumb / Navegación superior */}
       <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition font-medium">
-          Catálogo
+          {t("detalle.catalogo")}
         </Link>
         <span>/</span>
         <span className="text-slate-700 font-medium">
@@ -135,7 +140,7 @@ export default function Detalles() {
         {/* Columna Izquierda: Imagen del Producto */}
         <div className="lg:col-span-6 flex items-center justify-center bg-slate-50 rounded-xl p-8 border border-slate-100 relative min-h-[340px]">
           {producto.esComponentePC && (
-            <span className="absolute top-4 left-4 bg-slate-900 text-white text-xs font-semibold px-3 py-1 rounded-full   z-10 tracking-wide uppercase">
+            <span className="absolute top-4 left-4 bg-slate-900 text-white text-xs font-semibold px-3 py-1 rounded-full z-10 tracking-wide uppercase">
               {producto.tipoComponente}
             </span>
           )}
@@ -160,7 +165,7 @@ export default function Detalles() {
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <span className="text-sm">Sin imagen disponible</span>
+              <span className="text-sm">{t("detalle.sinImagen")}</span>
             </div>
           )}
         </div>
@@ -190,19 +195,19 @@ export default function Detalles() {
                   ${producto.precio.toLocaleString("es-AR")}
                 </span>
                 <p className="text-xs text-slate-400 mt-1">
-                  Precio final con impuestos incluidos
+                  {t("detalle.impuestosIncluidos")}
                 </p>
               </div>
 
               {producto.disponible ? (
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Stock disponible ({producto.stock} u.)
+                  {t("detalle.stockDisponible", { count: producto.stock })}
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-700 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full">
                   <span className="w-2 h-2 rounded-full bg-red-500"></span>
-                  Agotado temporalmente
+                  {t("detalle.agotado")}
                 </span>
               )}
             </div>
@@ -210,7 +215,7 @@ export default function Detalles() {
             {/* Descripción */}
             <div className="mt-5">
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Descripción del producto
+                {t("detalle.descripcionTitulo")}
               </h2>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
                 {producto.descripcion}
@@ -239,7 +244,10 @@ export default function Detalles() {
                     onClick={() =>
                       setCantidad((c) =>
                         Math.min(
-                          Math.max(producto.stock - cantidadEnCarrito(producto.id), 1),
+                          Math.max(
+                            producto.stock - cantidadEnCarrito(producto.id),
+                            1,
+                          ),
                           c + 1,
                         ),
                       )
@@ -272,10 +280,10 @@ export default function Detalles() {
                   />
                 </svg>
                 {!producto.disponible
-                  ? "Sin stock"
+                  ? t("detalle.sinStock")
                   : agregando
-                    ? "Agregando..."
-                    : "Agregar al carrito"}
+                    ? t("detalle.agregando")
+                    : t("detalle.agregarCarrito")}
               </button>
             </div>
             {errorCarrito && (
@@ -291,10 +299,10 @@ export default function Detalles() {
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5 mb-6">
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-slate-900">
-                Especificaciones Técnicas
+                {t("detalle.especificacionesTitulo")}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                Atributos de compatibilidad y rendimiento para{" "}
+                {t("detalle.atributosPara")}{" "}
                 <span className="font-semibold text-slate-700">
                   {producto.tipoComponente}
                 </span>
@@ -310,7 +318,9 @@ export default function Detalles() {
                 >
                   <path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" />
                 </svg>
-                Consumo requerido: {producto.wattsRequeridos} W
+                {t("detalle.consumoRequerido", {
+                  watts: producto.wattsRequeridos,
+                })}
               </div>
             )}
           </div>
@@ -338,8 +348,7 @@ export default function Detalles() {
             </div>
           ) : (
             <p className="text-sm text-slate-400 italic">
-              No hay atributos técnicos adicionales registrados para este
-              componente.
+              {t("detalle.sinAtributos")}
             </p>
           )}
         </div>

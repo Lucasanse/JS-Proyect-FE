@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "productos": "Products",
+    "armarPc": "Build your PC",
+    "servicioTecnico": "Tech Support",
+    "abrirMenu": "Open menu",
+    "cerrarMenu": "Close menu",
+    "inicio": "Home",
+    "notificaciones": "Notifications",
+    "cargando": "Loading...",
+    "hola": "Hello,",
+    "cerrarSesion": "Log out",
+    "iniciarSesion": "Log in",
+    "carrito": "Cart"
+  },
+  "home": {
+    "heroTitulo": "The tech you're looking for,",
+    "heroTituloDestacado": "at the best price",
+    "heroDescripcion": "Graphics cards, processors, peripherals, and much more from top brands at the best prices.",
+    "verProductos": "View products",
+    "verMas": "Learn more →",
+    "seccionProductos": "Products",
+    "servicios": {
+      "armadoTitulo": "Custom PC Builder",
+      "armadoTexto": "Pick every component and we'll build your custom rig.",
+      "tecnicoTitulo": "Tech Support",
+      "tecnicoTexto": "Repair and maintenance for your devices."
+    }
+  },
+  "detalle": {
+    "idInvalido": "Invalid product ID.",
+    "errorCarga": "Could not load the product.",
+    "errorAgregar": "Could not add to cart",
+    "noEncontradoTitulo": "Product not found",
+    "noEncontradoTexto": "The product you are looking for does not exist or was removed.",
+    "volverCatalogo": "← Back to catalog",
+    "catalogo": "Catalog",
+    "sinImagen": "No image available",
+    "impuestosIncluidos": "Final price including taxes",
+    "stockDisponible": "In stock ({{count}} u.)",
+    "agotado": "Temporarily out of stock",
+    "descripcionTitulo": "Product description",
+    "sinStock": "Out of stock",
+    "agregando": "Adding...",
+    "agregarCarrito": "Add to cart",
+    "especificacionesTitulo": "Technical Specifications",
+    "atributosPara": "Compatibility and performance attributes for",
+    "consumoRequerido": "Required power: {{watts}} W",
+    "sinAtributos": "No additional technical attributes registered for this component."
+  }
+}

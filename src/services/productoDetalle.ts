@@ -1,10 +1,15 @@
+import i18n from "../i18n";
 import { urlProductoDetalle } from "./api";
 
 export async function obtenerProductoPorId(
   id: number,
   signal?: AbortSignal,
 ): Promise<ProductoDetalle> {
-  const res = await fetch(`${urlProductoDetalle}/${id}`, { signal });
+  const lang = i18n.resolvedLanguage || "es";
+
+  const res = await fetch(`${urlProductoDetalle}/${id}?lang=${lang}`, {
+    signal,
+  });
   if (!res.ok) throw new Error(`Error ${res.status} al cargar el producto`);
   return res.json();
 }

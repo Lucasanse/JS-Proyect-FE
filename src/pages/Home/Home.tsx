@@ -1,17 +1,32 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import ProductoCard from "../../components/ProductoCard/ProductoCard";
-import { obtenerPaginaProductos, type ProductoResumen } from "../../services/productos";
+import {
+  obtenerPaginaProductos,
+  type ProductoResumen,
+} from "../../services/productos";
 
 const CANTIDAD_EN_INICIO = 5;
 
-// Cards del banner: cada una lleva a su sección
+// Usamos las claves del JSON para que se traduzcan dinámicamente al renderizar
 const SERVICIOS = [
-  { icono: "🖥️", titulo: "Armado de PC", texto: "Elegí cada componente y armamos tu equipo a medida.", to: "/armar-pc" },
-  { icono: "🔧", titulo: "Servicio técnico", texto: "Reparación y mantenimiento de tus equipos.", to: "/servicio-tecnico" },
-];
+  {
+    icono: "🖥️",
+    tituloKey: "home.servicios.armadoTitulo",
+    textoKey: "home.servicios.armadoTexto",
+    to: "/armar-pc",
+  },
+  {
+    icono: "🔧",
+    tituloKey: "home.servicios.tecnicoTitulo",
+    textoKey: "home.servicios.tecnicoTexto",
+    to: "/servicio-tecnico",
+  },
+] as const;
 
 export default function Home() {
+  const { t, i18n } = useTranslation();
   const [productos, setProductos] = useState<ProductoResumen[]>([]);
   // Favoritos solo en memoria hasta que exista el endpoint en el BE
   const [favoritos, setFavoritos] = useState<Set<number>>(new Set());
@@ -23,7 +38,7 @@ export default function Home() {
       .then((body) => setProductos(body.data.slice(0, CANTIDAD_EN_INICIO)))
       .catch(() => {}); // si falla, la sección simplemente no se muestra
     return () => controller.abort();
-  }, []);
+  }, [i18n.resolvedLanguage]); // <-- Se vuelve a pedir cuando cambia el idioma
 
   const toggleFavorito = (id: number) => {
     setFavoritos((prev) => {
@@ -45,17 +60,20 @@ export default function Home() {
         <div className="relative mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 md:py-14 lg:px-8">
           <div>
             <h1 className="text-3xl leading-tight font-extrabold text-white sm:text-4xl lg:text-5xl">
-              La tecnología que buscás, <span className="text-accent">al mejor precio</span>
+              {t("home.heroTitulo")}{" "}
+              <span className="text-accent">
+                {t("home.heroTituloDestacado")}
+              </span>
             </h1>
             <p className="mt-3 max-w-lg text-base text-secondary">
-              Placas de video, procesadores, periféricos y mucho más de las mejores marcas y al mejor precio.
+              {t("home.heroDescripcion")}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/productos"
                 className="rounded-lg bg-primary px-6 py-3 font-semibold text-white shadow-lg shadow-primary/30 transition hover:bg-primary-dark"
               >
-                Ver productos
+                {t("home.verProductos")}
               </Link>
             </div>
           </div>
@@ -64,14 +82,22 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {SERVICIOS.map((b) => (
               <Link
-                key={b.titulo}
+                key={b.to}
                 to={b.to}
                 className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition hover:-translate-y-1 hover:border-primary/60"
               >
-                <span className="text-2xl" aria-hidden="true">{b.icono}</span>
-                <h3 className="mt-2 font-semibold text-white">{b.titulo}</h3>
-                <p className="mt-1 text-sm text-secondary/80">{b.texto}</p>
-                <span className="mt-3 inline-block text-sm font-semibold text-accent">Ver más →</span>
+                <span className="text-2xl" aria-hidden="true">
+                  {b.icono}
+                </span>
+                <h3 className="mt-2 font-semibold text-white">
+                  {t(b.tituloKey)}
+                </h3>
+                <p className="mt-1 text-sm text-secondary/80">
+                  {t(b.textoKey)}
+                </p>
+                <span className="mt-3 inline-block text-sm font-semibold text-accent">
+                  {t("home.verMas")}
+                </span>
               </Link>
             ))}
           </div>
@@ -80,7 +106,9 @@ export default function Home() {
 
       {productos.length > 0 && (
         <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-primary">Productos</h2>
+          <h2 className="text-2xl font-bold text-primary">
+            {t("home.seccionProductos")}
+          </h2>
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {productos.map((p) => (
               <ProductoCard
