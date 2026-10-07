@@ -107,7 +107,7 @@ export default function Detalles() {
             {error ?? t("detalle.noEncontradoTexto")}
           </p>
           <Link
-            to="/"
+            to="/productos"
             className="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-indigo-700 transition"
           >
             {t("detalle.volverCatalogo")}
@@ -117,12 +117,15 @@ export default function Detalles() {
     );
   }
 
+  const restante = Math.max(producto.stock - cantidadEnCarrito(producto.id), 0);
+  const sinStock = !producto.disponible || restante === 0;
+
   // VISTA PRINCIPAL DEL PRODUCTO
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Breadcrumb / Navegación superior */}
       <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-        <Link to="/" className="hover:text-indigo-600 transition font-medium">
+        <Link to="/productos" className="hover:text-indigo-600 transition font-medium">
           {t("detalle.catalogo")}
         </Link>
         <span>/</span>
@@ -227,7 +230,7 @@ export default function Detalles() {
           <div className="mt-8 pt-6 border-t border-slate-100">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               {/* Selector de Cantidad */}
-              {producto.disponible && (
+              {!sinStock && (
                 <div className="flex items-center justify-between border border-slate-200 rounded-xl px-3 py-2 bg-slate-50 sm:w-36">
                   <button
                     type="button"
@@ -243,13 +246,7 @@ export default function Detalles() {
                     type="button"
                     onClick={() =>
                       setCantidad((c) =>
-                        Math.min(
-                          Math.max(
-                            producto.stock - cantidadEnCarrito(producto.id),
-                            1,
-                          ),
-                          c + 1,
-                        ),
+                        Math.min(Math.max(restante, 1), c + 1),
                       )
                     }
                     className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:bg-white hover:shadow-sm transition font-bold"
@@ -263,7 +260,7 @@ export default function Detalles() {
               <button
                 type="button"
                 onClick={handleAgregar}
-                disabled={!producto.disponible || agregando}
+                disabled={sinStock || agregando}
                 className="flex-1 inline-flex items-center justify-center gap-2 bg-indigo-600 text-white py-3.5 px-6 rounded-xl font-semibold hover:bg-indigo-700 active:scale-[0.99] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transition shadow-sm"
               >
                 <svg
@@ -279,7 +276,7 @@ export default function Detalles() {
                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                {!producto.disponible
+                {sinStock
                   ? t("detalle.sinStock")
                   : agregando
                     ? t("detalle.agregando")
