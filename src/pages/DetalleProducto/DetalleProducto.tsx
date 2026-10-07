@@ -8,6 +8,7 @@ import {
   obtenerProductoPorId,
   type ProductoDetalle,
 } from "../../services/productoDetalle.ts";
+import { useVersionCatalogo } from "../../services/catalogoEventos";
 
 export default function Detalles() {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +24,8 @@ export default function Detalles() {
   const navigate = useNavigate();
   const { data: session } = useSession();
   const { agregar, cantidadEnCarrito } = useCarrito();
+  // Cambia cuando el admin modifica productos: precio y stock se actualizan sin recargar
+  const versionCatalogo = useVersionCatalogo();
 
   const handleAgregar = async () => {
     if (!producto) return;
@@ -69,10 +72,11 @@ export default function Detalles() {
       });
 
     return () => controller.abort();
-  }, [id, lang, t]);
+  }, [id, lang, t, versionCatalogo]);
 
   // CARGA (Skeleton animado)
-  if (cargando) {
+  // Al refrescar el mismo producto (cambio de catálogo) se sigue mostrando el anterior
+  if (cargando && producto?.id !== Number(id)) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-10 animate-pulse">
         <div className="h-4 w-40 bg-slate-200 rounded mb-8"></div>
