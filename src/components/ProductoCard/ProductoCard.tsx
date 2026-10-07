@@ -137,7 +137,7 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
           className="flex h-9 grow basis-28 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-primary px-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
         >
           <CartIcon />
-          {sinStock ? t("card.sinStock") : topeAlcanzado ? t("card.enCarrito") : agregando ? t("card.agregando") : t("card.agregar")}
+          {deshabilitado ? t("card.sinStock") : agregando ? t("card.agregando") : t("card.agregar")}
         </button>
       </div>
       {error && <p className="relative z-10 text-xs text-primary">{error}</p>}
