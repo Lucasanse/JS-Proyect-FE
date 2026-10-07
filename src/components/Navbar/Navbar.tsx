@@ -68,7 +68,7 @@ export default function Navbar() {
             <BellIcon />
           </button>
 
-          <div className="flex items-center gap-4">
+          <div className="hidden items-center gap-4 md:flex">
             {isPending ? (
               <span className="text-sm text-muted">{t("nav.cargando")}</span>
             ) : session ? (
@@ -117,10 +117,44 @@ export default function Navbar() {
       {open && (
         <nav className="flex flex-col gap-1 border-t border-line px-4 py-3 md:hidden">
           {NAV_LINKS.map((l) => (
-            <NavLink key={l.to} to={l.to} onClick={close} className={linkClass}>
+            <NavLink
+              key={l.to}
+              to={l.to}
+              onClick={close}
+              className={(s) => `${linkClass(s)} py-3`}
+            >
               {t(l.labelKey)}
             </NavLink>
           ))}
+
+          {/* Sesión (en mobile vive dentro del menú) */}
+          <div className="mt-2 flex flex-col gap-2 border-t border-line pt-3">
+            {isPending ? (
+              <span className="px-3 text-sm text-muted">{t("nav.cargando")}</span>
+            ) : session ? (
+              <>
+                <span className="px-3 text-sm font-medium text-ink">
+                  {t("nav.hola")}{" "}
+                  <strong className="text-primary">{session.user.name}</strong>
+                </span>
+                <Link
+                  to="/logout"
+                  onClick={close}
+                  className="rounded-lg border border-line bg-surface-alt px-4 py-3 text-center text-sm font-semibold text-ink transition-colors hover:bg-line"
+                >
+                  {t("nav.cerrarSesion")}
+                </Link>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                onClick={close}
+                className="rounded-lg bg-primary px-4 py-3 text-center text-sm font-semibold text-surface transition-colors hover:bg-primary-dark"
+              >
+                {t("nav.iniciarSesion")}
+              </Link>
+            )}
+          </div>
         </nav>
       )}
     </header>
