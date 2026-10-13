@@ -27,6 +27,7 @@ export default function Navbar() {
   const { data: session, isPending } = useSession();
   const { carrito } = useCarrito();
   const cantidadCarrito = carrito?.cantidadTotal ?? 0;
+  const esAdmin = session?.user.rol === "ADMIN";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-4 border-primary bg-surface shadow-sm">
@@ -57,6 +58,11 @@ export default function Navbar() {
               {t(l.labelKey)}
             </NavLink>
           ))}
+          {esAdmin && (
+            <NavLink to="/admin" className={linkClass}>
+              {t("nav.admin")}
+            </NavLink>
+          )}
         </nav>
 
         <div className="ml-auto flex items-center gap-3 sm:gap-5">
@@ -126,6 +132,15 @@ export default function Navbar() {
               {t(l.labelKey)}
             </NavLink>
           ))}
+          {esAdmin && (
+            <NavLink
+              to="/admin"
+              onClick={close}
+              className={(s) => `${linkClass(s)} py-3`}
+            >
+              {t("nav.admin")}
+            </NavLink>
+          )}
 
           {/* Sesión (en mobile vive dentro del menú) */}
           <div className="mt-2 flex flex-col gap-2 border-t border-line pt-3">
