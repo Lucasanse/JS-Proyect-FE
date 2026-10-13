@@ -4,6 +4,7 @@ import * as api from "../../services/carrito";
 import { CarritoContext } from "./carritoContext";
 import AvisoCarrito from "../AvisoCarrito/AvisoCarrito";
 import type { ProductoResumen } from "../../services/productos";
+import { useVersionCatalogo } from "../../services/catalogoEventos";
 
 // Estado global del carrito. Siempre se sincroniza con el BE: cada acción
 // devuelve el carrito actualizado y lo guardamos tal cual.
@@ -19,6 +20,8 @@ export default function CarritoProvider({ children }: { children: ReactNode }) {
   // y se usa como key, así la animación se repite aunque se agregue el mismo producto.
   const [aviso, setAviso] = useState<{ id: number; producto: ProductoResumen; cantidad: number } | null>(null);
   const cerrarAviso = useCallback(() => setAviso(null), []);
+  // Cambia cuando el admin modifica productos: precios y stock del carrito se actualizan
+  const versionCatalogo = useVersionCatalogo();
   const setCarrito = (data: api.CarritoDetalle) => {
     if (userId) setEstado({ userId, data });
   };
@@ -30,7 +33,7 @@ export default function CarritoProvider({ children }: { children: ReactNode }) {
       .obtenerCarrito()
       .then((data) => setEstado({ userId, data }))
       .catch(() => setEstado({ userId, data: null }));
-  }, [userId]);
+  }, [userId, versionCatalogo]);
 
   const value = {
     carrito,

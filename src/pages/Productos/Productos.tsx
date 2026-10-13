@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ProductoCard from "../../components/ProductoCard/ProductoCard";
@@ -8,6 +8,7 @@ import {
   type ProductoResumen,
 } from "../../services/productos";
 import SearchBar from "../../components/Searchbar/Searchbar";
+import { useVersionCatalogo } from "../../services/catalogoEventos";
 
 export default function Productos() {
   const { t } = useTranslation();
@@ -66,12 +67,19 @@ function ListaProductos({ filtros, favoritos, onToggleFavorito }: ListaProps) {
   const finDeLista = useRef<HTMLDivElement>(null);
   // Los filtros no cambian durante la vida de este componente (por la key), así que alcanza con guardarlos una vez
   const [filtrosIniciales] = useState(filtros);
+  // Cambia cuando el admin modifica productos (precio, stock, alta, baja...)
+  const versionCatalogo = useVersionCatalogo();
+  const [versionInicial] = useState(versionCatalogo);
 
   useEffect(() => {
     const controller = new AbortController();
     obtenerPaginaProductos(pagina, controller.signal, filtrosIniciales)
       .then((body) => {
-        setProductos((prev) => [...prev, ...body.data]);
+        // Se filtran repetidos por si un refresco del catálogo movió productos entre páginas
+        setProductos((prev) => {
+          const ids = new Set(prev.map((p) => p.id));
+          return [...prev, ...body.data.filter((p) => !ids.has(p.id))];
+        });
         setHayMas(body.paginacion.hasNext);
       })
       .catch((e: unknown) => {
@@ -87,6 +95,24 @@ function ListaProductos({ filtros, favoritos, onToggleFavorito }: ListaProps) {
       });
     return () => controller.abort();
   }, [pagina, filtrosIniciales]);
+
+  // Vuelve a pedir las páginas ya cargadas y las reemplaza, sin perder el scroll
+  const refrescar = useEffectEvent((signal: AbortSignal) => {
+    const paginas = Array.from({ length: pagina }, (_, i) => i + 1);
+    Promise.all(paginas.map((p) => obtenerPaginaProductos(p, signal, filtrosIniciales)))
+      .then((respuestas) => {
+        setProductos(respuestas.flatMap((r) => r.data));
+        setHayMas(respuestas[respuestas.length - 1].paginacion.hasNext);
+      })
+      .catch(() => {}); // si falla, se sigue mostrando lo que ya estaba
+  });
+
+  useEffect(() => {
+    if (versionCatalogo === versionInicial) return;
+    const controller = new AbortController();
+    refrescar(controller.signal);
+    return () => controller.abort();
+  }, [versionCatalogo, versionInicial]);
 
   useEffect(() => {
     const el = finDeLista.current;
