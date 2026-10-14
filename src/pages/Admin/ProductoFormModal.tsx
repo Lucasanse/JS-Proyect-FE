@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import Modal from "../../components/Modal/Modal";
@@ -7,6 +7,7 @@ import {
   ApiError,
   MAX_MB_IMAGEN,
   actualizarProducto,
+  crearMarca,
   crearProducto,
   listarMarcas,
   listarTiposComponente,
@@ -20,7 +21,10 @@ import Campo from "./Campo";
 import Desplegable from "./Desplegable";
 import SelectorMarca from "./SelectorMarca";
 import SeccionComponente from "./SeccionComponente";
+import AutocompletarIA from "./AutocompletarIA";
 import { claseInput } from "./estilosForm";
+import type { SugerenciaProducto } from "../../services/analisisIA";
+import { reducirFoto } from "../../services/reducirFoto";
 
 interface Props {
   producto: ProductoAdmin | null; // null = alta de un producto nuevo
@@ -172,6 +176,17 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
   const [errorGeneral, setErrorGeneral] = useState("");
   const [guardando, setGuardando] = useState(false);
   const [subiendoImagen, setSubiendoImagen] = useState(false);
+  const [analizandoIA, setAnalizandoIA] = useState(false);
+  // Marca que detectó la IA pero no está cargada: se ofrece agregarla (no se crea sola)
+  const [marcaNueva, setMarcaNueva] = useState<string | null>(null);
+  const [agregandoMarca, setAgregandoMarca] = useState(false);
+  // Foto de las del análisis elegida como imagen del producto. Se sube recién al guardar,
+  // así no quedan archivos sin usar en el servidor si se cancela el alta.
+  const [fotoProducto, setFotoProducto] = useState<File | null>(null);
+  const vistaFotoProducto = useMemo(() => (fotoProducto ? URL.createObjectURL(fotoProducto) : null), [fotoProducto]);
+  useEffect(() => () => {
+    if (vistaFotoProducto) URL.revokeObjectURL(vistaFotoProducto);
+  }, [vistaFotoProducto]);
   // Las secciones opcionales arrancan abiertas si el producto ya tiene esos datos
   const [traduccionAbierta, setTraduccionAbierta] = useState(() => !!producto?.traduccionEn);
   const [componenteAbierto, setComponenteAbierto] = useState(() => !!producto?.componente);
@@ -222,6 +237,53 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
     if (sugerido) setComponenteAbierto(true);
   };
 
+  // Completa el formulario con lo que sugirió la IA. Solo pisa los campos para los que hay
+  // un dato; precio y stock no se tocan. Si el producto todavía no tiene imagen, se propone
+  // la primera foto analizada (se puede elegir otra o quitarla). El admin revisa todo antes de guardar.
+  const aplicarSugerencia = (s: SugerenciaProducto, fotos: File[]) => {
+    if (!campos.imagenUrl.trim() && !fotoProducto && fotos[0]) setFotoProducto(fotos[0]);
+    setCampos((prev) => ({
+      ...prev,
+      nombre: s.nombre || prev.nombre,
+      descripcion: s.descripcion || prev.descripcion,
+      idCategoria: s.idCategoria ? String(s.idCategoria) : prev.idCategoria,
+      idMarca: s.idMarca ? String(s.idMarca) : prev.idMarca,
+      nombreEn: s.traduccionEn?.nombre ?? prev.nombreEn,
+      descripcionEn: s.traduccionEn?.descripcion ?? prev.descripcionEn,
+      ...(s.componente && {
+        idTipoComponente: String(s.componente.idTipoComponente),
+        watts: s.componente.wattsRequeridos !== null ? String(s.componente.wattsRequeridos) : prev.watts,
+      }),
+    }));
+    if (s.componente) {
+      setValores(Object.fromEntries(s.componente.atributos.map((a) => [a.idAtributo, a.valor])));
+      setTipoSugerido(false);
+      setComponenteAbierto(true);
+    }
+    if (s.traduccionEn) setTraduccionAbierta(true);
+    setMarcaNueva(s.idMarca ? null : s.marcaNueva);
+    setErrores({});
+    setErrorGeneral("");
+  };
+
+  const agregarMarcaNueva = async () => {
+    if (!marcaNueva) return;
+    setAgregandoMarca(true);
+    try {
+      // Si ya existe con otras mayúsculas, el BE devuelve esa en vez de duplicarla
+      const m = await crearMarca(marcaNueva);
+      setMarcas((prev) =>
+        prev.some((x) => x.id === m.id) ? prev : [...prev, m].sort((a, b) => a.nombre.localeCompare(b.nombre)),
+      );
+      cambiar("idMarca", String(m.id));
+      setMarcaNueva(null);
+    } catch (err) {
+      setErrorGeneral(err instanceof Error ? err.message : t("admin.errorGenerico"));
+    } finally {
+      setAgregandoMarca(false);
+    }
+  };
+
   // Props comunes de cada input: valor, cambio y accesibilidad del error
   const propsDe = (campo: keyof Campos): PropsInput => ({
     id: `campo-${campo}`,
@@ -261,7 +323,15 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
 
     setGuardando(true);
     try {
-      const datos = aInput(campos, valores, tipo);
+      let datos = aInput(campos, valores, tipo);
+      // La foto elegida del análisis se sube ahora. Si después falla el guardado, queda
+      // como URL en el formulario para no volver a subirla al reintentar.
+      if (fotoProducto) {
+        const url = await subirImagen(await reducirFoto(fotoProducto));
+        setCampos((prev) => ({ ...prev, imagenUrl: url }));
+        setFotoProducto(null);
+        datos = { ...datos, imagenUrl: url };
+      }
       const guardado = esNuevo ? await crearProducto(datos) : await actualizarProducto(producto.id, datos);
       onGuardado(guardado);
     } catch (err) {
@@ -272,7 +342,7 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
     }
   };
 
-  const ocupado = guardando || subiendoImagen;
+  const ocupado = guardando || subiendoImagen || analizandoIA || agregandoMarca;
 
   return (
     <Modal
@@ -290,15 +360,62 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
             </p>
           )}
 
+          {/* Solo en el alta: la IA completa un producto nuevo a partir de fotos */}
+          {esNuevo && datosListos && (
+            <AutocompletarIA
+              onSugerencia={aplicarSugerencia}
+              onOcupado={setAnalizandoIA}
+              fotoElegida={fotoProducto}
+              onElegirFoto={(foto) => {
+                setFotoProducto(foto);
+                cambiar("imagenUrl", "");
+              }}
+            />
+          )}
+
+          {marcaNueva && (
+            <div className="flex flex-col gap-2 rounded-lg border border-accent/60 bg-accent/10 px-3 py-2 text-sm text-ink sm:flex-row sm:items-center sm:justify-between">
+              <span>{t("admin.ia.marcaNueva", { marca: marcaNueva })}</span>
+              <span className="flex shrink-0 gap-2">
+                <button
+                  type="button"
+                  onClick={agregarMarcaNueva}
+                  disabled={agregandoMarca}
+                  className="cursor-pointer rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {agregandoMarca ? t("admin.form.guardando") : t("admin.ia.agregarMarca", { marca: marcaNueva })}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMarcaNueva(null)}
+                  className="cursor-pointer rounded-lg border border-line bg-surface px-3 py-1 text-xs font-semibold text-muted hover:text-ink"
+                >
+                  {t("admin.ia.ignorar")}
+                </button>
+              </span>
+            </div>
+          )}
+
           <div className="grid gap-4 sm:grid-cols-[180px_1fr]">
             <SelectorImagen
               url={campos.imagenUrl}
+              vistaPrevia={vistaFotoProducto}
               error={errores.imagenUrl}
               subiendo={subiendoImagen}
               onSubiendo={setSubiendoImagen}
-              onCambiar={(url) => cambiar("imagenUrl", url)}
+              onCambiar={(url) => {
+                // Una imagen subida a mano o una URL reemplazan a la foto elegida del análisis
+                cambiar("imagenUrl", url);
+                setFotoProducto(null);
+              }}
               onError={(mensaje) => setErrores((prev) => ({ ...prev, imagenUrl: mensaje }))}
-              inputProps={propsDe("imagenUrl")}
+              inputProps={{
+                ...propsDe("imagenUrl"),
+                onChange: (e) => {
+                  cambiar("imagenUrl", e.target.value);
+                  setFotoProducto(null);
+                },
+              }}
             />
 
             <div className="space-y-4">
@@ -325,7 +442,10 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
                     value={campos.idMarca}
                     error={errores.idMarca}
                     cargando={!datosListos}
-                    onChange={(id) => cambiar("idMarca", id)}
+                    onChange={(id) => {
+                      cambiar("idMarca", id);
+                      setMarcaNueva(null);
+                    }}
                     onMarcaCreada={(m) =>
                       setMarcas((prev) =>
                         prev.some((x) => x.id === m.id)
@@ -432,6 +552,7 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
 
 interface SelectorImagenProps {
   url: string;
+  vistaPrevia: string | null; // foto del análisis con IA que se sube al guardar
   error?: string;
   subiendo: boolean;
   onSubiendo: (subiendo: boolean) => void;
@@ -441,8 +562,18 @@ interface SelectorImagenProps {
 }
 
 // Imagen del producto: se sube un archivo (clic o arrastrando) y el BE devuelve la URL.
-// También se puede pegar la URL de una imagen que ya esté en internet.
-function SelectorImagen({ url, error, subiendo, onSubiendo, onCambiar, onError, inputProps }: SelectorImagenProps) {
+// También se puede pegar la URL de una imagen que ya esté en internet, o usar una de las
+// fotos del análisis con IA (vistaPrevia), que se sube recién al guardar el producto.
+function SelectorImagen({
+  url,
+  vistaPrevia,
+  error,
+  subiendo,
+  onSubiendo,
+  onCambiar,
+  onError,
+  inputProps,
+}: SelectorImagenProps) {
   const { t } = useTranslation();
   const inputArchivo = useRef<HTMLInputElement>(null);
   const [arrastrando, setArrastrando] = useState(false);
@@ -489,7 +620,9 @@ function SelectorImagen({ url, error, subiendo, onSubiendo, onCambiar, onError, 
           arrastrando ? "border-primary bg-primary-light" : error ? "border-red-500" : "border-line"
         }`}
       >
-        {hayImagen ? (
+        {vistaPrevia ? (
+          <img src={vistaPrevia} alt="" className="h-full w-full object-contain" />
+        ) : hayImagen ? (
           <img
             src={url}
             alt=""
@@ -518,7 +651,9 @@ function SelectorImagen({ url, error, subiendo, onSubiendo, onCambiar, onError, 
         onChange={(e) => subir(e.target.files?.[0])}
       />
 
-      {url && (
+      {vistaPrevia && <p className="m-0 text-xs text-muted">{t("admin.form.fotoAlGuardar")}</p>}
+
+      {(url || vistaPrevia) && (
         <button
           type="button"
           onClick={() => onCambiar("")}

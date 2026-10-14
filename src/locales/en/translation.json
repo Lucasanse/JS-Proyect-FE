@@ -284,7 +284,32 @@
       "atributosDe": "{{tipo}} technical attributes",
       "atributosAyuda": "fill in the ones you know",
       "numeroInvalido": "It must be a number",
-      "ej": "E.g."
+      "ej": "E.g.",
+      "fotoAlGuardar": "Photo from the AI analysis: it's uploaded when you save the product."
+    },
+    "ia": {
+      "titulo": "Autofill with AI",
+      "ayuda": "Add up to {{max}} photos of the product, its box or its label (from the computer or your phone) and the AI fills in the details. You enter the price and stock.",
+      "agregarFotos": "Add photos",
+      "usarCelular": "Use phone",
+      "cerrarQr": "Close QR",
+      "listaLlena": "You can analyze up to {{max}} photos. Remove one to add another.",
+      "analizar_one": "Analyze {{count}} photo with AI",
+      "analizar_other": "Analyze {{count}} photos with AI",
+      "analizando": "Analyzing... this may take a few seconds",
+      "listo": "Done. Check the details the AI filled in before saving. You can pick which photo to use as the product image.",
+      "usarComoImagen": "Use as image",
+      "esImagen": "Image",
+      "quitarFoto": "Remove photo",
+      "errorAnalisis": "The photos couldn't be analyzed",
+      "qrAlt": "QR code to send photos from a phone",
+      "qrAyuda": "Scan the code with your phone's camera. The phone must be on the same Wi‑Fi as this computer.",
+      "qrSinIp": "This computer's network IP couldn't be detected. Set IP_LOCAL in the backend .env file.",
+      "qrVencido": "The QR code expired. Create a new one with \"Use phone\".",
+      "fotosRecibidas": "Photos received from the phone: {{cantidad}}",
+      "marcaNueva": "The AI detected the brand \"{{marca}}\", which isn't added yet.",
+      "agregarMarca": "Add \"{{marca}}\"",
+      "ignorar": "Ignore"
     },
     "eliminar": {
       "titulo": "Delete product",
@@ -316,5 +341,18 @@
       "usuarios": "Browse registered users and enable or disable their accounts."
     },
     "esComponente": "PC component"
+  },
+  "captura": {
+    "titulo": "Product photos",
+    "ayuda": "Take photos of the product, its box or its label. Each photo is sent to the computer as soon as you take it.",
+    "enviadas": "Photos sent: {{cantidad}} of {{max}}",
+    "sacarFoto": "Take photo",
+    "galeria": "Choose from gallery",
+    "enviando_one": "Sending {{count}} photo...",
+    "enviando_other": "Sending {{count}} photos...",
+    "listo": "Sent. You can take another one or continue on the computer.",
+    "maxFotos": "You can send up to {{max}} photos in total",
+    "vencido": "This link is invalid or has expired. Create a new QR code from the computer.",
+    "error": "The photos couldn't be sent. Please try again."
   }
 }
