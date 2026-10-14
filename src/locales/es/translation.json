@@ -284,7 +284,32 @@
       "atributosDe": "Atributos técnicos de {{tipo}}",
       "atributosAyuda": "completá los que conozcas",
       "numeroInvalido": "Tiene que ser un número",
-      "ej": "Ej:"
+      "ej": "Ej:",
+      "fotoAlGuardar": "Foto del análisis con IA: se sube al guardar el producto."
+    },
+    "ia": {
+      "titulo": "Autocompletar con IA",
+      "ayuda": "Agregá hasta {{max}} fotos del producto, su caja o su etiqueta (desde la computadora o el celular) y la IA completa los datos. El precio y el stock los cargás vos.",
+      "agregarFotos": "Agregar fotos",
+      "usarCelular": "Usar celular",
+      "cerrarQr": "Cerrar QR",
+      "listaLlena": "Se pueden analizar hasta {{max}} fotos. Quitá alguna para agregar otra.",
+      "analizar_one": "Analizar {{count}} foto con IA",
+      "analizar_other": "Analizar {{count}} fotos con IA",
+      "analizando": "Analizando... puede tardar unos segundos",
+      "listo": "Listo. Revisá los datos que completó la IA antes de guardar. Podés elegir qué foto usar como imagen del producto.",
+      "usarComoImagen": "Usar como imagen",
+      "esImagen": "Imagen",
+      "quitarFoto": "Quitar foto",
+      "errorAnalisis": "No se pudieron analizar las fotos",
+      "qrAlt": "Código QR para mandar fotos desde el celular",
+      "qrAyuda": "Escaneá el código con la cámara del celular. El celular tiene que estar conectado al mismo Wi‑Fi que esta computadora.",
+      "qrSinIp": "No se pudo detectar la IP de esta computadora en la red. Configurá IP_LOCAL en el .env del back.",
+      "qrVencido": "El código QR venció. Generá uno nuevo con \"Usar celular\".",
+      "fotosRecibidas": "Fotos recibidas del celular: {{cantidad}}",
+      "marcaNueva": "La IA detectó la marca \"{{marca}}\", que todavía no está cargada.",
+      "agregarMarca": "Agregar \"{{marca}}\"",
+      "ignorar": "Ignorar"
     },
     "eliminar": {
       "titulo": "Eliminar producto",
@@ -316,5 +341,18 @@
       "usuarios": "Consultar los usuarios registrados y habilitar o deshabilitar sus cuentas."
     },
     "esComponente": "Componente de PC"
+  },
+  "captura": {
+    "titulo": "Fotos del producto",
+    "ayuda": "Sacá fotos del producto, su caja o su etiqueta. Cada foto se envía sola a la computadora apenas la sacás.",
+    "enviadas": "Fotos enviadas: {{cantidad}} de {{max}}",
+    "sacarFoto": "Sacar foto",
+    "galeria": "Elegir de la galería",
+    "enviando_one": "Enviando {{count}} foto...",
+    "enviando_other": "Enviando {{count}} fotos...",
+    "listo": "Enviada. Podés sacar otra o seguir desde la computadora.",
+    "maxFotos": "Se pueden enviar hasta {{max}} fotos en total",
+    "vencido": "Este enlace no es válido o ya venció. Generá un código QR nuevo desde la computadora.",
+    "error": "No se pudieron enviar las fotos. Probá de nuevo."
   }
 }

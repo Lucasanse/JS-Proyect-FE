@@ -86,7 +86,7 @@ export class ApiError extends Error {
 }
 
 // credentials: "include" manda la cookie de sesión de Better Auth al BE.
-async function pedir<T>(path: string, init: RequestInit = {}, base = urlAdminProductos): Promise<T> {
+export async function pedir<T>(path: string, init: RequestInit = {}, base = urlAdminProductos): Promise<T> {
   const esJson = init.body !== undefined && !(init.body instanceof FormData);
   const res = await fetch(`${base}${path}`, {
     ...init,
