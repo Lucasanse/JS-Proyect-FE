@@ -284,7 +284,52 @@
       "atributosDe": "Atributos técnicos de {{tipo}}",
       "atributosAyuda": "completá los que conozcas",
       "numeroInvalido": "Tiene que ser un número",
-      "ej": "Ej:"
+      "ej": "Ej:",
+      "fotoAlGuardar": "Foto del análisis con IA: se sube al guardar el producto."
+    },
+    "ia": {
+      "titulo": "Autocompletar con IA",
+      "agregarFotos": "Agregar fotos",
+      "usarCelular": "Usar celular",
+      "cerrarQr": "Cerrar QR",
+      "quitarFoto": "Quitar foto",
+      "errorAnalisis": "No se pudo analizar esta foto",
+      "qrAlt": "Código QR para mandar fotos desde el celular",
+      "qrAyuda": "Escaneá el código con la cámara del celular. El celular tiene que estar conectado al mismo Wi‑Fi que esta computadora.",
+      "qrSinIp": "No se pudo detectar la IP de esta computadora en la red. Configurá IP_LOCAL en el .env del back.",
+      "qrVencido": "El código QR venció. Generá uno nuevo con \"Usar celular\".",
+      "fotosRecibidas": "Fotos recibidas del celular: {{cantidad}}",
+      "marcaNueva": "La IA detectó la marca \"{{marca}}\", que todavía no está cargada.",
+      "agregarMarca": "Agregar \"{{marca}}\"",
+      "ignorar": "Ignorar",
+      "ayudaLote": "Cargá de 1 a {{max}} fotos, cada una de un producto distinto (desde la computadora o el celular). La IA analiza cada foto por separado y después completás los productos de a uno. El precio y el stock los cargás vos.",
+      "loteLleno": "En la carga por lote entran hasta {{max}} fotos (una por producto). Quitá alguna para agregar otra.",
+      "analizarLote_one": "Analizar {{count}} producto con IA",
+      "analizarLote_other": "Analizar {{count}} productos con IA"
+    },
+    "lote": {
+      "titulo": "Carga por lote",
+      "tituloModal": "Nuevo producto {{numero}} de {{total}}",
+      "resumen": "Guardados: {{guardados}} de {{total}}",
+      "analizados": "Analizados por la IA: {{analizados}} de {{total}}",
+      "producto": "Producto {{numero}}",
+      "completando": "Producto {{numero}} de {{total}}",
+      "estado": {
+        "esperando": "En espera",
+        "analizando": "Analizando",
+        "listo": "Para revisar",
+        "error": "Error",
+        "guardado": "Guardado",
+        "descartado": "Descartado"
+      },
+      "ayudaEsperando": "Esta foto se analiza después de las anteriores. Si querés, podés ir completando los datos a mano.",
+      "ayudaAnalizando": "La IA está analizando esta foto. Mientras tanto podés cargar el precio y el stock.",
+      "ayudaListo": "Revisá los datos que completó la IA, cargá el precio y el stock, y guardá para pasar al siguiente.",
+      "reintentar": "Reintentar análisis",
+      "descartar": "Descartar este producto",
+      "crearYSeguir": "Crear y seguir con el siguiente",
+      "confirmarCerrar_one": "Queda {{count}} producto del lote sin guardar. Si cerrás, se pierde. ¿Cerrar igual?",
+      "confirmarCerrar_other": "Quedan {{count}} productos del lote sin guardar. Si cerrás, se pierden. ¿Cerrar igual?"
     },
     "eliminar": {
       "titulo": "Eliminar producto",
@@ -316,5 +361,18 @@
       "usuarios": "Consultar los usuarios registrados y habilitar o deshabilitar sus cuentas."
     },
     "esComponente": "Componente de PC"
+  },
+  "captura": {
+    "titulo": "Fotos del producto",
+    "ayuda": "Sacá una foto de cada producto (del producto, su caja o su etiqueta). Cada foto se envía sola a la computadora apenas la sacás.",
+    "enviadas": "Fotos enviadas: {{cantidad}} de {{max}}",
+    "sacarFoto": "Sacar foto",
+    "galeria": "Elegir de la galería",
+    "enviando_one": "Enviando {{count}} foto...",
+    "enviando_other": "Enviando {{count}} fotos...",
+    "listo": "Enviada. Podés sacar otra o seguir desde la computadora.",
+    "maxFotos": "Se pueden enviar hasta {{max}} fotos en total",
+    "vencido": "Este enlace no es válido o ya venció. Generá un código QR nuevo desde la computadora.",
+    "error": "No se pudieron enviar las fotos. Probá de nuevo."
   }
 }

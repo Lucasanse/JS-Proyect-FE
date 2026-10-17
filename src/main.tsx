@@ -14,9 +14,12 @@ import DetalleProducto from "./pages/DetalleProducto/DetalleProducto.tsx";
 import AdminInicio from "./pages/Admin/AdminInicio.tsx";
 import AdminProductos from "./pages/Admin/AdminProductos.tsx";
 import AdminLayout from "./layouts/AdminLayout.tsx";
+import Captura from "./pages/Captura/Captura.tsx";
 
 // Todas las rutas hijas se muestran dentro de MainLayout (Navbar + Footer)
 const router = createBrowserRouter([
+  // Página que abre el celular con el QR del formulario de productos (sin Navbar ni Footer)
+  { path: "/captura/:token", element: <Captura /> },
   {
     path: "/",
     element: <MainLayout />,
