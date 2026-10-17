@@ -22,15 +22,20 @@ import Desplegable from "./Desplegable";
 import SelectorMarca from "./SelectorMarca";
 import SeccionComponente from "./SeccionComponente";
 import AutocompletarIA from "./AutocompletarIA";
+import InputPrecio from "./InputPrecio";
+import PanelLote from "./PanelLote";
+import { estaCerrado, type ItemLote } from "./lote";
+import { IconoImagen } from "./IconosAdmin";
 import { claseInput } from "./estilosForm";
-import type { SugerenciaProducto } from "../../services/analisisIA";
+import { analizarFotos, type SugerenciaProducto } from "../../services/analisisIA";
 import { reducirFoto } from "../../services/reducirFoto";
 
 interface Props {
   producto: ProductoAdmin | null; // null = alta de un producto nuevo
   categorias: Categoria[];
   onCerrar: () => void;
-  onGuardado: (producto: ProductoAdmin) => void;
+  // quedanEnLote: en la carga por lote, true si todavía faltan productos (el formulario sigue abierto)
+  onGuardado: (producto: ProductoAdmin, quedanEnLote?: boolean) => void;
 }
 
 // Todos los campos como texto, tal cual están en los inputs
@@ -51,6 +56,17 @@ interface Campos {
 // Claves: nombres de Campos, o "atributo-<id>" para los atributos técnicos
 type Errores = Record<string, string | undefined>;
 type Valores = Record<number, string>; // idAtributo -> valor
+
+// Lo cargado en un producto de la carga por lote, para retomarlo al volver a él
+interface Borrador {
+  campos: Campos;
+  valores: Valores;
+  fotoProducto: File | null;
+  marcaNueva: string | null;
+  traduccionAbierta: boolean;
+  componenteAbierto: boolean;
+  tipoSugerido: boolean;
+}
 
 // Props comunes de cada input (ver propsDe)
 interface PropsInput {
@@ -176,11 +192,10 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
   const [errorGeneral, setErrorGeneral] = useState("");
   const [guardando, setGuardando] = useState(false);
   const [subiendoImagen, setSubiendoImagen] = useState(false);
-  const [analizandoIA, setAnalizandoIA] = useState(false);
   // Marca que detectó la IA pero no está cargada: se ofrece agregarla (no se crea sola)
   const [marcaNueva, setMarcaNueva] = useState<string | null>(null);
   const [agregandoMarca, setAgregandoMarca] = useState(false);
-  // Foto de las del análisis elegida como imagen del producto. Se sube recién al guardar,
+  // Foto del lote que se usa como imagen del producto. Se sube recién al guardar,
   // así no quedan archivos sin usar en el servidor si se cancela el alta.
   const [fotoProducto, setFotoProducto] = useState<File | null>(null);
   const vistaFotoProducto = useMemo(() => (fotoProducto ? URL.createObjectURL(fotoProducto) : null), [fotoProducto]);
@@ -192,6 +207,26 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
   const [componenteAbierto, setComponenteAbierto] = useState(() => !!producto?.componente);
   // true si el tipo de componente se eligió solo a partir de la categoría (se puede cambiar)
   const [tipoSugerido, setTipoSugerido] = useState(false);
+
+  // Carga por lote: cada foto es un producto. El formulario muestra uno a la vez.
+  const [lote, setLote] = useState<ItemLote[] | null>(null);
+  const [actual, setActual] = useState(0); // producto del lote que está en el formulario
+  // El análisis del lote sigue corriendo entre renders: lo que necesita leer al instante va en refs
+  const actualRef = useRef(0);
+  const sugerencias = useRef(new Map<number, SugerenciaProducto>());
+  const aplicadas = useRef(new Set<number>()); // sugerencias ya volcadas en el formulario
+  const cerrados = useRef(new Set<number>()); // guardados o descartados: no se analizan ni se vuelve a ellos
+  const borradores = useRef(new Map<number, Borrador>());
+  const pedidoLote = useRef<AbortController | null>(null);
+  const vistasLote = useRef<string[]>([]);
+  // Al cerrar el formulario se corta el análisis y se liberan las miniaturas
+  useEffect(
+    () => () => {
+      pedidoLote.current?.abort();
+      vistasLote.current.forEach((v) => URL.revokeObjectURL(v));
+    },
+    [],
+  );
 
   // Marcas y tipos de componente para los selects
   const [marcas, setMarcas] = useState<MarcaAdmin[]>([]);
@@ -238,10 +273,9 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
   };
 
   // Completa el formulario con lo que sugirió la IA. Solo pisa los campos para los que hay
-  // un dato; precio y stock no se tocan. Si el producto todavía no tiene imagen, se propone
-  // la primera foto analizada (se puede elegir otra o quitarla). El admin revisa todo antes de guardar.
-  const aplicarSugerencia = (s: SugerenciaProducto, fotos: File[]) => {
-    if (!campos.imagenUrl.trim() && !fotoProducto && fotos[0]) setFotoProducto(fotos[0]);
+  // un dato; precio y stock no se tocan. El admin revisa todo antes de guardar.
+  // Usa solo setters: la llama el análisis del lote, que puede terminar en otro render.
+  const completarConSugerencia = (s: SugerenciaProducto) => {
     setCampos((prev) => ({
       ...prev,
       nombre: s.nombre || prev.nombre,
@@ -282,6 +316,118 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
     } finally {
       setAgregandoMarca(false);
     }
+  };
+
+  // ── Carga por lote ──
+
+  const actualizarItem = (id: number, cambios: Partial<ItemLote>) =>
+    setLote((prev) => prev && prev.map((x) => (x.id === id ? { ...x, ...cambios } : x)));
+
+  // Pone en el formulario el producto "id" del lote: lo que ya se le había cargado (si se
+  // pasó por él) o un formulario vacío con su foto como imagen. Si la IA ya respondió y
+  // todavía no se usó la sugerencia, se completa con ella.
+  const cargarItem = (id: number, items: ItemLote[]) => {
+    const b = borradores.current.get(id);
+    setCampos(b?.campos ?? camposIniciales(null));
+    setValores(b?.valores ?? {});
+    setFotoProducto(b ? b.fotoProducto : items[id].foto);
+    setMarcaNueva(b?.marcaNueva ?? null);
+    setTraduccionAbierta(b?.traduccionAbierta ?? false);
+    setComponenteAbierto(b?.componenteAbierto ?? false);
+    setTipoSugerido(b?.tipoSugerido ?? false);
+    setErrores({});
+    setErrorGeneral("");
+    actualRef.current = id;
+    setActual(id);
+    const s = sugerencias.current.get(id);
+    if (s && !aplicadas.current.has(id)) {
+      aplicadas.current.add(id);
+      completarConSugerencia(s);
+    }
+  };
+
+  // Al pasar a otro producto se guarda lo cargado en este, para retomarlo al volver
+  const irA = (id: number) => {
+    if (!lote) return;
+    borradores.current.set(actual, {
+      campos,
+      valores,
+      fotoProducto,
+      marcaNueva,
+      traduccionAbierta,
+      componenteAbierto,
+      tipoSugerido,
+    });
+    cargarItem(id, lote);
+  };
+
+  const analizarItem = async (item: ItemLote, signal: AbortSignal) => {
+    actualizarItem(item.id, { estado: "analizando", error: "" });
+    try {
+      const s = await analizarFotos([item.foto], signal);
+      // Si se descartó mientras se analizaba, la sugerencia ya no se usa
+      if (cerrados.current.has(item.id)) return;
+      sugerencias.current.set(item.id, s);
+      actualizarItem(item.id, { estado: "listo" });
+      // Si es el producto que está en pantalla, se completa ya; si no, al ir a él
+      if (actualRef.current === item.id && !aplicadas.current.has(item.id)) {
+        aplicadas.current.add(item.id);
+        completarConSugerencia(s);
+      }
+    } catch (e) {
+      if (signal.aborted || cerrados.current.has(item.id)) return;
+      actualizarItem(item.id, { estado: "error", error: e instanceof Error ? e.message : t("admin.ia.errorAnalisis") });
+    }
+  };
+
+  // Las fotos se analizan de a una, en orden (así no se pasa el límite de pedidos de la IA).
+  // Mientras tanto ya se puede ir completando el primer producto.
+  const iniciarLote = async (fotos: File[]) => {
+    const items: ItemLote[] = fotos.map((foto, id) => ({
+      id,
+      foto,
+      vista: URL.createObjectURL(foto),
+      estado: "esperando",
+      error: "",
+    }));
+    vistasLote.current = items.map((x) => x.vista);
+    setLote(items);
+    cargarItem(0, items);
+    const controller = new AbortController();
+    pedidoLote.current = controller;
+    for (const item of items) {
+      if (controller.signal.aborted) return;
+      if (!cerrados.current.has(item.id)) await analizarItem(item, controller.signal);
+    }
+  };
+
+  const reintentarItem = (id: number) => {
+    if (lote && pedidoLote.current) analizarItem(lote[id], pedidoLote.current.signal);
+  };
+
+  // Marca el producto actual como guardado o descartado y pasa al siguiente que falte.
+  // Devuelve false si ya no queda ninguno.
+  const cerrarItemActual = (estado: "guardado" | "descartado") => {
+    if (!lote) return false;
+    cerrados.current.add(actual);
+    borradores.current.delete(actual);
+    actualizarItem(actual, { estado });
+    const siguiente = [...lote.slice(actual + 1), ...lote.slice(0, actual)].find((x) => !cerrados.current.has(x.id));
+    if (!siguiente) return false;
+    cargarItem(siguiente.id, lote);
+    return true;
+  };
+
+  const descartarItem = () => {
+    if (!cerrarItemActual("descartado")) onCerrar();
+  };
+
+  const pendientesLote = lote ? lote.filter((x) => !estaCerrado(x)).length : 0;
+
+  // Si quedan productos del lote sin guardar, se pide confirmación antes de perderlos
+  const cerrar = () => {
+    if (pendientesLote > 0 && !window.confirm(t("admin.lote.confirmarCerrar", { count: pendientesLote }))) return;
+    onCerrar();
   };
 
   // Props comunes de cada input: valor, cambio y accesibilidad del error
@@ -333,7 +479,9 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
         datos = { ...datos, imagenUrl: url };
       }
       const guardado = esNuevo ? await crearProducto(datos) : await actualizarProducto(producto.id, datos);
-      onGuardado(guardado);
+      // En la carga por lote el formulario pasa al siguiente producto en vez de cerrarse
+      if (lote) onGuardado(guardado, cerrarItemActual("guardado"));
+      else onGuardado(guardado);
     } catch (err) {
       if (err instanceof ApiError && err.detalles.length > 0) mostrarErrores(erroresDelBackend(err));
       setErrorGeneral(err instanceof Error ? err.message : t("admin.errorGenerico"));
@@ -342,12 +490,21 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
     }
   };
 
-  const ocupado = guardando || subiendoImagen || analizandoIA || agregandoMarca;
+  // Cambiar de producto del lote mientras se sube una imagen o se agrega una marca las
+  // dejaría en el producto equivocado
+  const bloqueadoLote = guardando || subiendoImagen || agregandoMarca;
+  const ocupado = bloqueadoLote || lote?.[actual].estado === "analizando";
 
   return (
     <Modal
-      titulo={esNuevo ? t("admin.form.tituloNuevo") : t("admin.form.tituloEditar")}
-      onCerrar={onCerrar}
+      titulo={
+        lote
+          ? t("admin.lote.tituloModal", { numero: actual + 1, total: lote.length })
+          : esNuevo
+            ? t("admin.form.tituloNuevo")
+            : t("admin.form.tituloEditar")
+      }
+      onCerrar={cerrar}
       bloqueado={guardando}
       ancho="lg"
       cerrarAlClicFuera={false}
@@ -360,16 +517,18 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
             </p>
           )}
 
-          {/* Solo en el alta: la IA completa un producto nuevo a partir de fotos */}
-          {esNuevo && datosListos && (
-            <AutocompletarIA
-              onSugerencia={aplicarSugerencia}
-              onOcupado={setAnalizandoIA}
-              fotoElegida={fotoProducto}
-              onElegirFoto={(foto) => {
-                setFotoProducto(foto);
-                cambiar("imagenUrl", "");
-              }}
+          {/* Solo en el alta: de 1 a 10 fotos, una por producto, que la IA analiza de a una */}
+          {esNuevo && datosListos && !lote && <AutocompletarIA onAnalizarLote={iniciarLote} />}
+
+          {/* Carga por lote: tira con todos los productos; el formulario es el del elegido */}
+          {lote && (
+            <PanelLote
+              items={lote}
+              actual={actual}
+              bloqueado={bloqueadoLote}
+              onElegir={irA}
+              onReintentar={reintentarItem}
+              onDescartar={descartarItem}
             />
           )}
 
@@ -460,13 +619,9 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
                 <Campo id="campo-precio" label={t("admin.form.precio")} error={errores.precio} requerido>
                   <div className="relative">
                     <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">$</span>
-                    <input
+                    <InputPrecio
                       {...propsDe("precio")}
-                      type="number"
-                      inputMode="decimal"
-                      min="0.01"
-                      step="0.01"
-                      placeholder="0,00"
+                      onValor={(v) => cambiar("precio", v)}
                       className={`${propsDe("precio").className} pl-7`}
                     />
                   </div>
@@ -527,7 +682,7 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
         <footer className="flex flex-col-reverse gap-2 border-t border-line bg-surface-alt px-5 py-3 sm:flex-row sm:justify-end">
           <button
             type="button"
-            onClick={onCerrar}
+            onClick={cerrar}
             disabled={guardando}
             className="cursor-pointer rounded-lg border border-line bg-surface px-4 py-2 font-semibold text-ink transition-colors hover:bg-line disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -540,7 +695,9 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
           >
             {guardando
               ? t("admin.form.guardando")
-              : esNuevo
+              : lote && pendientesLote > 1
+                ? t("admin.lote.crearYSeguir")
+                : esNuevo
                 ? t("admin.form.crear")
                 : t("admin.form.guardarCambios")}
           </button>
@@ -631,8 +788,8 @@ function SelectorImagen({
           />
         ) : (
           <>
-            <span aria-hidden className="text-3xl">
-              🖼️
+            <span className="text-3xl">
+              <IconoImagen />
             </span>
             <span>{rota === url && url ? t("admin.form.imagenRota") : t("admin.form.arrastraImagen")}</span>
           </>

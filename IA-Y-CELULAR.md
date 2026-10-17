@@ -1,6 +1,6 @@
 # Análisis de productos con IA y carga de fotos desde el celular
 
-Esta función permite cargar un producto nuevo a partir de fotos (del producto, su caja o su etiqueta). La IA completa el formulario, y el admin revisa y guarda como siempre. También se pueden mandar fotos desde el celular escaneando un QR.
+Esta función permite cargar de 1 a 10 productos nuevos a partir de fotos, una por producto (del producto, su caja o su etiqueta). La IA analiza cada foto y completa el formulario de ese producto; el admin revisa, carga precio y stock, y guarda uno por uno. También se pueden mandar fotos desde el celular escaneando un QR.
 
 Repositorios:
 - Backend: `JS-Proyect-BE`
@@ -118,28 +118,78 @@ Es la parte que evita que la IA meta datos inválidos.
 
 Aparece arriba del formulario de **alta** (no al editar).
 
-- **Agregar fotos desde la PC**: botón "Agregar fotos", hasta 5 en total.
-- **Usar celular**: crea la sesión, muestra el QR y la URL en texto.
-- **Miniaturas**: cada foto tiene "Usar como imagen" y una ✕ para quitarla. La elegida se marca con borde y "✓ Imagen".
-- **Analizar**: "✨ Analizar N fotos con IA" envía las fotos de la lista.
+Se cargan **de 1 a 10 fotos, cada una de un producto distinto**. Ya no existe el modo de "varias fotos (hasta 5) de un mismo producto": se sacó para dejar un solo flujo.
+
+- **Agregar fotos desde la PC**: botón "Agregar fotos", hasta 10 en total. Si se eligen de más, entran las que caben y aparece un aviso.
+- **Usar celular**: crea la sesión, muestra el QR y la URL en texto. El celular acepta hasta 10 fotos, una por producto.
+- **Miniaturas**: cada foto muestra "Producto N" y tiene un botón con ícono de cruz para quitarla.
+- **Analizar N productos con IA**: le pasa las fotos al formulario, que las analiza de a una (ver sección 3 bis).
+- **Sin emojis**: se sacaron los emojis de la caja (título, botones y mensajes). La cruz para quitar foto ahora es un ícono SVG (`IconoCerrar` en `IconosAdmin.tsx`).
 - **Mientras el QR está abierto**, cada 2 segundos consulta cuántas fotos llegaron. Si hay nuevas, las descarga y las agrega a la lista. Si la sesión venció (404), cierra el QR y muestra un aviso.
 - **Al cerrar el QR** (o el formulario) se envía `DELETE` para invalidar el token. Las fotos ya descargadas siguen en la lista.
-- **Bloqueo**: mientras analiza, avisa al formulario para que no se pueda guardar.
 
 ### 3. Formulario: `src/pages/Admin/ProductoFormModal.tsx`
 
-- **`aplicarSugerencia(sugerencia, fotos)`**: completa lo que devolvió la IA sin tocar precio ni stock.
+- **`completarConSugerencia(sugerencia)`**: completa lo que devolvió la IA sin tocar precio ni stock.
   - Solo cambia los campos para los que hay dato.
-  - Si el producto no tiene imagen, propone la primera foto.
   - Si hay componente, cambia tipo, atributos y watts. Si watts es `null`, deja el valor anterior.
   - Si detectó una marca que no existe, muestra el aviso "Agregar marca". Esa acción usa el endpoint de marcas que ya existía.
+  - Usa solo setters de estado, porque la llama el análisis del lote, que puede terminar varios renders después.
 - **Foto del producto**
-  - Se guarda en `fotoProducto` y se muestra con una URL temporal.
+  - Cada producto del lote usa su foto como imagen. Se guarda en `fotoProducto` y se muestra con una URL temporal.
   - **No se sube hasta tocar "Crear producto"**. Si cancelás, no queda ningún archivo en el servidor.
-  - Si subís una imagen a mano o pegás una URL, reemplaza a la foto elegida.
+  - Si subís una imagen a mano o pegás una URL, reemplaza a la foto.
+- **Precio con separador de miles** (`src/pages/Admin/InputPrecio.tsx`): mientras se escribe, el precio se muestra como en Argentina, con punto de miles y coma decimal (`1.234.567,89`), para no confundirse con la cantidad de ceros.
+  - El formulario sigue guardando el valor sin formato (`"1234567.89"`), así que la validación y lo que se manda al BE no cambiaron.
+  - El input es de texto (`inputMode="decimal"`, así en el celular sale el teclado numérico). Ignora letras y deja hasta 2 decimales y 9 dígitos enteros (con más se ve el error de "precio muy alto").
+  - Si el admin escribe un punto al final o pega `1500.50` (sin coma), ese punto se toma como coma decimal. Al borrar no: si de `1.500` se borra un dígito, queda `150`.
+  - El cursor se mantiene después del mismo dígito aunque aparezcan o desaparezcan puntos de miles.
+  - Al editar un producto, el precio ya aparece formateado (`99.000`).
 - **Al guardar**
   - Si hay foto elegida, la reduce con `reducirFoto`, la sube con el endpoint de imágenes que ya existía y usa esa URL.
   - Si el guardado falla después, la URL queda en el formulario y no se vuelve a subir al reintentar.
+- **Sin emojis**: el recuadro de imagen vacío ahora muestra un ícono SVG (`IconoImagen`) en lugar del emoji. Lo mismo en la miniatura de la tabla de productos (`AdminProductos.tsx`) y en la cruz de "nueva marca" (`SelectorMarca.tsx`).
+
+### 3 bis. Carga por lote: `ProductoFormModal.tsx`, `PanelLote.tsx` y `lote.ts`
+
+Sirve para dar de alta varios productos de una vez: se cargan de 1 a 10 fotos, **una por producto**, y después se completa cada producto en el mismo formulario, de a uno.
+
+**Cómo se usa**
+
+1. Abrir "Nuevo producto".
+2. Agregar de 1 a 10 fotos (desde la PC o el celular). Cada foto tiene que ser de un producto distinto.
+3. Tocar **Analizar N productos con IA**. La caja de IA se reemplaza por el panel del lote y el formulario muestra el producto 1.
+4. Revisar lo que completó la IA, cargar precio y stock, y tocar **Crear y seguir con el siguiente**. Se guarda y pasa solo al siguiente producto que falte.
+5. En el último producto el botón vuelve a decir **Crear producto**. Al guardarlo se cierra el formulario.
+
+**Panel del lote (`PanelLote.tsx`)**
+
+- Una tira con la miniatura de cada producto, su número y su estado:
+  - **En espera**: todavía no le tocó a la IA.
+  - **Analizando**: la IA la está procesando.
+  - **Para revisar**: la IA ya respondió.
+  - **Error**: el análisis falló (por ejemplo, IA saturada o límite de uso).
+  - **Guardado** / **Descartado**: ya no se puede volver a ese producto.
+- Tocando una miniatura se pasa a ese producto. También hay botones **Anterior** y **Siguiente** (saltean los guardados y descartados).
+- Arriba muestra "Guardados: N de 10" y, mientras la IA trabaja, "Analizados por la IA: N de 10".
+- Debajo de la tira, un recuadro dice qué producto se está completando y qué hacer según su estado.
+- **Reintentar análisis**: aparece si la IA falló con ese producto.
+- **Descartar este producto**: lo saca del lote (por ejemplo, si la foto salió mal) y pasa al siguiente.
+- El título del modal muestra "Nuevo producto 3 de 10".
+
+**Cómo funciona por dentro (`ProductoFormModal.tsx`)**
+
+- **Análisis de a una foto, en orden.** `iniciarLote` recorre las fotos y llama a `analizarFotos([foto])` para cada una, esperando a que termine la anterior. Así no se pasa el límite de pedidos por minuto de Gemini. Mientras tanto ya se puede completar el producto 1.
+- **El back no cambió.** Cada análisis es un pedido normal a `POST /api/admin/productos/analizar` con una sola foto, y el celular ya aceptaba 10 fotos por sesión. Por eso el máximo del lote es 10 (`MAX_FOTOS_LOTE` en `analisisIA.ts`).
+- **Si la IA responde con el producto en pantalla**, completa el formulario en ese momento (sin tocar precio ni stock). Si responde con otro producto, la sugerencia queda guardada y se aplica al entrar a ese producto. Cada sugerencia se aplica una sola vez, para no pisar lo que corrigió el admin.
+- **Borradores.** Al pasar de un producto a otro se guarda lo cargado en el actual (campos, atributos, foto, marca nueva, secciones abiertas). Al volver, se recupera tal cual. Un producto nuevo arranca vacío con su foto como imagen.
+- **Al guardar** se usa el mismo `handleSubmit` de siempre (validación, subida de la foto, `crearProducto`). Si sale bien, el producto queda como "Guardado" y el formulario pasa al siguiente. `onGuardado` recibe un segundo parámetro, `quedanEnLote`: si es `true`, `AdminProductos` muestra el aviso y recarga la tabla, pero **no cierra el modal**.
+- **Bloqueos**:
+  - No se puede guardar un producto mientras la IA lo está analizando.
+  - No se puede cambiar de producto mientras se guarda, se sube una imagen o se agrega una marca (si no, el resultado quedaría en el producto equivocado).
+- **Al cerrar con productos sin guardar** se pide confirmación ("Quedan N productos del lote sin guardar..."). Los que ya se guardaron quedan guardados.
+- **Al cerrar el formulario** se corta el análisis que esté en curso y se liberan las miniaturas.
+- **`lote.ts`** tiene el tipo `ItemLote` (id, foto, miniatura, estado y error) y `estaCerrado` (guardado o descartado).
 
 ### 4. Página del celular: `src/pages/Captura/Captura.tsx`
 
@@ -150,6 +200,7 @@ Se registró en `src/main.tsx` como ruta `/captura/:token`, fuera del layout (si
   - **Sacar foto**: abre la cámara trasera (`capture="environment"`).
   - **Elegir de la galería**: permite varias fotos.
 - **Cada foto se envía apenas se elige**. No hay botón de enviar. Así, si el navegador recarga la página, las fotos ya están en el servidor.
+- El texto de ayuda pide **una foto de cada producto**, porque en la PC cada foto pasa a ser un producto distinto.
 - Muestra el contador ("Fotos enviadas: N de 10") y miniaturas de lo enviado en esta visita.
 - Al llegar al límite, deshabilita los botones.
 
@@ -159,7 +210,7 @@ Se registró en `src/main.tsx` como ruta `/captura/:token`, fuera del layout (si
 - **`package.json`**
   - `dev` ahora es `vite --host`, para exponer el front en la red local.
   - Dependencias nuevas: `qrcode` y `@types/qrcode`.
-- **Traducciones** (`es` y `en`): secciones `admin.ia.*`, `captura.*` y `admin.form.fotoAlGuardar`.
+- **Traducciones** (`es` y `en`): secciones `admin.ia.*`, `admin.lote.*` (carga por lote), `captura.*` y `admin.form.fotoAlGuardar`.
 - **`README.md`**: sección "Cómo probar la IA y la carga desde el celular", para que tu amigo pueda seguirla.
 
 ---
@@ -183,11 +234,12 @@ PC (admin)                         Servidor (BE :3000)               Celular
    GET /api/admin/captura/TOKEN ─► cantidad de fotos
    GET .../fotos/0, .../fotos/1 ─► fotos nuevas
    → miniaturas en la caja de IA
-5. Elige fotos, usa una como imagen
-   y toca "Analizar"
+5. Toca "Analizar N productos"
+   Por cada foto, de a una:
    POST /api/admin/productos/analizar ─► Gemini ─► saneo ─► borrador
-   → completa el formulario
-6. "Crear producto" → sube la foto y guarda el producto
+   → completa el formulario de ese producto
+6. "Crear y seguir con el siguiente" → sube la foto,
+   guarda el producto y pasa al siguiente
 7. Al cerrar el QR:
    DELETE /api/admin/captura/TOKEN ► borra la sesión
 ```
@@ -198,7 +250,7 @@ PC (admin)                         Servidor (BE :3000)               Celular
 - **El celular nunca habla con la IA.** Solo envía fotos al BE. Quien llama a Gemini es la PC, que tiene el admin logueado.
 - **El celular usa la misma URL del front.** Como pasa por el proxy de Vite, no hay que configurar CORS ni puertos extra.
 - **Las fotos del celular no se guardan en disco.** Viven en memoria del BE hasta que se cierra el QR, vence la sesión o se reinicia el servidor.
-- **La PC decide qué se analiza.** El celular puede enviar hasta 10 fotos. La PC elige hasta 5 para la IA y una como imagen del producto.
+- **La PC decide qué se analiza.** El celular puede enviar hasta 10 fotos. La PC usa hasta 10, una por producto, y cada foto es también la imagen de su producto.
 
 ---
 

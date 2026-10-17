@@ -3,22 +3,18 @@ import { useTranslation } from "react-i18next";
 import QRCode from "qrcode";
 import { ApiError } from "../../services/adminProductos";
 import {
-  MAX_FOTOS_IA,
-  analizarFotos,
+  MAX_FOTOS_LOTE,
   cancelarCaptura,
   crearCaptura,
   descargarFotoCaptura,
   estadoCaptura,
   urlParaCelular,
   type CapturaCreada,
-  type SugerenciaProducto,
 } from "../../services/analisisIA";
+import { IconoCerrar } from "./IconosAdmin";
 
 interface Props {
-  onSugerencia: (sugerencia: SugerenciaProducto, fotos: File[]) => void;
-  onOcupado: (ocupado: boolean) => void; // mientras analiza no se puede guardar el formulario
-  fotoElegida: File | null; // la que se va a usar como imagen del producto
-  onElegirFoto: (foto: File) => void;
+  onAnalizarLote: (fotos: File[]) => void; // una foto por producto
 }
 
 interface Foto {
@@ -32,16 +28,14 @@ const CONSULTA_CADA_MS = 2000;
 const boton =
   "cursor-pointer rounded-lg border border-line bg-surface px-3 py-2 text-sm font-semibold text-ink transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50";
 
-// Caja del formulario de alta: se juntan fotos del producto (desde la computadora o desde
-// el celular escaneando un QR), la IA las analiza y devuelve un borrador para completar
-// los campos. Cualquiera de las fotos se puede usar como imagen del producto.
-export default function AutocompletarIA({ onSugerencia, onOcupado, fotoElegida, onElegirFoto }: Props) {
+// Caja del formulario de alta: se juntan de 1 a 10 fotos, cada una de un producto distinto
+// (desde la computadora o desde el celular escaneando un QR). Al analizar se le pasan al
+// formulario, que las manda a la IA de a una y deja completar cada producto por separado.
+export default function AutocompletarIA({ onAnalizarLote }: Props) {
   const { t } = useTranslation();
   const inputFotos = useRef<HTMLInputElement>(null);
   const [fotos, setFotos] = useState<Foto[]>([]);
-  const [analizando, setAnalizando] = useState(false);
   const [error, setError] = useState("");
-  const [listo, setListo] = useState(false);
   const [creandoQr, setCreandoQr] = useState(false);
   const [captura, setCaptura] = useState<CapturaCreada | null>(null);
   const [qr, setQr] = useState({ url: "", imagen: "" });
@@ -52,29 +46,24 @@ export default function AutocompletarIA({ onSugerencia, onOcupado, fotoElegida, 
   const fotosActuales = useRef<Foto[]>([]);
   const siguienteId = useRef(0);
   const descargadas = useRef(0); // fotos del celular ya traídas a la computadora
-  const pedidoActual = useRef<AbortController | null>(null);
 
   const actualizarFotos = (nuevas: Foto[]) => {
     fotosActuales.current = nuevas;
     setFotos(nuevas);
   };
 
-  // Al cerrar el formulario se corta el análisis y se liberan las miniaturas
+  // Al cerrar el formulario se liberan las miniaturas
   useEffect(
     () => () => {
-      pedidoActual.current?.abort();
       fotosActuales.current.forEach((f) => URL.revokeObjectURL(f.vista));
     },
     [],
   );
 
-  // Avisa al formulario para bloquear el botón de guardar
-  useEffect(() => onOcupado(analizando), [analizando, onOcupado]);
-
   const agregar = useCallback(
     (archivos: File[]) => {
-      const lugar = MAX_FOTOS_IA - fotosActuales.current.length;
-      if (archivos.length > lugar) setError(t("admin.ia.listaLlena", { max: MAX_FOTOS_IA }));
+      const lugar = MAX_FOTOS_LOTE - fotosActuales.current.length;
+      if (archivos.length > lugar) setError(t("admin.ia.loteLleno", { max: MAX_FOTOS_LOTE }));
       else setError("");
       const nuevas = archivos
         .slice(0, Math.max(lugar, 0))
@@ -82,7 +71,6 @@ export default function AutocompletarIA({ onSugerencia, onOcupado, fotoElegida, 
       if (nuevas.length === 0) return;
       fotosActuales.current = [...fotosActuales.current, ...nuevas];
       setFotos(fotosActuales.current);
-      setListo(false);
     },
     [t],
   );
@@ -159,45 +147,22 @@ export default function AutocompletarIA({ onSugerencia, onOcupado, fotoElegida, 
     }
   };
 
-  const analizar = async () => {
-    const archivos = fotos.map((f) => f.archivo);
-    if (archivos.length === 0) return;
-    const controller = new AbortController();
-    pedidoActual.current = controller;
-    setError("");
-    setListo(false);
-    setAnalizando(true);
-    try {
-      onSugerencia(await analizarFotos(archivos, controller.signal), archivos);
-      setListo(true);
-    } catch (e) {
-      if (!controller.signal.aborted) setError(e instanceof Error ? e.message : t("admin.ia.errorAnalisis"));
-    } finally {
-      if (!controller.signal.aborted) setAnalizando(false);
-    }
-  };
-
-  const llena = fotos.length >= MAX_FOTOS_IA;
+  const llena = fotos.length >= MAX_FOTOS_LOTE;
 
   return (
     <section className="space-y-3 rounded-xl border border-primary/40 bg-primary-light/40 p-4">
       <div>
-        <h3 className="m-0 text-sm font-bold text-ink">✨ {t("admin.ia.titulo")}</h3>
-        <p className="mt-1 text-xs text-muted">{t("admin.ia.ayuda", { max: MAX_FOTOS_IA })}</p>
+        <h3 className="m-0 text-sm font-bold text-ink">{t("admin.ia.titulo")}</h3>
+        <p className="mt-1 text-xs text-muted">{t("admin.ia.ayudaLote", { max: MAX_FOTOS_LOTE })}</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => inputFotos.current?.click()}
-          disabled={analizando || llena}
-          className={boton}
-        >
-          🖼️ {t("admin.ia.agregarFotos")}
+        <button type="button" onClick={() => inputFotos.current?.click()} disabled={llena} className={boton}>
+          {t("admin.ia.agregarFotos")}
         </button>
         {!captura && (
-          <button type="button" onClick={usarCelular} disabled={analizando || creandoQr} className={boton}>
-            📱 {creandoQr ? t("nav.cargando") : t("admin.ia.usarCelular")}
+          <button type="button" onClick={usarCelular} disabled={creandoQr} className={boton}>
+            {creandoQr ? t("nav.cargando") : t("admin.ia.usarCelular")}
           </button>
         )}
         <input
@@ -238,61 +203,40 @@ export default function AutocompletarIA({ onSugerencia, onOcupado, fotoElegida, 
 
       {fotos.length > 0 && (
         <ul className="m-0 grid list-none grid-cols-3 gap-2 p-0 sm:grid-cols-5">
-          {fotos.map((f) => {
-            const elegida = f.archivo === fotoElegida;
-            return (
-              <li
-                key={f.id}
-                className={`relative overflow-hidden rounded-lg border-2 bg-surface ${elegida ? "border-primary" : "border-line"}`}
+          {fotos.map((f, i) => (
+            <li key={f.id} className="relative overflow-hidden rounded-lg border-2 border-line bg-surface">
+              <img src={f.vista} alt="" className="aspect-square w-full object-cover" />
+              <button
+                type="button"
+                onClick={() => quitar(f)}
+                aria-label={t("admin.ia.quitarFoto")}
+                className="absolute top-1 right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-black/60 text-xs text-white"
               >
-                <img src={f.vista} alt="" className="aspect-square w-full object-cover" />
-                <button
-                  type="button"
-                  onClick={() => quitar(f)}
-                  disabled={analizando}
-                  aria-label={t("admin.ia.quitarFoto")}
-                  className="absolute top-1 right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-black/60 text-xs text-white disabled:cursor-not-allowed"
-                >
-                  ✕
-                </button>
-                {elegida ? (
-                  <span className="block bg-primary px-1 py-1 text-center text-[11px] font-semibold text-white">
-                    ✓ {t("admin.ia.esImagen")}
-                  </span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => onElegirFoto(f.archivo)}
-                    className="block w-full cursor-pointer bg-surface-alt px-1 py-1 text-center text-[11px] font-semibold text-ink hover:bg-primary-light hover:text-primary"
-                  >
-                    {t("admin.ia.usarComoImagen")}
-                  </button>
-                )}
-              </li>
-            );
-          })}
+                <IconoCerrar />
+              </button>
+              <span className="block bg-surface-alt px-1 py-1 text-center text-[11px] font-semibold text-ink">
+                {t("admin.lote.producto", { numero: i + 1 })}
+              </span>
+            </li>
+          ))}
         </ul>
       )}
 
       {fotos.length > 0 && (
         <button
           type="button"
-          onClick={analizar}
-          disabled={analizando}
-          className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
+          onClick={() => onAnalizarLote(fotos.map((f) => f.archivo))}
+          className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
         >
-          ✨ {analizando ? t("admin.ia.analizando") : t("admin.ia.analizar", { count: fotos.length })}
+          {t("admin.ia.analizarLote", { count: fotos.length })}
         </button>
       )}
 
-      <div aria-live="polite">
-        {listo && !analizando && <p className="m-0 text-sm text-green-700">✓ {t("admin.ia.listo")}</p>}
-        {error && (
-          <p role="alert" className="m-0 text-sm text-red-700">
-            {error}
-          </p>
-        )}
-      </div>
+      {error && (
+        <p role="alert" className="m-0 text-sm text-red-700">
+          {error}
+        </p>
+      )}
     </section>
   );
 }
