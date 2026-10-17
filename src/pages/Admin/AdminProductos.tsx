@@ -12,6 +12,7 @@ import { notificarCambioCatalogo } from "../../services/catalogoEventos";
 import { useToast } from "../../components/Toast/toastContext";
 import ProductoFormModal from "./ProductoFormModal";
 import EliminarProductoModal from "./EliminarProductoModal";
+import { IconoImagen } from "./IconosAdmin";
 
 const formatoPrecio = new Intl.NumberFormat("es-AR", {
   style: "currency",
@@ -131,9 +132,10 @@ export default function AdminProductos() {
     }
   };
 
-  const alGuardar = (producto: ProductoAdmin) => {
+  // En la carga por lote el formulario sigue abierto mientras queden productos
+  const alGuardar = (producto: ProductoAdmin, quedanEnLote = false) => {
     const esNuevo = modal?.tipo === "form" && modal.producto === null;
-    setModal(null);
+    if (!quedanEnLote) setModal(null);
     notificarCambioCatalogo();
     if (esNuevo) {
       mostrarToast(t("admin.toast.creado", { nombre: producto.nombre }), "exito");
@@ -400,8 +402,8 @@ function InfoProducto({ producto }: { producto: ProductoAdmin }) {
         {producto.imagenUrl ? (
           <img src={producto.imagenUrl} alt="" loading="lazy" className="h-full w-full object-contain" />
         ) : (
-          <span aria-hidden className="text-lg text-muted">
-            🖼️
+          <span className="text-lg text-muted">
+            <IconoImagen />
           </span>
         )}
       </div>

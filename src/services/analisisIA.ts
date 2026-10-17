@@ -22,7 +22,7 @@ export interface SugerenciaProducto {
 
 export interface EstadoCaptura {
   fotos: number; // fotos recibidas desde el celular
-  maxFotos: number; // las que se pueden mandar desde el celular (se analizan hasta MAX_FOTOS_IA)
+  maxFotos: number; // las que se pueden mandar desde el celular (una por producto)
   expiraEn: string;
 }
 
@@ -31,7 +31,8 @@ export interface CapturaCreada extends EstadoCaptura {
   ipLocal: string | null; // IP de la PC en la red, para armar la URL del QR
 }
 
-export const MAX_FOTOS_IA = 5;
+export const MAX_FOTOS_IA = 5; // fotos por pedido que acepta el BE
+export const MAX_FOTOS_LOTE = 10; // carga por lote: una foto por producto (igual al máximo del celular)
 
 async function formConFotos(archivos: File[]) {
   const form = new FormData();

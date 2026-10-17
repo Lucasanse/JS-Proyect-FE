@@ -62,7 +62,7 @@ export default function Captura() {
     <main className="min-h-svh bg-surface-alt px-4 py-6 text-ink">
       <div className="mx-auto max-w-md space-y-5">
         <header className="space-y-1 text-center">
-          <h1 className="m-0 text-xl font-bold">📷 {t("captura.titulo")}</h1>
+          <h1 className="m-0 text-xl font-bold">{t("captura.titulo")}</h1>
           <p className="m-0 text-sm text-muted">{t("captura.ayuda")}</p>
         </header>
 
@@ -85,7 +85,7 @@ export default function Captura() {
                 disabled={quedan <= 0 || enviando > 0}
                 className={`${boton} bg-primary text-white hover:bg-primary-dark`}
               >
-                📸 {t("captura.sacarFoto")}
+                {t("captura.sacarFoto")}
               </button>
               <button
                 type="button"
@@ -93,7 +93,7 @@ export default function Captura() {
                 disabled={quedan <= 0 || enviando > 0}
                 className={`${boton} border border-line bg-surface text-ink hover:border-primary`}
               >
-                🖼️ {t("captura.galeria")}
+                {t("captura.galeria")}
               </button>
               <input
                 ref={inputCamara}
