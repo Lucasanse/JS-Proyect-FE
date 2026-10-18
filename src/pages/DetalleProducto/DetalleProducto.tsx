@@ -9,6 +9,7 @@ import {
   type ProductoDetalle,
 } from "../../services/productoDetalle.ts";
 import { useVersionCatalogo } from "../../services/catalogoEventos";
+import { ContenedorCompraUnidad } from "../../components/Comprar/ComprarUnidad.tsx";
 
 export default function Detalles() {
   const { id } = useParams<{ id: string }>();
@@ -129,7 +130,10 @@ export default function Detalles() {
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Breadcrumb / Navegación superior */}
       <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-        <Link to="/productos" className="hover:text-indigo-600 transition font-medium">
+        <Link
+          to="/productos"
+          className="hover:text-indigo-600 transition font-medium"
+        >
           {t("detalle.catalogo")}
         </Link>
         <span>/</span>
@@ -249,9 +253,7 @@ export default function Detalles() {
                   <button
                     type="button"
                     onClick={() =>
-                      setCantidad((c) =>
-                        Math.min(Math.max(restante, 1), c + 1),
-                      )
+                      setCantidad((c) => Math.min(Math.max(restante, 1), c + 1))
                     }
                     className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:bg-white hover:shadow-sm transition font-bold"
                   >
@@ -286,6 +288,11 @@ export default function Detalles() {
                     ? t("detalle.agregando")
                     : t("detalle.agregarCarrito")}
               </button>
+              <ContenedorCompraUnidad
+                idProducto={producto.id}
+                idUsuario={session?.user.id}
+                cantidad={cantidad}
+              ></ContenedorCompraUnidad>
             </div>
             {errorCarrito && (
               <p className="mt-2 text-sm text-red-600">{errorCarrito}</p>
