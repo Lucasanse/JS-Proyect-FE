@@ -288,11 +288,13 @@ export default function Detalles() {
                     ? t("detalle.agregando")
                     : t("detalle.agregarCarrito")}
               </button>
-              <ContenedorCompraUnidad
-                idProducto={producto.id}
-                idUsuario={session?.user.id}
-                cantidad={cantidad}
-              ></ContenedorCompraUnidad>
+              {producto.stock > 0 && (
+                <ContenedorCompraUnidad
+                  idProducto={producto.id}
+                  idUsuario={session?.user.id}
+                  cantidad={cantidad}
+                />
+              )}
             </div>
             {errorCarrito && (
               <p className="mt-2 text-sm text-red-600">{errorCarrito}</p>
