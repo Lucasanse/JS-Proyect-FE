@@ -316,5 +316,35 @@
       "usuarios": "Browse registered users and enable or disable their accounts."
     },
     "esComponente": "PC component"
+  },
+
+  "checkout": {
+    "exito": {
+      "titulo": "Thank you for your purchase!",
+      "descripcion": "Your payment was processed successfully and your order is being prepared.",
+      "comprobante": "Receipt",
+      "orden": "Order",
+      "botonSeguir": "Continue shopping"
+    },
+    "pendiente": {
+      "titulo": "Pending payment",
+      "descripcion": "We are waiting for payment confirmation. Cash payments may take a few hours.",
+      "comprobante": "Receipt",
+      "botonVolver": "Back to home"
+    },
+    "rechazado": {
+      "titulo": "Payment rejected",
+      "descripcion": "We couldn't process the charge. Please try again with another payment method.",
+      "botonReintentar": "Retry checkout"
+    },
+    "boton": {
+      "pagarMP": "Pay with Mercado Pago",
+      "confirmarPedido": "Confirm order",
+      "comprarAhora": "Buy now",
+      "cargando": "Loading secure link..."
+    },
+    "errores": {
+      "falloIniciar": "Could not initiate payment. Please try again."
+    }
   }
 }

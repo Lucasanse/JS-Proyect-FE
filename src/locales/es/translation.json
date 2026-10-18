@@ -316,5 +316,39 @@
       "usuarios": "Consultar los usuarios registrados y habilitar o deshabilitar sus cuentas."
     },
     "esComponente": "Componente de PC"
+  },
+  "estadoPago": {
+    "noInfo": "No hay información de pago",
+    "volver": "Volver a la tienda"
+  },
+
+  "checkout": {
+    "exito": {
+      "titulo": "¡Gracias por tu compra!",
+      "descripcion": "Tu pago fue procesado con éxito y tu pedido ya está siendo preparado.",
+      "comprobante": "Comprobante",
+      "orden": "Orden",
+      "botonSeguir": "Seguir comprando"
+    },
+    "pendiente": {
+      "titulo": "Pago pendiente",
+      "descripcion": "Estamos esperando la confirmación del pago. Si abonaste en efectivo, puede demorar unas horas.",
+      "comprobante": "Comprobante",
+      "botonVolver": "Volver al inicio"
+    },
+    "rechazado": {
+      "titulo": "Pago rechazado",
+      "descripcion": "No pudimos procesar el cobro. Por favor, intentá nuevamente con otro medio de pago.",
+      "botonReintentar": "Reintentar compra"
+    },
+    "boton": {
+      "pagarMP": "Pagar con Mercado Pago",
+      "confirmarPedido": "Confirmar pedido",
+      "comprarAhora": "Comprar ahora",
+      "cargando": "Cargando link seguro..."
+    },
+    "errores": {
+      "falloIniciar": "No pudimos iniciar el pago. Por favor, intentá de nuevo."
+    }
   }
 }

@@ -1,41 +1,34 @@
-// BotonMercadoPago.jsx (o .tsx si usás TypeScript en el front)
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface PropsBoton {
-  onClick: Function;
+  onClick: () => void;
   cargando: boolean;
-  texto: string;
-  disabled: boolean | undefined;
+  texto?: string;
+  disabled?: boolean;
 }
+
 export const BotonMercadoPago = ({
   onClick,
   cargando,
-  texto = "Pagar con Mercado Pago",
+  texto,
   disabled,
 }: PropsBoton) => {
+  const { t } = useTranslation();
+
+  const textoFinal = texto ?? t("checkout.boton.pagarMP");
+
   return (
     <button
       onClick={onClick}
-      disabled={disabled ?? cargando}
-      style={{
-        backgroundColor: "#009EE3",
-        color: "#FFFFFF",
-        padding: "14px 24px",
-        border: "none",
-        borderRadius: "6px",
-        fontSize: "16px",
-        fontWeight: "600",
-        cursor: cargando ? "not-allowed" : "pointer",
-        opacity: cargando ? 0.7 : 1,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "10px",
-        width: "100%",
-        transition: "background-color 0.2s ease",
-      }}
+      disabled={Boolean(disabled ?? cargando)}
+      className="flex items-center justify-center w-full gap-2.5 px-6 py-3.5 bg-[#e31a00] hover:bg-[#fa3c3c] text-white font-semibold text-base rounded-md transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
     >
-      {cargando ? <span>Cargando link seguro...</span> : <span>{texto}</span>}
+      {cargando ? (
+        <span>{t("checkout.boton.cargando")}</span>
+      ) : (
+        <span>{textoFinal}</span>
+      )}
     </button>
   );
 };

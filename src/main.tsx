@@ -31,7 +31,7 @@ const router = createBrowserRouter([
       { path: "armar-pc", element: <ArmarPc /> },
       { path: "servicio-tecnico", element: <ServicioTecnico /> },
       { path: "detalleProducto/:id", element: <DetalleProducto /> },
-      { path: "checkout/exito", element: <PantallaEstadoPago /> },
+      { path: "checkout/:estado", element: <PantallaEstadoPago /> },
       // Panel de administración (solo rol ADMIN, lo controla AdminLayout).
       // Cada sección nueva va como ruta hija y en el menú de AdminLayout.
       {
