@@ -26,7 +26,7 @@ export const SECCIONES_ADMIN: SeccionAdmin[] = [
     tituloKey: "admin.menu.servicioTecnico",
     descripcionKey: "admin.inicio.servicioTecnico",
     icono: <IconoHerramienta />,
-    disponible: false,
+    disponible: true,
   },
   {
     to: "ventas",
