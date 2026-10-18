@@ -8,3 +8,5 @@ export const urlProductoDetalle = `${BASE_URL}/api/productoDetalle`;
 export const urlCarrito = `${BASE_URL}/api/carrito`;
 export const urlAdmin = `${BASE_URL}/api/admin`;
 export const urlAdminProductos = `${urlAdmin}/productos`;
+export const urlServicioTecnico = `${BASE_URL}/api/servicio-tecnico`;
+export const urlAdminServicioTecnico = `${urlAdmin}/servicio-tecnico`;
