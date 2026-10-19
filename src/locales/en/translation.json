@@ -3,6 +3,7 @@
     "productos": "Products",
     "armarPc": "Build your PC",
     "servicioTecnico": "Tech Support",
+    "misCompras": "My purchases",
     "abrirMenu": "Open menu",
     "cerrarMenu": "Close menu",
     "inicio": "Home",
@@ -374,5 +375,49 @@
     "maxFotos": "You can send up to {{max}} photos in total",
     "vencido": "This link is invalid or has expired. Create a new QR code from the computer.",
     "error": "The photos couldn't be sent. Please try again."
+  },
+  "checkout": {
+    "exito": {
+      "titulo": "Thank you for your purchase!",
+      "descripcion": "Your payment was processed successfully and your order is being prepared.",
+      "comprobante": "Receipt",
+      "orden": "Order",
+      "botonSeguir": "Continue shopping"
+    },
+    "pendiente": {
+      "titulo": "Pending payment",
+      "descripcion": "We are waiting for payment confirmation. Cash payments may take a few hours.",
+      "comprobante": "Receipt",
+      "botonVolver": "Back to home"
+    },
+    "rechazado": {
+      "titulo": "Payment rejected",
+      "descripcion": "We couldn't process the charge. Please try again with another payment method.",
+      "botonReintentar": "Retry checkout"
+    },
+    "boton": {
+      "pagarMP": "Pay with Mercado Pago",
+      "confirmarPedido": "Confirm order",
+      "comprarAhora": "Buy now",
+      "cargando": "Loading secure link..."
+    },
+    "errores": {
+      "falloIniciar": "Could not initiate payment. Please try again."
+    }
+  },
+  "historial": {
+    "titulo": "My Purchase History",
+    "vacio": "You don't have any purchases yet.",
+    "errorCarga": "There was an error loading your purchases. Please try again.",
+    "productos": "Products",
+    "estados": {
+      "aprobado": "Approved",
+      "pendiente": "Pending",
+      "rechazado": "Rejected"
+    }
+  },
+  "avisoRetiro": {
+    "titulo": "Important pickup information",
+    "descripcion": "All purchases are strictly for in-store pickup. Presenting your invoice or receipt is required when picking up your order."
   }
 }
