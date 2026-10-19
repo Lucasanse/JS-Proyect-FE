@@ -21,7 +21,15 @@ export type EstadoSolicitud = (typeof ESTADOS_SOLICITUD)[number];
 
 // Qué puede pedir el cliente; puede elegir varios (ver servicioTecnico.catalogo.ts en el BE).
 // El backup no es un servicio aparte: se pide como opción del formateo.
-export const TIPOS_SERVICIO = ["REPARACION", "LIMPIEZA", "FORMATEO", "INSTALACION_SOFTWARE", "OTRO"] as const;
+// LIMPIEZA es la limpieza externa; OPTIMIZACION es que la computadora ande más rápido (con SSD opcional).
+export const TIPOS_SERVICIO = [
+  "REPARACION",
+  "LIMPIEZA",
+  "FORMATEO",
+  "OPTIMIZACION",
+  "INSTALACION_SOFTWARE",
+  "OTRO",
+] as const;
 export type TipoServicio = (typeof TIPOS_SERVICIO)[number];
 
 export const TIPOS_EQUIPO = ["PC_FIJA", "NOTEBOOK", "IMPRESORA"] as const; // solo REPARACION
@@ -43,6 +51,7 @@ export interface SolicitudResumen {
   software: Software[]; // solo con INSTALACION_SOFTWARE
   conBackup: boolean; // solo con FORMATEO
   conPastaTermica: boolean; // solo con LIMPIEZA
+  conSSD: boolean; // solo con OPTIMIZACION
   descripcion: string | null;
   estado: EstadoSolicitud;
   fecha: string;
@@ -84,6 +93,7 @@ export interface SolicitudInput {
   software?: Software[];
   conBackup?: boolean;
   conPastaTermica?: boolean;
+  conSSD?: boolean;
   descripcion?: string;
 }
 

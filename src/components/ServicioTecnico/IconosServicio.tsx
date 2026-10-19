@@ -41,6 +41,8 @@ const ICONOS_SERVICIO: Record<TipoServicio, ReactNode> = {
       <path d="M21 3v6h-6" />
     </>
   ),
+  // Rayo
+  OPTIMIZACION: <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" />,
   // Descarga
   INSTALACION_SOFTWARE: (
     <>

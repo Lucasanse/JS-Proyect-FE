@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSession } from "../../services/auth-client";
 import { listarMisSolicitudes, type SolicitudDetalle, type SolicitudResumen } from "../../services/servicioTecnico";
@@ -25,31 +25,17 @@ export default function ServicioTecnico() {
         </header>
 
         <div className="mt-8">
-          {isPending ? <p className="text-muted">{t("nav.cargando")}</p> : !session ? <AvisoLogin /> : <PanelCliente />}
+          {/* Sin sesión no hay nada que mostrar: se va directo al login */}
+          {isPending ? (
+            <p className="text-muted">{t("nav.cargando")}</p>
+          ) : !session ? (
+            <Navigate to="/login" replace />
+          ) : (
+            <PanelCliente />
+          )}
         </div>
       </div>
     </section>
-  );
-}
-
-function AvisoLogin() {
-  const { t } = useTranslation();
-  return (
-    <div className="mx-auto max-w-xl rounded-xl border border-line bg-surface p-6 text-center shadow-sm">
-      <p className="text-ink">
-        {t("servicioTecnico.sesionAntes")}{" "}
-        <Link to="/login" className="font-semibold text-primary hover:underline">
-          {t("servicioTecnico.sesionLink")}
-        </Link>{" "}
-        {t("servicioTecnico.sesionDespues")}
-      </p>
-      <p className="mt-2 text-sm text-muted">
-        {t("servicioTecnico.sinCuenta")}{" "}
-        <Link to="/register" className="font-semibold text-primary hover:underline">
-          {t("servicioTecnico.registrate")}
-        </Link>
-      </p>
-    </div>
   );
 }
 

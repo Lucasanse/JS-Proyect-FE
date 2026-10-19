@@ -71,12 +71,10 @@
   "servicioTecnico": {
     "titulo": "Servicio técnico",
     "intro": "¿Tu equipo tiene un problema? Contanos qué le pasa y te respondemos por acá. Vas a poder seguir el avance de la reparación en todo momento.",
-    "sesionAntes": "Tenés que",
-    "sesionLink": "iniciar sesión",
-    "sesionDespues": "para pedir servicio técnico y ver tus solicitudes.",
-    "sesionDespuesDetalle": "para ver esta solicitud.",
-    "sinCuenta": "¿No tenés cuenta?",
-    "registrate": "Registrate",
+    "avisoPrecio": {
+      "titulo": "El precio del arreglo te lo comunicamos cuando traigas el equipo al local.",
+      "detalle": "Primero lo revisamos y si te confirmamos, te pasamos el presupuesto. No hacemos ningún trabajo sin que lo confirmes."
+    },
     "errorCarga": "No se pudieron cargar tus solicitudes",
     "errorGenerico": "Ocurrió un error",
     "sinSolicitudes": "Todavía no enviaste ninguna solicitud.",
@@ -112,6 +110,9 @@
       "pasoFormateo": "Formateo",
       "conBackup": "Hacer un backup de mis archivos antes de formatear",
       "conBackupAyuda": "Guardamos tus fotos, documentos y demás archivos y te los dejamos en el equipo formateado.",
+      "pasoOptimizacion": "Que ande más rápido",
+      "conSSD": "Cambiar el disco duro por un SSD",
+      "conSSDAyuda": "Un disco SSD hace que la computadora arranque y abra los programas mucho más rápido.",
       "pasoSoftware": "¿Qué querés instalar?",
       "sistemaOperativo": "Sistema operativo",
       "soloUno": "elegí uno solo",
@@ -148,15 +149,17 @@
     },
     "tipos": {
       "REPARACION": "Reparación de componentes",
-      "LIMPIEZA": "Limpieza",
+      "LIMPIEZA": "Limpieza externa",
       "FORMATEO": "Formateo",
+      "OPTIMIZACION": "Que ande más rápido",
       "INSTALACION_SOFTWARE": "Instalación de software",
       "OTRO": "Otro"
     },
     "tiposAyuda": {
       "REPARACION": "Algo no funciona en tu PC fija, notebook o impresora.",
-      "LIMPIEZA": "Limpieza interna de polvo, con cambio de pasta térmica si lo necesitás.",
+      "LIMPIEZA": "Limpieza externa del equipo, con cambio de pasta térmica si lo necesitás.",
       "FORMATEO": "Borrado y reinstalación del sistema, con backup si lo necesitás.",
+      "OPTIMIZACION": "Optimizamos tu computadora para que funcione más rápido, con cambio a disco SSD si querés.",
       "INSTALACION_SOFTWARE": "Windows, Office y programas útiles.",
       "OTRO": "Contanos qué necesitás."
     },
@@ -182,14 +185,16 @@
       "loQuePediste": "Lo que pediste",
       "servicios": {
         "REPARACION": "Reparación de componentes",
-        "LIMPIEZA": "Limpieza interna de polvo",
+        "LIMPIEZA": "Limpieza externa del equipo",
         "FORMATEO": "Formateo del equipo",
+        "OPTIMIZACION": "Optimización para que la computadora ande más rápido",
         "INSTALACION_SOFTWARE": "Instalación de software",
         "OTRO": "Otro servicio"
       },
       "equipo": "Equipo:",
       "pastaTermica": "Cambio de pasta térmica",
       "backup": "Backup de tus archivos antes de formatear",
+      "ssd": "Cambio del disco duro por un SSD",
       "queLeSucede": "Lo que le sucede al equipo",
       "queNecesitas": "Lo que necesitás",
       "comentarios": "Tus comentarios"
@@ -200,12 +205,6 @@
       "fecha": "Enviada",
       "servicios_one": "Servicio",
       "servicios_other": "Servicios",
-      "pastaTermica": "Cambio de pasta térmica",
-      "backup": "Backup antes de formatear",
-      "si": "Sí",
-      "no": "No",
-      "equipo": "Equipo",
-      "software": "Programas a instalar",
       "sinComentarios": "Sin comentarios."
     },
     "y": "y"
@@ -519,7 +518,7 @@
       },
       "volver": "Solicitudes",
       "noEncontrada": "La solicitud no existe.",
-      "cerradaSinRespuestas": "La solicitud está finalizada: ya no se puede responder.",
+      "cerradaSinRespuestas": "La solicitud está rechazada o cerrada: para responder, cambiale el estado.",
       "cliente": "Cliente",
       "nombre": "Nombre",
       "correo": "Correo",
@@ -541,9 +540,9 @@
       "confirmarPregunta": "¿Pasar la solicitud #{{id}} de",
       "confirmarPreguntaFin": "?",
       "confirmarAviso": "El cambio queda registrado en el historial y el cliente lo va a ver en su solicitud.",
-      "confirmarCerrar": "Una solicitud cerrada no se puede reabrir ni responder. El cliente lo va a ver en su solicitud.",
+      "confirmarCerrar": "Mientras esté cerrada no se puede responder. Si hace falta, la podés reabrir cambiándole el estado. El cliente lo va a ver en su solicitud.",
       "rechazarTitulo": "Rechazar solicitud",
-      "confirmarRechazar": "El cliente va a ver el motivo en su solicitud. Una solicitud rechazada no se puede reabrir ni responder.",
+      "confirmarRechazar": "El cliente va a ver el motivo en su solicitud. Mientras esté rechazada no se puede responder; si hace falta, la podés reabrir cambiándole el estado.",
       "motivoRechazo": "Motivo del rechazo (lo ve el cliente)",
       "motivoPlaceholder": "Ej: no conseguimos repuestos para ese modelo de impresora.",
       "motivoRequerido": "Escribí el motivo del rechazo",
@@ -572,7 +571,6 @@
     "noInfo": "No hay información de pago",
     "volver": "Volver a la tienda"
   },
-
   "checkout": {
     "exito": {
       "titulo": "¡Gracias por tu compra!",

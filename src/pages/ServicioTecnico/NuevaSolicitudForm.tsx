@@ -16,6 +16,7 @@ import {
 } from "../../services/servicioTecnico";
 import { useToast } from "../../components/Toast/toastContext";
 import { IconoEquipo, IconoServicio } from "../../components/ServicioTecnico/IconosServicio";
+import AvisoPrecio from "../../components/ServicioTecnico/AvisoPrecio";
 import { claseInput } from "../Admin/estilosForm";
 
 type Campo = "servicios" | "tipoEquipo" | "software" | "descripcion";
@@ -30,6 +31,7 @@ const PROGRAMAS = SOFTWARE.filter((s) => !SISTEMAS_OPERATIVOS.includes(s));
 // - Reparación: qué equipo (PC fija, notebook o impresora) y qué le sucede.
 // - Limpieza: si quiere que además se cambie la pasta térmica.
 // - Formateo: si quiere un backup de sus archivos antes de formatear.
+// - Optimización (que ande más rápido): si quiere cambiar el disco duro por un SSD.
 // - Instalación de software: qué programas (un solo Windows).
 // - Otro: qué necesita.
 // Valida lo mismo que el BE; si el BE igual rechaza algo, el error se muestra en su campo.
@@ -41,6 +43,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
   const [software, setSoftware] = useState<Software[]>([]);
   const [conBackup, setConBackup] = useState(false);
   const [conPastaTermica, setConPastaTermica] = useState(false);
+  const [conSSD, setConSSD] = useState(false);
   const [descripcion, setDescripcion] = useState("");
   // Los errores se muestran recién después del primer intento de envío
   const [intentado, setIntentado] = useState(false);
@@ -103,6 +106,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
     setSoftware([]);
     setConBackup(false);
     setConPastaTermica(false);
+    setConSSD(false);
     setDescripcion("");
     setIntentado(false);
   };
@@ -126,6 +130,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
         ...(pide("INSTALACION_SOFTWARE") && { software }),
         ...(pide("FORMATEO") && { conBackup }),
         ...(pide("LIMPIEZA") && { conPastaTermica }),
+        ...(pide("OPTIMIZACION") && { conSSD }),
         descripcion: descripcion.trim(),
       });
       reiniciar();
@@ -148,7 +153,8 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
 
   return (
     <form onSubmit={enviar} noValidate className="rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-6">
-      <p className="text-sm text-muted">{t("servicioTecnico.form.ayuda")}</p>
+      <AvisoPrecio />
+      <p className="mt-5 text-sm text-muted">{t("servicioTecnico.form.ayuda")}</p>
 
       <fieldset className="mt-5" disabled={enviando}>
         <legend id="solicitud-servicios" tabIndex={-1} className="text-base font-bold text-ink">
@@ -222,6 +228,22 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
             }}
             titulo={t("servicioTecnico.form.conBackup")}
             ayuda={t("servicioTecnico.form.conBackupAyuda")}
+          />
+        </fieldset>
+      )}
+
+      {pide("OPTIMIZACION") && (
+        <fieldset className="mt-6" disabled={enviando}>
+          <legend className="mb-3 text-base font-bold text-ink">{t("servicioTecnico.form.pasoOptimizacion")}</legend>
+          <Opcion
+            tipo="checkbox"
+            elegida={conSSD}
+            onElegir={() => {
+              tocar();
+              setConSSD((s) => !s);
+            }}
+            titulo={t("servicioTecnico.form.conSSD")}
+            ayuda={t("servicioTecnico.form.conSSDAyuda")}
           />
         </fieldset>
       )}

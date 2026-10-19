@@ -2,10 +2,10 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { SolicitudDetalle } from "../../services/servicioTecnico";
 import EstadoBadge from "./EstadoBadge";
-import { IconoEquipo, IconoServicio } from "./IconosServicio";
+import ListaServicios from "./ListaServicios";
 import { formatoFecha } from "./formatoFecha";
 
-// Qué pidió el cliente y en qué estado está. Lo usan el detalle del cliente y el del admin.
+// Qué pidió el cliente y en qué estado está (detalle del admin).
 export default function DetalleServicio({
   solicitud: s,
   mostrarFecha = true,
@@ -25,59 +25,10 @@ export default function DetalleServicio({
         </Dato>
         {mostrarFecha && <Dato etiqueta={t("servicioTecnico.detalle.fecha")}>{formatoFecha(s.fecha)}</Dato>}
 
+        {/* Igual que lo ve el cliente: lista numerada, sin íconos ni etiquetas */}
         <Dato etiqueta={t("servicioTecnico.detalle.servicios", { count: s.servicios.length })} ancho>
-          <ul className="flex flex-wrap gap-2">
-            {s.servicios.map((servicio) => (
-              <li
-                key={servicio}
-                className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-alt px-3 py-1 font-semibold"
-              >
-                <span className="text-base text-primary">
-                  <IconoServicio tipo={servicio} />
-                </span>
-                {t(`servicioTecnico.tipos.${servicio}`)}
-              </li>
-            ))}
-          </ul>
+          <ListaServicios solicitud={s} />
         </Dato>
-
-        {s.tipoEquipo && (
-          <Dato etiqueta={t("servicioTecnico.detalle.equipo")}>
-            <span className="inline-flex items-center gap-2 font-semibold">
-              <span className="text-lg text-primary">
-                <IconoEquipo tipo={s.tipoEquipo} />
-              </span>
-              {t(`servicioTecnico.equipos.${s.tipoEquipo}`)}
-            </span>
-          </Dato>
-        )}
-
-        {pide("LIMPIEZA") && (
-          <Dato etiqueta={t("servicioTecnico.detalle.pastaTermica")}>
-            {s.conPastaTermica ? t("servicioTecnico.detalle.si") : t("servicioTecnico.detalle.no")}
-          </Dato>
-        )}
-
-        {pide("FORMATEO") && (
-          <Dato etiqueta={t("servicioTecnico.detalle.backup")}>
-            {s.conBackup ? t("servicioTecnico.detalle.si") : t("servicioTecnico.detalle.no")}
-          </Dato>
-        )}
-
-        {s.software.length > 0 && (
-          <Dato etiqueta={t("servicioTecnico.detalle.software")} ancho>
-            <ul className="flex flex-wrap gap-2">
-              {s.software.map((p) => (
-                <li
-                  key={p}
-                  className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-dark"
-                >
-                  {t(`servicioTecnico.software.${p}`)}
-                </li>
-              ))}
-            </ul>
-          </Dato>
-        )}
 
         <Dato
           etiqueta={t(

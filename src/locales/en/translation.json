@@ -71,12 +71,10 @@
   "servicioTecnico": {
     "titulo": "Tech Support",
     "intro": "Is your device having trouble? Tell us what is happening and we will reply here. You can follow the repair progress at any time.",
-    "sesionAntes": "You need to",
-    "sesionLink": "log in",
-    "sesionDespues": "to request tech support and see your requests.",
-    "sesionDespuesDetalle": "to see this request.",
-    "sinCuenta": "Don't have an account?",
-    "registrate": "Sign up",
+    "avisoPrecio": {
+      "titulo": "We'll tell you the price of the repair when you bring the device to the store.",
+      "detalle": "We check it first and send you a quote. We don't do any work until you confirm it."
+    },
     "errorCarga": "Your requests could not be loaded",
     "errorGenerico": "An error occurred",
     "sinSolicitudes": "You have not sent any requests yet.",
@@ -112,6 +110,9 @@
       "pasoFormateo": "Formatting",
       "conBackup": "Back up my files before formatting",
       "conBackupAyuda": "We save your photos, documents and other files and put them back on the formatted device.",
+      "pasoOptimizacion": "Make it faster",
+      "conSSD": "Replace the hard drive with an SSD",
+      "conSSDAyuda": "An SSD makes the computer start up and open programs much faster.",
       "pasoSoftware": "What do you want installed?",
       "sistemaOperativo": "Operating system",
       "soloUno": "choose only one",
@@ -148,15 +149,17 @@
     },
     "tipos": {
       "REPARACION": "Component repair",
-      "LIMPIEZA": "Cleaning",
+      "LIMPIEZA": "External cleaning",
       "FORMATEO": "Formatting",
+      "OPTIMIZACION": "Make it faster",
       "INSTALACION_SOFTWARE": "Software installation",
       "OTRO": "Other"
     },
     "tiposAyuda": {
       "REPARACION": "Something is not working on your desktop PC, laptop or printer.",
-      "LIMPIEZA": "Internal dust cleaning, with thermal paste replacement if you need it.",
+      "LIMPIEZA": "External cleaning of your device, with thermal paste replacement if you need it.",
       "FORMATEO": "System wipe and reinstall, with a backup if you need it.",
+      "OPTIMIZACION": "We optimize your computer so it runs faster, with an upgrade to an SSD if you want.",
       "INSTALACION_SOFTWARE": "Windows, Office and useful programs.",
       "OTRO": "Tell us what you need."
     },
@@ -182,14 +185,16 @@
       "loQuePediste": "What you asked for",
       "servicios": {
         "REPARACION": "Component repair",
-        "LIMPIEZA": "Internal dust cleaning",
+        "LIMPIEZA": "External cleaning of the device",
         "FORMATEO": "Device formatting",
+        "OPTIMIZACION": "Optimization so the computer runs faster",
         "INSTALACION_SOFTWARE": "Software installation",
         "OTRO": "Other service"
       },
       "equipo": "Device:",
       "pastaTermica": "Thermal paste replacement",
       "backup": "Backup of your files before formatting",
+      "ssd": "Replace the hard drive with an SSD",
       "queLeSucede": "What is wrong with the device",
       "queNecesitas": "What you need",
       "comentarios": "Your comments"
@@ -200,12 +205,6 @@
       "fecha": "Sent",
       "servicios_one": "Service",
       "servicios_other": "Services",
-      "pastaTermica": "Thermal paste replacement",
-      "backup": "Backup before formatting",
-      "si": "Yes",
-      "no": "No",
-      "equipo": "Device",
-      "software": "Programs to install",
       "sinComentarios": "No comments."
     },
     "y": "and"
@@ -518,7 +517,7 @@
       },
       "volver": "Requests",
       "noEncontrada": "The request does not exist.",
-      "cerradaSinRespuestas": "The request is finished: it can no longer be answered.",
+      "cerradaSinRespuestas": "The request is rejected or closed: change its status to answer it.",
       "cliente": "Customer",
       "nombre": "Name",
       "correo": "Email",
@@ -540,9 +539,9 @@
       "confirmarPregunta": "Move request #{{id}} from",
       "confirmarPreguntaFin": "?",
       "confirmarAviso": "The change is recorded in the history and the customer will see it in their request.",
-      "confirmarCerrar": "A closed request cannot be reopened or answered. The customer will see it in their request.",
+      "confirmarCerrar": "While it's closed it can't be answered. If needed, you can reopen it by changing its status. The customer will see it in their request.",
       "rechazarTitulo": "Reject request",
-      "confirmarRechazar": "The customer will see the reason in their request. A rejected request can't be reopened or answered.",
+      "confirmarRechazar": "The customer will see the reason in their request. While it's rejected it can't be answered; if needed, you can reopen it by changing its status.",
       "motivoRechazo": "Reason for rejection (the customer sees it)",
       "motivoPlaceholder": "E.g.: we couldn't find parts for that printer model.",
       "motivoRequerido": "Write the reason for the rejection",
