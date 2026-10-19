@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { obtenerPedidos, type Compra } from "../../services/pedidos";
 import { useSession } from "../../services/auth-client";
+import AvisoCarrito from "../../components/AvisoCarrito/AvisoCarrito";
+import { AvisoRetiroLocal } from "../../components/AvisoDomicilio/AvisoDomicilio";
 export const MisCompras = () => {
   const { t } = useTranslation();
   const [compras, setCompras] = useState<Compra[]>([]);
@@ -105,6 +107,7 @@ export const MisCompras = () => {
         </div>
       ) : (
         <div className="flex flex-col gap-6">
+          <AvisoRetiroLocal></AvisoRetiroLocal>
           {compras.map((compra) => (
             <div
               key={compra.id}

@@ -28,6 +28,7 @@ export const ContenedorCompraCarrito = ({
     try {
       const respuesta = await fetch(urlCompraCarrito, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -90,6 +91,7 @@ export const ContenedorCompraUnidad = ({
     try {
       const respuesta = await fetch(urlCompraUnidad, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

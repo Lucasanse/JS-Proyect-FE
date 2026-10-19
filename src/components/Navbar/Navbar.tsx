@@ -5,6 +5,7 @@ import jsLogo from "../../assets/js-logo.png";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../CarritoProvider/carritoContext";
 import { SwitchLenguaje } from "../SwitchLenguaje/SwitchLenguaje";
+import { CampanaNotificaciones } from "../Notificaciones/Campana";
 
 // Guardamos la clave de traducción (labelKey) en lugar del texto fijo
 const BASE_NAV_LINKS = [
@@ -72,13 +73,9 @@ export default function Navbar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-3 sm:gap-5">
-          <button
-            type="button"
-            aria-label={t("nav.notificaciones")}
-            className="relative flex cursor-pointer text-muted hover:text-primary"
-          >
-            <BellIcon />
-          </button>
+          <CampanaNotificaciones
+            idUsuario={session?.user.id}
+          ></CampanaNotificaciones>
 
           <div className="hidden items-center gap-4 md:flex">
             {isPending ? (
