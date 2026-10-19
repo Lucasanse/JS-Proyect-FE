@@ -358,5 +358,9 @@
       "pendiente": "Pending",
       "rechazado": "Rejected"
     }
+  },
+  "avisoRetiro": {
+    "titulo": "Important pickup information",
+    "descripcion": "All purchases are strictly for in-store pickup. Presenting your invoice or receipt is required when picking up your order."
   }
 }

@@ -26,6 +26,7 @@ export async function obtenerPedidos(
   signal?: AbortSignal,
 ): Promise<Compra[]> {
   const res = await fetch(`${urlCompras}/${id}`, {
+    credentials: "include",
     signal,
   });
   if (!res.ok) throw new Error(`Error ${res.status} al cargar el producto`);

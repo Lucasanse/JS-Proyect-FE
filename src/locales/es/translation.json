@@ -363,5 +363,9 @@
       "pendiente": "Pendiente",
       "rechazado": "Rechazado"
     }
+  },
+  "avisoRetiro": {
+    "titulo": "Información importante sobre tu pedido",
+    "descripcion": "Todas las compras son con retiro en el local. Para retirar es indispensable presentar la factura o comprobante de compra."
   }
 }
