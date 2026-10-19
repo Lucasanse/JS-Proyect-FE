@@ -3,6 +3,7 @@
     "productos": "Products",
     "armarPc": "Build your PC",
     "servicioTecnico": "Tech Support",
+    "misCompras": "My purchases",
     "abrirMenu": "Open menu",
     "cerrarMenu": "Close menu",
     "inicio": "Home",
@@ -345,6 +346,17 @@
     },
     "errores": {
       "falloIniciar": "Could not initiate payment. Please try again."
+    }
+  },
+  "historial": {
+    "titulo": "My Purchase History",
+    "vacio": "You don't have any purchases yet.",
+    "errorCarga": "There was an error loading your purchases. Please try again.",
+    "productos": "Products",
+    "estados": {
+      "aprobado": "Approved",
+      "pendiente": "Pending",
+      "rechazado": "Rejected"
     }
   }
 }
