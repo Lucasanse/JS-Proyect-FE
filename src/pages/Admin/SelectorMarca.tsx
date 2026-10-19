@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { crearMarca, type MarcaAdmin } from "../../services/adminProductos";
 import { claseInput } from "./estilosForm";
+import { IconoCerrar } from "./IconosAdmin";
 
 interface Props {
   id: string;
@@ -104,7 +105,7 @@ export default function SelectorMarca({
             aria-label={t("admin.cancelar")}
             className="shrink-0 cursor-pointer rounded-lg border border-line px-2.5 text-muted hover:bg-surface-alt hover:text-ink"
           >
-            ✕
+            <IconoCerrar />
           </button>
         </div>
         {errorNueva && (

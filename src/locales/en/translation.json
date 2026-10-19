@@ -285,7 +285,52 @@
       "atributosDe": "{{tipo}} technical attributes",
       "atributosAyuda": "fill in the ones you know",
       "numeroInvalido": "It must be a number",
-      "ej": "E.g."
+      "ej": "E.g.",
+      "fotoAlGuardar": "Photo from the AI analysis: it's uploaded when you save the product."
+    },
+    "ia": {
+      "titulo": "Autofill with AI",
+      "agregarFotos": "Add photos",
+      "usarCelular": "Use phone",
+      "cerrarQr": "Close QR",
+      "quitarFoto": "Remove photo",
+      "errorAnalisis": "This photo couldn't be analyzed",
+      "qrAlt": "QR code to send photos from a phone",
+      "qrAyuda": "Scan the code with your phone's camera. The phone must be on the same Wi‑Fi as this computer.",
+      "qrSinIp": "This computer's network IP couldn't be detected. Set IP_LOCAL in the backend .env file.",
+      "qrVencido": "The QR code expired. Create a new one with \"Use phone\".",
+      "fotosRecibidas": "Photos received from the phone: {{cantidad}}",
+      "marcaNueva": "The AI detected the brand \"{{marca}}\", which isn't added yet.",
+      "agregarMarca": "Add \"{{marca}}\"",
+      "ignorar": "Ignore",
+      "ayudaLote": "Add 1 to {{max}} photos, each of a different product (from the computer or your phone). The AI analyzes each photo separately and then you complete the products one by one. You enter the price and stock.",
+      "loteLleno": "A batch upload takes up to {{max}} photos (one per product). Remove one to add another.",
+      "analizarLote_one": "Analyze {{count}} product with AI",
+      "analizarLote_other": "Analyze {{count}} products with AI"
+    },
+    "lote": {
+      "titulo": "Batch upload",
+      "tituloModal": "New product {{numero}} of {{total}}",
+      "resumen": "Saved: {{guardados}} of {{total}}",
+      "analizados": "Analyzed by the AI: {{analizados}} of {{total}}",
+      "producto": "Product {{numero}}",
+      "completando": "Product {{numero}} of {{total}}",
+      "estado": {
+        "esperando": "Waiting",
+        "analizando": "Analyzing",
+        "listo": "To review",
+        "error": "Error",
+        "guardado": "Saved",
+        "descartado": "Discarded"
+      },
+      "ayudaEsperando": "This photo is analyzed after the previous ones. You can fill in the details by hand if you want.",
+      "ayudaAnalizando": "The AI is analyzing this photo. Meanwhile you can enter the price and stock.",
+      "ayudaListo": "Check the details the AI filled in, enter the price and stock, and save to move on to the next one.",
+      "reintentar": "Retry analysis",
+      "descartar": "Discard this product",
+      "crearYSeguir": "Create and go to the next one",
+      "confirmarCerrar_one": "{{count}} product in the batch isn't saved. If you close, it will be lost. Close anyway?",
+      "confirmarCerrar_other": "{{count}} products in the batch aren't saved. If you close, they will be lost. Close anyway?"
     },
     "eliminar": {
       "titulo": "Delete product",
@@ -318,7 +363,19 @@
     },
     "esComponente": "PC component"
   },
-
+  "captura": {
+    "titulo": "Product photos",
+    "ayuda": "Take one photo of each product (the product, its box or its label). Each photo is sent to the computer as soon as you take it.",
+    "enviadas": "Photos sent: {{cantidad}} of {{max}}",
+    "sacarFoto": "Take photo",
+    "galeria": "Choose from gallery",
+    "enviando_one": "Sending {{count}} photo...",
+    "enviando_other": "Sending {{count}} photos...",
+    "listo": "Sent. You can take another one or continue on the computer.",
+    "maxFotos": "You can send up to {{max}} photos in total",
+    "vencido": "This link is invalid or has expired. Create a new QR code from the computer.",
+    "error": "The photos couldn't be sent. Please try again."
+  },
   "checkout": {
     "exito": {
       "titulo": "Thank you for your purchase!",
