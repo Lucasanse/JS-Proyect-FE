@@ -3,6 +3,7 @@
     "productos": "Productos",
     "armarPc": "Armá tu PC",
     "servicioTecnico": "Servicio técnico",
+    "misCompras": "Mis compras",
     "abrirMenu": "Abrir menú",
     "cerrarMenu": "Cerrar menú",
     "inicio": "Inicio",
@@ -489,7 +490,8 @@
       "pronto": "Pronto",
       "prontoAyuda": "Esta sección todavía no está disponible",
       "inicio": "Inicio",
-      "usuarios": "Usuarios"
+      "usuarios": "Usuarios",
+      "misCompras": "Mis compras"
     },
     "inicio": {
       "titulo": "¿Qué querés hacer?",
@@ -565,5 +567,54 @@
     "maxFotos": "Se pueden enviar hasta {{max}} fotos en total",
     "vencido": "Este enlace no es válido o ya venció. Generá un código QR nuevo desde la computadora.",
     "error": "No se pudieron enviar las fotos. Probá de nuevo."
+  },
+  "estadoPago": {
+    "noInfo": "No hay información de pago",
+    "volver": "Volver a la tienda"
+  },
+
+  "checkout": {
+    "exito": {
+      "titulo": "¡Gracias por tu compra!",
+      "descripcion": "Tu pago fue procesado con éxito y tu pedido ya está siendo preparado.",
+      "comprobante": "Comprobante",
+      "orden": "Orden",
+      "botonSeguir": "Seguir comprando"
+    },
+    "pendiente": {
+      "titulo": "Pago pendiente",
+      "descripcion": "Estamos esperando la confirmación del pago. Si abonaste en efectivo, puede demorar unas horas.",
+      "comprobante": "Comprobante",
+      "botonVolver": "Volver al inicio"
+    },
+    "rechazado": {
+      "titulo": "Pago rechazado",
+      "descripcion": "No pudimos procesar el cobro. Por favor, intentá nuevamente con otro medio de pago.",
+      "botonReintentar": "Reintentar compra"
+    },
+    "boton": {
+      "pagarMP": "Pagar con Mercado Pago",
+      "confirmarPedido": "Confirmar pedido",
+      "comprarAhora": "Comprar ahora",
+      "cargando": "Cargando link seguro..."
+    },
+    "errores": {
+      "falloIniciar": "No pudimos iniciar el pago. Por favor, intentá de nuevo."
+    }
+  },
+  "historial": {
+    "titulo": "Mi Historial de Compras",
+    "vacio": "Aún no tenés compras registradas.",
+    "errorCarga": "Hubo un error al cargar tus compras. Por favor, intentá nuevamente.",
+    "productos": "Productos",
+    "estados": {
+      "aprobado": "Aprobado",
+      "pendiente": "Pendiente",
+      "rechazado": "Rechazado"
+    }
+  },
+  "avisoRetiro": {
+    "titulo": "Información importante sobre tu pedido",
+    "descripcion": "Todas las compras son con retiro en el local. Para retirar es indispensable presentar la factura o comprobante de compra."
   }
 }

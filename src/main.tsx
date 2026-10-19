@@ -18,6 +18,8 @@ import AdminLayout from "./layouts/AdminLayout.tsx";
 import AdminServicioTecnico from "./pages/Admin/AdminServicioTecnico.tsx";
 import AdminSolicitudDetalle from "./pages/Admin/AdminSolicitudDetalle.tsx";
 import Captura from "./pages/Captura/Captura.tsx";
+import { PantallaEstadoPago } from "./pages/EstadoPago/EstadoPago.tsx";
+import { MisCompras } from "./pages/MisCompras/MisCompras.tsx";
 
 // Todas las rutas hijas se muestran dentro de MainLayout (Navbar + Footer)
 const router = createBrowserRouter([
@@ -37,6 +39,8 @@ const router = createBrowserRouter([
       { path: "servicio-tecnico", element: <ServicioTecnico /> },
       { path: "servicio-tecnico/:id", element: <DetalleSolicitud /> },
       { path: "detalleProducto/:id", element: <DetalleProducto /> },
+      { path: "checkout/:estado", element: <PantallaEstadoPago /> },
+      { path: "misCompras", element: <MisCompras /> },
       // Panel de administración (solo rol ADMIN, lo controla AdminLayout).
       // Cada sección nueva va como ruta hija y en el menú de AdminLayout.
       {
