@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../../components/CarritoProvider/carritoContext";
 import type { ItemCarrito } from "../../services/carrito";
+import { ContenedorCompraCarrito } from "../../components/Comprar/ComprarUnidad";
 
 // Por ahora todo se muestra en pesos. Para sumar dólares, agregar otra fila
 // en el resumen con su propio formato (ej. currency: "USD") y la cotización.
@@ -20,7 +21,11 @@ export default function Carrito() {
   const { carrito, cargando } = useCarrito();
 
   if (isPending || cargando) {
-    return <Contenedor><p className="text-muted">{t("carrito.cargando")}</p></Contenedor>;
+    return (
+      <Contenedor>
+        <p className="text-muted">{t("carrito.cargando")}</p>
+      </Contenedor>
+    );
   }
 
   if (!session) {
@@ -28,7 +33,10 @@ export default function Carrito() {
       <Contenedor>
         <Aviso>
           {t("carrito.sesionAntes")}{" "}
-          <Link to="/login" className="font-semibold text-primary hover:underline">
+          <Link
+            to="/login"
+            className="font-semibold text-primary hover:underline"
+          >
             {t("carrito.sesionLink")}
           </Link>{" "}
           {t("carrito.sesionDespues")}
@@ -42,7 +50,10 @@ export default function Carrito() {
       <Contenedor>
         <Aviso>
           {t("carrito.vacio")}{" "}
-          <Link to="/productos" className="font-semibold text-primary hover:underline">
+          <Link
+            to="/productos"
+            className="font-semibold text-primary hover:underline"
+          >
             {t("carrito.verProductos")}
           </Link>
         </Aviso>
@@ -70,7 +81,9 @@ function Contenedor({ children }: { children: React.ReactNode }) {
   return (
     <section className="w-full flex-1 bg-surface-alt">
       <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="mb-6 text-3xl font-bold text-ink">{t("carrito.titulo")}</h1>
+        <h1 className="mb-6 text-3xl font-bold text-ink">
+          {t("carrito.titulo")}
+        </h1>
         {children}
       </div>
     </section>
@@ -78,7 +91,11 @@ function Contenedor({ children }: { children: React.ReactNode }) {
 }
 
 function Aviso({ children }: { children: React.ReactNode }) {
-  return <p className="rounded-xl border border-line bg-surface p-6 text-muted shadow-sm">{children}</p>;
+  return (
+    <p className="rounded-xl border border-line bg-surface p-6 text-muted shadow-sm">
+      {children}
+    </p>
+  );
 }
 
 function FilaCarrito({ item }: { item: ItemCarrito }) {
@@ -117,7 +134,10 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
   // Se guarda con el botón Confirmar o con Enter. La cantidad queda entre 1 y el stock.
   const confirmarCantidad = () => {
     const numero = Number(valor);
-    const nueva = Math.min(Math.max(Number.isNaN(numero) ? cantidad : numero, 1), Math.max(producto.stock, 1));
+    const nueva = Math.min(
+      Math.max(Number.isNaN(numero) ? cantidad : numero, 1),
+      Math.max(producto.stock, 1),
+    );
     if (nueva === cantidad) setValor(String(cantidad));
     else ejecutar(() => cambiarCantidad(producto.id, nueva));
   };
@@ -127,17 +147,29 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
       <div className="flex items-center gap-4">
         <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-surface">
           {producto.imagenUrl ? (
-            <img src={producto.imagenUrl} alt={producto.nombre} className="h-full w-full object-contain p-1" />
+            <img
+              src={producto.imagenUrl}
+              alt={producto.nombre}
+              className="h-full w-full object-contain p-1"
+            />
           ) : (
             <span className="text-xs text-muted">{t("carrito.sinImagen")}</span>
           )}
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <p className="line-clamp-2 text-[15px] font-medium text-ink">{producto.nombre}</p>
-          <p className={`flex items-center gap-1.5 text-sm ${sinStock || superaStock ? "text-primary" : "text-secondary-dark"}`}>
+          <p className="line-clamp-2 text-[15px] font-medium text-ink">
+            {producto.nombre}
+          </p>
+          <p
+            className={`flex items-center gap-1.5 text-sm ${sinStock || superaStock ? "text-primary" : "text-secondary-dark"}`}
+          >
             <span className="h-2 w-2 rounded-full bg-current" />
-            {sinStock ? t("carrito.sinStock") : superaStock ? t("carrito.soloQuedan", { count: producto.stock }) : t("carrito.stockDisponible")}
+            {sinStock
+              ? t("carrito.sinStock")
+              : superaStock
+                ? t("carrito.soloQuedan", { count: producto.stock })
+                : t("carrito.stockDisponible")}
           </p>
         </div>
 
@@ -180,13 +212,19 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
         </div>
 
         <div className="hidden w-36 flex-col items-end sm:flex">
-          <span className="text-sm text-muted">{formatoPrecio.format(producto.precio)}</span>
-          <span className="text-lg font-bold text-ink">{formatoPrecio.format(subtotal)}</span>
+          <span className="text-sm text-muted">
+            {formatoPrecio.format(producto.precio)}
+          </span>
+          <span className="text-lg font-bold text-ink">
+            {formatoPrecio.format(subtotal)}
+          </span>
         </div>
       </div>
 
       {/* En mobile el precio va debajo */}
-      <p className="text-right text-sm font-bold text-ink sm:hidden">{formatoPrecio.format(subtotal)}</p>
+      <p className="text-right text-sm font-bold text-ink sm:hidden">
+        {formatoPrecio.format(subtotal)}
+      </p>
       {error && <p className="text-xs text-primary">{error}</p>}
     </li>
   );
@@ -196,10 +234,13 @@ function Resumen() {
   const { t } = useTranslation();
   const { carrito, vaciar } = useCarrito();
   const [error, setError] = useState("");
+  const { data: session } = useSession();
   if (!carrito) return null;
 
   // No se puede confirmar si algún producto quedó sin stock suficiente
-  const hayProblemasDeStock = carrito.items.some((i) => i.cantidad > i.producto.stock);
+  const hayProblemasDeStock = carrito.items.some(
+    (i) => i.cantidad > i.producto.stock,
+  );
 
   const eliminarPedido = async () => {
     if (!window.confirm(t("carrito.confirmarEliminar"))) return;
@@ -218,11 +259,17 @@ function Resumen() {
       <dl className="divide-y divide-line text-[15px]">
         <div className="flex justify-between py-3">
           <dt className="text-ink">{t("carrito.subtotal")}</dt>
-          <dd className="font-semibold text-ink">{formatoPrecio.format(carrito.total)}</dd>
+          <dd className="font-semibold text-ink">
+            {formatoPrecio.format(carrito.total)}
+          </dd>
         </div>
         <div className="flex justify-between py-3">
-          <dt className="font-bold text-ink">{t("carrito.totalPagar", { moneda: MONEDA })}</dt>
-          <dd className="font-bold text-ink">{formatoPrecio.format(carrito.total)}</dd>
+          <dt className="font-bold text-ink">
+            {t("carrito.totalPagar", { moneda: MONEDA })}
+          </dt>
+          <dd className="font-bold text-ink">
+            {formatoPrecio.format(carrito.total)}
+          </dd>
         </div>
       </dl>
 
@@ -232,13 +279,11 @@ function Resumen() {
       {error && <p className="text-sm text-primary">{error}</p>}
 
       <div className="flex flex-col gap-2">
-        <button
-          type="button"
+        <ContenedorCompraCarrito
+          idUsuario={session?.user.id}
           disabled={hayProblemasDeStock}
-          className="h-11 cursor-pointer rounded-lg bg-primary font-semibold text-surface transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
-        >
-          {t("carrito.confirmarPedido")}
-        </button>
+        ></ContenedorCompraCarrito>
+
         <button
           type="button"
           onClick={eliminarPedido}
@@ -253,7 +298,16 @@ function Resumen() {
 
 function CheckIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M5 12l5 5L20 7" />
     </svg>
   );

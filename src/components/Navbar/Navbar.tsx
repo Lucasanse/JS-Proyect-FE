@@ -5,9 +5,10 @@ import jsLogo from "../../assets/js-logo.png";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../CarritoProvider/carritoContext";
 import { SwitchLenguaje } from "../SwitchLenguaje/SwitchLenguaje";
+import { CampanaNotificaciones } from "../Notificaciones/Campana";
 
 // Guardamos la clave de traducción (labelKey) en lugar del texto fijo
-const NAV_LINKS = [
+const BASE_NAV_LINKS = [
   { to: "/productos", labelKey: "nav.productos" },
   { to: "/armar-pc", labelKey: "nav.armarPc" },
   { to: "/servicio-tecnico", labelKey: "nav.servicioTecnico" },
@@ -28,7 +29,13 @@ export default function Navbar() {
   const { carrito } = useCarrito();
   const cantidadCarrito = carrito?.cantidadTotal ?? 0;
   const esAdmin = session?.user.rol === "ADMIN";
-
+  const navLinks = [
+    ...BASE_NAV_LINKS,
+    // Agregamos "Mis compras" solo si el usuario está autenticado
+    ...(session?.user?.id
+      ? [{ to: `/miscompras`, labelKey: "nav.misCompras" }]
+      : []),
+  ];
   return (
     <header className="sticky top-0 z-50 w-full border-b-4 border-primary bg-surface shadow-sm">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-2.5 sm:px-6 lg:px-8">
@@ -53,7 +60,7 @@ export default function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((l) => (
+          {navLinks.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass}>
               {t(l.labelKey)}
             </NavLink>
@@ -66,13 +73,9 @@ export default function Navbar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-3 sm:gap-5">
-          <button
-            type="button"
-            aria-label={t("nav.notificaciones")}
-            className="relative flex cursor-pointer text-muted hover:text-primary"
-          >
-            <BellIcon />
-          </button>
+          <CampanaNotificaciones
+            idUsuario={session?.user.id}
+          ></CampanaNotificaciones>
 
           <div className="hidden items-center gap-4 md:flex">
             {isPending ? (
@@ -122,7 +125,7 @@ export default function Navbar() {
       {/* Menú desplegable mobile */}
       {open && (
         <nav className="flex flex-col gap-1 border-t border-line px-4 py-3 md:hidden">
-          {NAV_LINKS.map((l) => (
+          {navLinks.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
@@ -145,7 +148,9 @@ export default function Navbar() {
           {/* Sesión (en mobile vive dentro del menú) */}
           <div className="mt-2 flex flex-col gap-2 border-t border-line pt-3">
             {isPending ? (
-              <span className="px-3 text-sm text-muted">{t("nav.cargando")}</span>
+              <span className="px-3 text-sm text-muted">
+                {t("nav.cargando")}
+              </span>
             ) : session ? (
               <>
                 <span className="px-3 text-sm font-medium text-ink">
