@@ -8,3 +8,7 @@ export const urlProductoDetalle = `${BASE_URL}/api/productoDetalle`;
 export const urlCarrito = `${BASE_URL}/api/carrito`;
 export const urlAdmin = `${BASE_URL}/api/admin`;
 export const urlAdminProductos = `${urlAdmin}/productos`;
+export const urlCompraUnidad = `${BASE_URL}/api/checkout/unidad`;
+export const urlCompraCarrito = `${BASE_URL}/api/checkout/carrito`;
+export const urlCompras = `${BASE_URL}/api/compras`;
+export const urlNotificaciones = `${BASE_URL}/api/notificaciones`;
