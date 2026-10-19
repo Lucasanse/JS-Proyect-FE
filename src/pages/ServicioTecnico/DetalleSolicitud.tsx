@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSession } from "../../services/auth-client";
 import { ApiError } from "../../services/adminProductos";
@@ -13,6 +13,8 @@ import ErrorCarga from "../../components/ServicioTecnico/ErrorCarga";
 import { COLORES_ESTADO } from "../../components/ServicioTecnico/coloresEstado";
 import { tituloSolicitud } from "../../components/ServicioTecnico/textosSolicitud";
 import { formatoFecha } from "../../components/ServicioTecnico/formatoFecha";
+import ListaServicios from "../../components/ServicioTecnico/ListaServicios";
+import AvisoPrecio from "../../components/ServicioTecnico/AvisoPrecio";
 
 // /servicio-tecnico/:id: lo que ve el cliente de una solicitud, todo como texto y listas
 // (sin tarjetas ni botones): estado, respuestas del comercio, lo que se va a hacer y sus comentarios.
@@ -53,15 +55,8 @@ export default function DetalleSolicitud() {
   if (isPending || (session && cargando && !solicitud && !error)) {
     contenido = <p className="mt-6 text-muted">{t("nav.cargando")}</p>;
   } else if (!session) {
-    contenido = (
-      <p className="mt-6 text-ink">
-        {t("servicioTecnico.sesionAntes")}{" "}
-        <Link to="/login" className="font-semibold text-primary hover:underline">
-          {t("servicioTecnico.sesionLink")}
-        </Link>{" "}
-        {t("servicioTecnico.sesionDespuesDetalle")}
-      </p>
-    );
+    // Sin sesión se va directo al login
+    return <Navigate to="/login" replace />;
   } else if (error?.noExiste) {
     contenido = <p className="mt-6 text-muted">{t("servicioTecnico.noEncontrada")}</p>;
   } else if (error && !solicitud) {
@@ -107,6 +102,9 @@ function Detalle({ solicitud: s }: { solicitud: SolicitudDetalle }) {
         {s.estado === "RECHAZADA" && <p className="mt-1 text-sm text-muted">{t("servicioTecnico.rechazadaAviso")}</p>}
       </header>
 
+      {/* Mientras no esté terminada, se recuerda que el precio se informa al llevar el equipo */}
+      {!["RESUELTA", "RECHAZADA", "CERRADA"].includes(s.estado) && <AvisoPrecio className="mt-5" />}
+
       {respuestas.length > 0 ? (
         <RespuestasComercio respuestas={respuestas} rechazada={s.estado === "RECHAZADA"} />
       ) : (
@@ -125,24 +123,7 @@ function Detalle({ solicitud: s }: { solicitud: SolicitudDetalle }) {
           s.estado === "RECHAZADA" ? t("servicioTecnico.lista.loQuePediste") : t("servicioTecnico.lista.queVamosAHacer")
         }
       >
-        <ol className="list-decimal space-y-1 pl-5">
-          {s.servicios.map((servicio) => (
-            <li key={servicio}>
-              {t(`servicioTecnico.lista.servicios.${servicio}`)}
-              <Detalles>
-                {servicio === "REPARACION" && s.tipoEquipo && (
-                  <li>
-                    {t("servicioTecnico.lista.equipo")} {t(`servicioTecnico.equipos.${s.tipoEquipo}`)}
-                  </li>
-                )}
-                {servicio === "LIMPIEZA" && s.conPastaTermica && <li>{t("servicioTecnico.lista.pastaTermica")}</li>}
-                {servicio === "FORMATEO" && s.conBackup && <li>{t("servicioTecnico.lista.backup")}</li>}
-                {servicio === "INSTALACION_SOFTWARE" &&
-                  s.software.map((p) => <li key={p}>{t(`servicioTecnico.software.${p}`)}</li>)}
-              </Detalles>
-            </li>
-          ))}
-        </ol>
+        <ListaServicios solicitud={s} />
       </Seccion>
 
       {s.descripcion && (
@@ -170,13 +151,6 @@ function Seccion({ titulo, children }: { titulo: string; children: ReactNode }) 
       <div className="text-ink">{children}</div>
     </section>
   );
-}
-
-// Sublista de un servicio (pasta térmica, backup, programas...). Si no tiene nada no se muestra.
-function Detalles({ children }: { children: ReactNode }) {
-  const items = (Array.isArray(children) ? children.flat() : [children]).filter(Boolean);
-  if (items.length === 0) return null;
-  return <ul className="list-[circle] pl-5 text-muted">{children}</ul>;
 }
 
 // Lo que respondió el comercio, destacado con el color de la marca para que se vea primero.
