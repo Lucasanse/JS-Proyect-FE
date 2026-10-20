@@ -1,5 +1,10 @@
 import type { ReactNode } from "react";
-import { IconoCaja, IconoHerramienta, IconoRecibo, IconoUsuarios } from "./IconosAdmin";
+import {
+  IconoCaja,
+  IconoHerramienta,
+  IconoRecibo,
+  IconoUsuarios,
+} from "./IconosAdmin";
 
 // Funcionalidades del panel de administración. Las usan el menú (AdminLayout)
 // y la página de inicio "¿Qué querés hacer?" (AdminInicio).
@@ -33,7 +38,7 @@ export const SECCIONES_ADMIN: SeccionAdmin[] = [
     tituloKey: "admin.menu.ventas",
     descripcionKey: "admin.inicio.ventas",
     icono: <IconoRecibo />,
-    disponible: false,
+    disponible: true,
   },
   {
     to: "usuarios",
