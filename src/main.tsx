@@ -20,6 +20,8 @@ import AdminSolicitudDetalle from "./pages/Admin/AdminSolicitudDetalle.tsx";
 import Captura from "./pages/Captura/Captura.tsx";
 import { PantallaEstadoPago } from "./pages/EstadoPago/EstadoPago.tsx";
 import { MisCompras } from "./pages/MisCompras/MisCompras.tsx";
+import { VentasAdmin } from "./pages/Admin/AdminPedidos.tsx";
+import { VentaDetalleAdmin } from "./pages/Admin/VentaDetalleAdmin.tsx";
 
 // Todas las rutas hijas se muestran dentro de MainLayout (Navbar + Footer)
 const router = createBrowserRouter([
@@ -27,6 +29,7 @@ const router = createBrowserRouter([
   { path: "/captura/:token", element: <Captura /> },
   {
     path: "/",
+
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },
@@ -51,6 +54,8 @@ const router = createBrowserRouter([
           { path: "productos", element: <AdminProductos /> },
           { path: "servicio-tecnico", element: <AdminServicioTecnico /> },
           { path: "servicio-tecnico/:id", element: <AdminSolicitudDetalle /> },
+          { path: "ventas", element: <VentasAdmin /> },
+          { path: "ventas/:id", element: <VentaDetalleAdmin /> },
         ],
       },
     ],
