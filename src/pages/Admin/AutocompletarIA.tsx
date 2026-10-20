@@ -5,21 +5,27 @@ import { ApiError } from "../../services/adminProductos";
 import {
   MAX_FOTOS_LOTE,
   cancelarCaptura,
+  cerrarCaptura,
   crearCaptura,
   descargarFotoCaptura,
   estadoCaptura,
   urlParaCelular,
   type CapturaCreada,
+  type OrigenFoto,
 } from "../../services/analisisIA";
 import { IconoCerrar } from "./IconosAdmin";
+import type { FotoLote } from "./lote";
 
 interface Props {
-  onAnalizarLote: (fotos: File[]) => void; // una foto por producto
+  // Una foto por producto. tokenCaptura: el QR sigue abierto; pasa a ser responsabilidad
+  // del formulario, que lo cierra al terminar (el análisis usa las fotos que guarda el BE).
+  onAnalizarLote: (fotos: FotoLote[], tokenCaptura: string | null) => void;
 }
 
 interface Foto {
   id: number;
   archivo: File;
+  origen?: OrigenFoto; // si llegó del celular, dónde la tiene el BE
   vista: string; // object URL para la miniatura
 }
 
@@ -40,12 +46,14 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
   const [captura, setCaptura] = useState<CapturaCreada | null>(null);
   const [qr, setQr] = useState({ url: "", imagen: "" });
   const [fotosCelular, setFotosCelular] = useState(0);
+  const [iniciando, setIniciando] = useState(false); // cerrando el QR antes de analizar
 
   // Copia de "fotos" que se actualiza al instante (el estado tarda un render): la usan
   // la descarga de fotos del celular, que corre fuera del render, y la limpieza final.
   const fotosActuales = useRef<Foto[]>([]);
   const siguienteId = useRef(0);
   const descargadas = useRef(0); // fotos del celular ya traídas a la computadora
+  const entregada = useRef(false); // la captura pasó al formulario: no hay que cancelarla acá
 
   const actualizarFotos = (nuevas: Foto[]) => {
     fotosActuales.current = nuevas;
@@ -61,13 +69,13 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
   );
 
   const agregar = useCallback(
-    (archivos: File[]) => {
+    (archivos: File[], origen?: OrigenFoto) => {
       const lugar = MAX_FOTOS_LOTE - fotosActuales.current.length;
       if (archivos.length > lugar) setError(t("admin.ia.loteLleno", { max: MAX_FOTOS_LOTE }));
       else setError("");
       const nuevas = archivos
         .slice(0, Math.max(lugar, 0))
-        .map((archivo) => ({ id: siguienteId.current++, archivo, vista: URL.createObjectURL(archivo) }));
+        .map((archivo) => ({ id: siguienteId.current++, archivo, origen, vista: URL.createObjectURL(archivo) }));
       if (nuevas.length === 0) return;
       fotosActuales.current = [...fotosActuales.current, ...nuevas];
       setFotos(fotosActuales.current);
@@ -81,6 +89,25 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
     setError("");
   };
 
+  // Trae las fotos del celular que todavía no se descargaron, hasta "total". Las llamadas
+  // se encolan: el polling y el cierre final pueden coincidir sin bajar una foto dos veces.
+  const cola = useRef<Promise<void>>(Promise.resolve());
+  const traerPendientes = useCallback(
+    (token: string, total: number, signal?: AbortSignal) => {
+      const tarea = cola.current.then(async () => {
+        while (descargadas.current < total) {
+          const indice = descargadas.current;
+          const archivo = await descargarFotoCaptura(token, indice, signal);
+          descargadas.current++;
+          agregar([archivo], { token, indice });
+        }
+      });
+      cola.current = tarea.catch(() => {});
+      return tarea;
+    },
+    [agregar],
+  );
+
   // Mientras se muestra el QR, cada 2 segundos se consulta si llegaron fotos del celular
   // y se descargan las nuevas para mostrarlas acá
   useEffect(() => {
@@ -93,11 +120,7 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
       try {
         const estado = await estadoCaptura(captura.token, controller.signal);
         setFotosCelular(estado.fotos);
-        while (descargadas.current < estado.fotos) {
-          const archivo = await descargarFotoCaptura(captura.token, descargadas.current, controller.signal);
-          descargadas.current++;
-          agregar([archivo]);
-        }
+        await traerPendientes(captura.token, estado.fotos, controller.signal);
       } catch (e) {
         if (controller.signal.aborted) return;
         if (e instanceof ApiError && e.status === 404) {
@@ -113,13 +136,13 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
       clearInterval(intervalo);
       controller.abort();
     };
-  }, [captura, agregar, t]);
+  }, [captura, traerPendientes, t]);
 
   // Al cerrar el QR (o el formulario) se descarta la captura en el BE
   useEffect(() => {
     if (!captura) return;
     return () => {
-      cancelarCaptura(captura.token).catch(() => {});
+      if (!entregada.current) cancelarCaptura(captura.token).catch(() => {});
     };
   }, [captura]);
 
@@ -145,6 +168,28 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
     } finally {
       setCreandoQr(false);
     }
+  };
+
+  // Si hay un QR abierto, primero se lo cierra para que el celular no siga mandando fotos
+  // que nadie recibiría, y se bajan las que llegaron desde la última consulta. Después el
+  // lote pasa al formulario, que se queda con la captura para analizar las fotos del celular.
+  const iniciarAnalisis = async () => {
+    setIniciando(true);
+    let tokenCaptura: string | null = null;
+    if (captura) {
+      try {
+        const estado = await cerrarCaptura(captura.token);
+        await traerPendientes(captura.token, estado.fotos);
+        tokenCaptura = captura.token;
+      } catch {
+        // El QR venció o se cortó la conexión: se analiza lo que ya está en la grilla
+      }
+    }
+    entregada.current = tokenCaptura !== null;
+    onAnalizarLote(
+      fotosActuales.current.map((f) => ({ archivo: f.archivo, origen: f.origen })),
+      tokenCaptura,
+    );
   };
 
   const llena = fotos.length >= MAX_FOTOS_LOTE;
@@ -225,8 +270,9 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
       {fotos.length > 0 && (
         <button
           type="button"
-          onClick={() => onAnalizarLote(fotos.map((f) => f.archivo))}
-          className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+          onClick={iniciarAnalisis}
+          disabled={iniciando}
+          className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
         >
           {t("admin.ia.analizarLote", { count: fotos.length })}
         </button>

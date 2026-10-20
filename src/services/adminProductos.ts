@@ -77,11 +77,13 @@ export const MAX_MB_IMAGEN = 5;
 export class ApiError extends Error {
   status: number;
   detalles: { path: (string | number)[]; message: string }[];
+  reintentarEn?: number; // en un 429, segundos que conviene esperar para volver a intentar
 
-  constructor(status: number, message: string, detalles: ApiError["detalles"] = []) {
+  constructor(status: number, message: string, detalles: ApiError["detalles"] = [], reintentarEn?: number) {
     super(message);
     this.status = status;
     this.detalles = detalles;
+    this.reintentarEn = reintentarEn;
   }
 }
 
@@ -96,7 +98,7 @@ export async function pedir<T>(path: string, init: RequestInit = {}, base = urlA
   if (res.status === 204) return undefined as T;
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new ApiError(res.status, data.error || `Error ${res.status}`, data.detalles);
+  if (!res.ok) throw new ApiError(res.status, data.error || `Error ${res.status}`, data.detalles, data.reintentarEnSegundos);
   return data;
 }
 

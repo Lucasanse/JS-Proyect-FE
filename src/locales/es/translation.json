@@ -455,6 +455,7 @@
       "estado": {
         "esperando": "En espera",
         "analizando": "Analizando",
+        "pausado": "Esperando a la IA",
         "listo": "Para revisar",
         "error": "Error",
         "guardado": "Guardado",
@@ -462,6 +463,7 @@
       },
       "ayudaEsperando": "Esta foto se analiza después de las anteriores. Si querés, podés ir completando los datos a mano.",
       "ayudaAnalizando": "La IA está analizando esta foto. Mientras tanto podés cargar el precio y el stock.",
+      "ayudaPausado": "La IA alcanzó su límite de uso. El análisis sigue solo en unos segundos; mientras tanto podés completar los datos a mano.",
       "ayudaListo": "Revisá los datos que completó la IA, cargá el precio y el stock, y guardá para pasar al siguiente.",
       "reintentar": "Reintentar análisis",
       "descartar": "Descartar este producto",
@@ -564,6 +566,7 @@
     "enviando_other": "Enviando {{count}} fotos...",
     "listo": "Enviada. Podés sacar otra o seguir desde la computadora.",
     "maxFotos": "Se pueden enviar hasta {{max}} fotos en total",
+    "cerrada": "El lote ya se envió a la computadora. Para cargar más productos, generá un QR nuevo desde la computadora.",
     "vencido": "Este enlace no es válido o ya venció. Generá un código QR nuevo desde la computadora.",
     "error": "No se pudieron enviar las fotos. Probá de nuevo."
   },

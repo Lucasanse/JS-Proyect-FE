@@ -3,6 +3,11 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 import { enviarFotosCaptura, infoCaptura, type EstadoCaptura } from "../../services/analisisIA";
+import { ApiError } from "../../services/adminProductos";
+
+// Mientras el lote no se haya mandado a analizar, cada tanto se consulta si la computadora
+// ya cerró el envío, así el celular no sigue sacando fotos que nadie va a recibir
+const CONSULTA_CADA_MS = 3000;
 
 // Página que abre el celular al escanear el QR del formulario de productos.
 // No necesita sesión: el token de la URL hace de permiso y vence a los pocos minutos.
@@ -31,7 +36,26 @@ export default function Captura() {
     return () => controller.abort();
   }, [token]);
 
+  const abierta = estado !== null && !estado.cerrada;
+  useEffect(() => {
+    if (!abierta) return;
+    const controller = new AbortController();
+    const intervalo = setInterval(() => {
+      infoCaptura(token, controller.signal)
+        .then(setEstado)
+        .catch((e) => {
+          // Un corte de red momentáneo no es un enlace vencido: solo cuenta el 404
+          if (!controller.signal.aborted && e instanceof ApiError && e.status === 404) setVencido(true);
+        });
+    }, CONSULTA_CADA_MS);
+    return () => {
+      clearInterval(intervalo);
+      controller.abort();
+    };
+  }, [token, abierta]);
+
   const quedan = estado ? estado.maxFotos - estado.fotos : 0;
+  const bloqueado = !abierta || quedan <= 0 || enviando > 0;
 
   const enviar = async (lista: FileList | null) => {
     let archivos = [...(lista ?? [])].filter((a) => a.type.startsWith("image/"));
@@ -50,6 +74,8 @@ export default function Captura() {
       setEnviadas((prev) => [...prev, ...archivos.map((a) => URL.createObjectURL(a))]);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("captura.error"));
+      // Si fue un 409 el lote se cerró; si falló una tanda, ya pudieron llegar algunas fotos
+      infoCaptura(token).then(setEstado).catch(() => {});
     } finally {
       setEnviando(0);
     }
@@ -78,11 +104,17 @@ export default function Captura() {
               {t("captura.enviadas", { cantidad: estado.fotos, max: estado.maxFotos })}
             </p>
 
+            {estado.cerrada && (
+              <p role="status" className="m-0 rounded-xl bg-green-50 p-3 text-center text-green-800">
+                ✓ {t("captura.cerrada")}
+              </p>
+            )}
+
             <div className="space-y-3">
               <button
                 type="button"
                 onClick={() => inputCamara.current?.click()}
-                disabled={quedan <= 0 || enviando > 0}
+                disabled={bloqueado}
                 className={`${boton} bg-primary text-white hover:bg-primary-dark`}
               >
                 {t("captura.sacarFoto")}
@@ -90,7 +122,7 @@ export default function Captura() {
               <button
                 type="button"
                 onClick={() => inputGaleria.current?.click()}
-                disabled={quedan <= 0 || enviando > 0}
+                disabled={bloqueado}
                 className={`${boton} border border-line bg-surface text-ink hover:border-primary`}
               >
                 {t("captura.galeria")}
@@ -119,7 +151,7 @@ export default function Captura() {
                   {t("captura.enviando", { count: enviando })}
                 </p>
               )}
-              {enviando === 0 && enviadas.length > 0 && (
+              {enviando === 0 && enviadas.length > 0 && !estado.cerrada && (
                 <p className="m-0 rounded-xl bg-green-50 p-3 text-green-800">✓ {t("captura.listo")}</p>
               )}
               {error && (
