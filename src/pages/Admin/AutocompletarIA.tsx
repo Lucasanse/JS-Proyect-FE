@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import QRCode from "qrcode";
+
 import { ApiError } from "../../services/adminProductos";
 import {
   MAX_FOTOS_LOTE,
@@ -71,11 +72,12 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
   const agregar = useCallback(
     (archivos: File[], origen?: OrigenFoto) => {
       const lugar = MAX_FOTOS_LOTE - fotosActuales.current.length;
-      if (archivos.length > lugar) setError(t("admin.ia.loteLleno", { max: MAX_FOTOS_LOTE }));
+      if (archivos.length > lugar)
+        setError(t("admin.ia.loteLleno", { max: MAX_FOTOS_LOTE }));
       else setError("");
       const nuevas = archivos
         .slice(0, Math.max(lugar, 0))
-        .map((archivo) => ({ id: siguienteId.current++, archivo, origen, vista: URL.createObjectURL(archivo) }));
+        .map((archivo) => ({ id: siguienteId.current++, archivo, origen, vista: URL.createObjectURL(archivo) });
       if (nuevas.length === 0) return;
       fotosActuales.current = [...fotosActuales.current, ...nuevas];
       setFotos(fotosActuales.current);
@@ -149,7 +151,8 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
   const elegirFotos = (lista: FileList | null) => {
     const archivos = [...(lista ?? [])];
     if (inputFotos.current) inputFotos.current.value = "";
-    if (archivos.some((a) => !a.type.startsWith("image/"))) return setError(t("admin.form.noEsImagen"));
+    if (archivos.some((a) => !a.type.startsWith("image/")))
+      return setError(t("admin.form.noEsImagen"));
     agregar(archivos);
   };
 
@@ -159,7 +162,12 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
     try {
       const nueva = await crearCaptura();
       const url = urlParaCelular(nueva);
-      setQr({ url: url ?? "", imagen: url ? await QRCode.toDataURL(url, { width: 220, margin: 1 }) : "" });
+      setQr({
+        url: url ?? "",
+        imagen: url
+          ? await QRCode.toDataURL(url, { width: 220, margin: 1 })
+          : "",
+      });
       descargadas.current = 0;
       setFotosCelular(0);
       setCaptura(nueva);
@@ -197,16 +205,30 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
   return (
     <section className="space-y-3 rounded-xl border border-primary/40 bg-primary-light/40 p-4">
       <div>
-        <h3 className="m-0 text-sm font-bold text-ink">{t("admin.ia.titulo")}</h3>
-        <p className="mt-1 text-xs text-muted">{t("admin.ia.ayudaLote", { max: MAX_FOTOS_LOTE })}</p>
+        <h3 className="m-0 text-sm font-bold text-ink">
+          {t("admin.ia.titulo")}
+        </h3>
+        <p className="mt-1 text-xs text-muted">
+          {t("admin.ia.ayudaLote", { max: MAX_FOTOS_LOTE })}
+        </p>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={() => inputFotos.current?.click()} disabled={llena} className={boton}>
+        <button
+          type="button"
+          onClick={() => inputFotos.current?.click()}
+          disabled={llena}
+          className={boton}
+        >
           {t("admin.ia.agregarFotos")}
         </button>
         {!captura && (
-          <button type="button" onClick={usarCelular} disabled={creandoQr} className={boton}>
+          <button
+            type="button"
+            onClick={usarCelular}
+            disabled={creandoQr}
+            className={boton}
+          >
             {creandoQr ? t("nav.cargando") : t("admin.ia.usarCelular")}
           </button>
         )}
@@ -223,7 +245,13 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
       {captura && (
         <div className="flex flex-col gap-4 rounded-lg border border-line bg-surface p-3 sm:flex-row sm:items-center">
           {qr.imagen && (
-            <img src={qr.imagen} alt={t("admin.ia.qrAlt")} width={160} height={160} className="mx-auto shrink-0 sm:mx-0" />
+            <img
+              src={qr.imagen}
+              alt={t("admin.ia.qrAlt")}
+              width={160}
+              height={160}
+              className="mx-auto shrink-0 sm:mx-0"
+            />
           )}
           <div className="min-w-0 flex-1 space-y-2 text-sm">
             {qr.url ? (
@@ -239,7 +267,11 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
             <p className="m-0 font-semibold text-ink" aria-live="polite">
               {t("admin.ia.fotosRecibidas", { cantidad: fotosCelular })}
             </p>
-            <button type="button" onClick={() => setCaptura(null)} className={boton}>
+            <button
+              type="button"
+              onClick={() => setCaptura(null)}
+              className={boton}
+            >
               {t("admin.ia.cerrarQr")}
             </button>
           </div>
@@ -249,8 +281,15 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
       {fotos.length > 0 && (
         <ul className="m-0 grid list-none grid-cols-3 gap-2 p-0 sm:grid-cols-5">
           {fotos.map((f, i) => (
-            <li key={f.id} className="relative overflow-hidden rounded-lg border-2 border-line bg-surface">
-              <img src={f.vista} alt="" className="aspect-square w-full object-cover" />
+            <li
+              key={f.id}
+              className="relative overflow-hidden rounded-lg border-2 border-line bg-surface"
+            >
+              <img
+                src={f.vista}
+                alt=""
+                className="aspect-square w-full object-cover"
+              />
               <button
                 type="button"
                 onClick={() => quitar(f)}

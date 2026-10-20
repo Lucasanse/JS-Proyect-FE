@@ -14,3 +14,4 @@ export const urlCompraUnidad = `${BASE_URL}/api/checkout/unidad`;
 export const urlCompraCarrito = `${BASE_URL}/api/checkout/carrito`;
 export const urlCompras = `${BASE_URL}/api/compras`;
 export const urlNotificaciones = `${BASE_URL}/api/notificaciones`;
+export const urlPedidosAdmin = `${BASE_URL}/api/admin/ventas`;
