@@ -24,11 +24,29 @@ import SeccionComponente from "./SeccionComponente";
 import AutocompletarIA from "./AutocompletarIA";
 import InputPrecio from "./InputPrecio";
 import PanelLote from "./PanelLote";
-import { estaCerrado, type ItemLote } from "./lote";
+import { estaCerrado, type FotoLote, type ItemLote } from "./lote";
 import { IconoImagen } from "./IconosAdmin";
 import { claseInput } from "./estilosForm";
-import { analizarFotos, type SugerenciaProducto } from "../../services/analisisIA";
+import { analizarFotoLote, cancelarCaptura, type SugerenciaProducto } from "../../services/analisisIA";
 import { reducirFoto } from "../../services/reducirFoto";
+
+// Si la IA responde 429 (límite de uso), el lote se frena y se reintenta la misma foto tras
+// esperar. El BE indica cuánto; si no, se usa ESPERA_LIMITE_S. Pasados los reintentos, queda en error.
+const ESPERA_LIMITE_S = 20;
+const ESPERA_MAXIMA_S = 60;
+const REINTENTOS_LIMITE = 4;
+
+// Espera "segundos" o hasta que se corte el lote (signal)
+const esperar = (segundos: number, signal: AbortSignal) =>
+  new Promise<void>((resolve) => {
+    const fin = () => {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", fin);
+      resolve();
+    };
+    const timer = setTimeout(fin, segundos * 1000);
+    signal.addEventListener("abort", fin);
+  });
 
 interface Props {
   producto: ProductoAdmin | null; // null = alta de un producto nuevo
@@ -219,11 +237,13 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
   const borradores = useRef(new Map<number, Borrador>());
   const pedidoLote = useRef<AbortController | null>(null);
   const vistasLote = useRef<string[]>([]);
-  // Al cerrar el formulario se corta el análisis y se liberan las miniaturas
+  const tokenCaptura = useRef<string | null>(null); // QR del celular que el lote sigue usando
+  // Al cerrar el formulario se corta el análisis, se libera la captura del BE y las miniaturas
   useEffect(
     () => () => {
       pedidoLote.current?.abort();
       vistasLote.current.forEach((v) => URL.revokeObjectURL(v));
+      if (tokenCaptura.current) cancelarCaptura(tokenCaptura.current).catch(() => {});
     },
     [],
   );
@@ -361,12 +381,14 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
     cargarItem(id, lote);
   };
 
-  const analizarItem = async (item: ItemLote, signal: AbortSignal) => {
+  // Analiza un producto. Devuelve los segundos a esperar si la IA llegó a su límite de uso
+  // (el producto queda "pausado"), o null si terminó, con sugerencia o con error.
+  const analizarItem = async (item: ItemLote, signal: AbortSignal): Promise<number | null> => {
     actualizarItem(item.id, { estado: "analizando", error: "" });
     try {
-      const s = await analizarFotos([item.foto], signal);
+      const s = await analizarFotoLote(item.foto, item.origen, signal);
       // Si se descartó mientras se analizaba, la sugerencia ya no se usa
-      if (cerrados.current.has(item.id)) return;
+      if (cerrados.current.has(item.id)) return null;
       sugerencias.current.set(item.id, s);
       actualizarItem(item.id, { estado: "listo" });
       // Si es el producto que está en pantalla, se completa ya; si no, al ir a él
@@ -374,19 +396,40 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
         aplicadas.current.add(item.id);
         completarConSugerencia(s);
       }
+      return null;
     } catch (e) {
+      if (signal.aborted || cerrados.current.has(item.id)) return null;
+      const mensaje = e instanceof Error ? e.message : t("admin.ia.errorAnalisis");
+      if (e instanceof ApiError && e.status === 429) {
+        actualizarItem(item.id, { estado: "pausado", error: mensaje });
+        return Math.min(e.reintentarEn ?? ESPERA_LIMITE_S, ESPERA_MAXIMA_S);
+      }
+      actualizarItem(item.id, { estado: "error", error: mensaje });
+      return null;
+    }
+  };
+
+  // Analiza un producto y, si la IA está en su límite, espera y reintenta solo. Como el lote
+  // se procesa en fila, esperar acá también frena a los productos que vienen después.
+  const analizarConReintentos = async (item: ItemLote, signal: AbortSignal) => {
+    for (let intento = 0; ; intento++) {
+      const espera = await analizarItem(item, signal);
+      if (espera === null || signal.aborted || cerrados.current.has(item.id)) return;
+      if (intento >= REINTENTOS_LIMITE) return actualizarItem(item.id, { estado: "error" });
+      await esperar(espera, signal);
       if (signal.aborted || cerrados.current.has(item.id)) return;
-      actualizarItem(item.id, { estado: "error", error: e instanceof Error ? e.message : t("admin.ia.errorAnalisis") });
     }
   };
 
   // Las fotos se analizan de a una, en orden (así no se pasa el límite de pedidos de la IA).
   // Mientras tanto ya se puede ir completando el primer producto.
-  const iniciarLote = async (fotos: File[]) => {
-    const items: ItemLote[] = fotos.map((foto, id) => ({
+  const iniciarLote = async (fotos: FotoLote[], token: string | null) => {
+    tokenCaptura.current = token;
+    const items: ItemLote[] = fotos.map(({ archivo, origen }, id) => ({
       id,
-      foto,
-      vista: URL.createObjectURL(foto),
+      foto: archivo,
+      origen,
+      vista: URL.createObjectURL(archivo),
       estado: "esperando",
       error: "",
     }));
@@ -397,12 +440,12 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
     pedidoLote.current = controller;
     for (const item of items) {
       if (controller.signal.aborted) return;
-      if (!cerrados.current.has(item.id)) await analizarItem(item, controller.signal);
+      if (!cerrados.current.has(item.id)) await analizarConReintentos(item, controller.signal);
     }
   };
 
   const reintentarItem = (id: number) => {
-    if (lote && pedidoLote.current) analizarItem(lote[id], pedidoLote.current.signal);
+    if (lote && pedidoLote.current) analizarConReintentos(lote[id], pedidoLote.current.signal);
   };
 
   // Marca el producto actual como guardado o descartado y pasa al siguiente que falte.

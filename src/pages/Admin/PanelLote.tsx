@@ -13,6 +13,7 @@ interface Props {
 const colorEstado: Record<EstadoItemLote, string> = {
   esperando: "bg-surface-alt text-muted",
   analizando: "bg-primary-light text-primary",
+  pausado: "bg-amber-50 text-amber-800",
   listo: "bg-surface-alt text-ink",
   error: "bg-red-50 text-red-700",
   guardado: "bg-green-700 text-white",
@@ -27,7 +28,7 @@ export default function PanelLote({ items, actual, bloqueado, onElegir, onReinte
   const item = items[actual];
   const guardados = items.filter((x) => x.estado === "guardado").length;
   const pendientes = items.filter((x) => !estaCerrado(x));
-  const analizados = items.filter((x) => x.estado !== "esperando" && x.estado !== "analizando").length;
+  const analizados = items.filter((x) => !["esperando", "analizando", "pausado"].includes(x.estado)).length;
   const posicion = pendientes.findIndex((x) => x.id === actual);
   const anterior = pendientes[posicion - 1];
   const siguiente = pendientes[posicion + 1];
@@ -35,6 +36,7 @@ export default function PanelLote({ items, actual, bloqueado, onElegir, onReinte
   const ayuda: Record<EstadoItemLote, string> = {
     esperando: t("admin.lote.ayudaEsperando"),
     analizando: t("admin.lote.ayudaAnalizando"),
+    pausado: t("admin.lote.ayudaPausado"),
     listo: t("admin.lote.ayudaListo"),
     error: item.error || t("admin.ia.errorAnalisis"),
     guardado: "",
