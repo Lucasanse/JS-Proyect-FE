@@ -70,7 +70,144 @@
   },
   "servicioTecnico": {
     "titulo": "Tech Support",
-    "enConstruccion": "Page under construction."
+    "intro": "Is your device having trouble? Tell us what is happening and we will reply here. You can follow the repair progress at any time.",
+    "avisoPrecio": {
+      "titulo": "We'll tell you the price of the repair when you bring the device to the store.",
+      "detalle": "We check it first and send you a quote. We don't do any work until you confirm it."
+    },
+    "errorCarga": "Your requests could not be loaded",
+    "errorGenerico": "An error occurred",
+    "sinSolicitudes": "You have not sent any requests yet.",
+    "actualizada": "Updated:",
+    "respuestas_one": "{{count}} reply",
+    "respuestas_other": "{{count}} replies",
+    "verDetalle": "View details",
+    "volver": "My requests",
+    "noEncontrada": "We could not find this request. It may not exist or it may not be yours.",
+    "solicitud": "Request",
+    "respuestasTitulo_one": "Reply from the store",
+    "respuestasTitulo_other": "Replies from the store",
+    "esperandoRespuesta": "We received your request. We will reply here as soon as possible.",
+    "cerradaAviso": "This request is closed. If the problem persists, please send a new request.",
+    "rechazadaAviso": "We won't be able to do this job. You'll find the reason below.",
+    "estados": {
+      "PENDIENTE": "Pending",
+      "ESPERANDO_EQUIPO": "Waiting for device",
+      "EN_REVISION": "Under review",
+      "EN_REPARACION": "Being repaired",
+      "RESUELTA": "Resolved",
+      "RECHAZADA": "Rejected",
+      "CERRADA": "Closed"
+    },
+    "form": {
+      "ayuda": "Choose the services you need and fill in the details. We will reply here.",
+      "pasoServicio": "Which services do you need?",
+      "variosServicios": "You can choose more than one.",
+      "pasoEquipo": "Which device needs repair?",
+      "pasoLimpieza": "Cleaning",
+      "conPastaTermica": "Replace the thermal paste",
+      "conPastaTermicaAyuda": "We replace the processor's thermal paste so the device runs cooler.",
+      "pasoFormateo": "Formatting",
+      "conBackup": "Back up my files before formatting",
+      "conBackupAyuda": "We save your photos, documents and other files and put them back on the formatted device.",
+      "pasoOptimizacion": "Make it faster",
+      "conSSD": "Replace the hard drive with an SSD",
+      "conSSDAyuda": "An SSD makes the computer start up and open programs much faster.",
+      "pasoSoftware": "What do you want installed?",
+      "sistemaOperativo": "Operating system",
+      "soloUno": "choose only one",
+      "programas": "Programs",
+      "etiquetaTexto": {
+        "REPARACION": "What is wrong with it?",
+        "OTRO": "What do you need?",
+        "COMENTARIOS": "Comments"
+      },
+      "opcional": "optional",
+      "placeholders": {
+        "REPARACION": "Describe the problem: what it does (or does not do), since when, and whether anything happened before (a drop, an update, a power cut...).",
+        "OTRO": "Tell us which service you need.",
+        "COMENTARIOS": "Anything we should know: whether you have an Office license, which files matter, whether it is noisy or overheats..."
+      },
+      "errores": {
+        "servicio": "Choose the type of service",
+        "equipo": "Choose which device needs repair",
+        "software": "Choose at least one program to install",
+        "descripcionREPARACION": "Tell us what is wrong with the device",
+        "descripcionOTRO": "Tell us which service you need"
+      },
+      "minimo_one": "Write at least {{count}} character",
+      "minimo_other": "Write at least {{count}} characters",
+      "maximo_one": "Maximum {{count}} character",
+      "maximo_other": "Maximum {{count}} characters",
+      "enviada": "Done! We received your request #{{id}}",
+      "enviando": "Sending...",
+      "enviar": "Send request"
+    },
+    "tabs": {
+      "nueva": "New request",
+      "mis": "My requests"
+    },
+    "tipos": {
+      "REPARACION": "Component repair",
+      "LIMPIEZA": "External cleaning",
+      "FORMATEO": "Formatting",
+      "OPTIMIZACION": "Make it faster",
+      "INSTALACION_SOFTWARE": "Software installation",
+      "OTRO": "Other"
+    },
+    "tiposAyuda": {
+      "REPARACION": "Something is not working on your desktop PC, laptop or printer.",
+      "LIMPIEZA": "External cleaning of your device, with thermal paste replacement if you need it.",
+      "FORMATEO": "System wipe and reinstall, with a backup if you need it.",
+      "OPTIMIZACION": "We optimize your computer so it runs faster, with an upgrade to an SSD if you want.",
+      "INSTALACION_SOFTWARE": "Windows, Office and useful programs.",
+      "OTRO": "Tell us what you need."
+    },
+    "equipos": {
+      "PC_FIJA": "Desktop PC",
+      "NOTEBOOK": "Laptop",
+      "IMPRESORA": "Printer"
+    },
+    "software": {
+      "WIN10": "Windows 10",
+      "WIN11": "Windows 11",
+      "OFFICE": "Office suite",
+      "WINRAR": "WinRAR",
+      "VLC": "VLC"
+    },
+    "lista": {
+      "enviada": "sent on",
+      "estado": "Status:",
+      "sinRespuestas": "There were no replies.",
+      "ultimaRespuesta": "Latest reply",
+      "motivoRechazo": "Reason for rejection",
+      "queVamosAHacer": "What we will do",
+      "loQuePediste": "What you asked for",
+      "servicios": {
+        "REPARACION": "Component repair",
+        "LIMPIEZA": "External cleaning of the device",
+        "FORMATEO": "Device formatting",
+        "OPTIMIZACION": "Optimization so the computer runs faster",
+        "INSTALACION_SOFTWARE": "Software installation",
+        "OTRO": "Other service"
+      },
+      "equipo": "Device:",
+      "pastaTermica": "Thermal paste replacement",
+      "backup": "Backup of your files before formatting",
+      "ssd": "Replace the hard drive with an SSD",
+      "queLeSucede": "What is wrong with the device",
+      "queNecesitas": "What you need",
+      "comentarios": "Your comments"
+    },
+    "detalle": {
+      "titulo": "Request details",
+      "estado": "Status",
+      "fecha": "Sent",
+      "servicios_one": "Service",
+      "servicios_other": "Services",
+      "sinComentarios": "No comments."
+    },
+    "y": "and"
   },
   "aviso": {
     "agregado": "Added to cart",
@@ -361,7 +498,60 @@
       "ventas": "See the list of sales, check the details of each one and update its status.",
       "usuarios": "Browse registered users and enable or disable their accounts."
     },
-    "esComponente": "PC component"
+    "esComponente": "PC component",
+    "st": {
+      "titulo": "Tech support",
+      "subtitulo": "Customer requests",
+      "cantidad_one": "{{count}} request",
+      "cantidad_other": "{{count}} requests",
+      "buscar": "Search by number, description or customer...",
+      "filtroEstado": "Filter by status",
+      "todosEstados": "All statuses",
+      "sinResultados": "No requests match these filters.",
+      "sinSolicitudes": "No requests have arrived yet.",
+      "col": {
+        "cliente": "Customer",
+        "servicio": "Service",
+        "estado": "Status",
+        "fecha": "Date"
+      },
+      "volver": "Requests",
+      "noEncontrada": "The request does not exist.",
+      "cerradaSinRespuestas": "The request is rejected or closed: change its status to answer it.",
+      "cliente": "Customer",
+      "nombre": "Name",
+      "correo": "Email",
+      "telefono": "Phone",
+      "responder": "Reply to the customer",
+      "respuestaPlaceholder": "Write the reply the customer will see...",
+      "respuestaVacia": "Write a reply",
+      "atajo": "Ctrl + Enter to send",
+      "enviando": "Sending...",
+      "enviarRespuesta": "Send reply",
+      "toastRespuesta": "Reply sent",
+      "estado": "Status",
+      "estadoActual": "Current:",
+      "estadoFinal": "The request is finished and its status can no longer change.",
+      "nuevoEstado": "New status",
+      "elegirEstado": "Choose the new status...",
+      "cambiarEstado": "Change status",
+      "confirmarTitulo": "Change status",
+      "confirmarPregunta": "Move request #{{id}} from",
+      "confirmarPreguntaFin": "?",
+      "confirmarAviso": "The change is recorded in the history and the customer will see it in their request.",
+      "confirmarCerrar": "While it's closed it can't be answered. If needed, you can reopen it by changing its status. The customer will see it in their request.",
+      "rechazarTitulo": "Reject request",
+      "confirmarRechazar": "The customer will see the reason in their request. While it's rejected it can't be answered; if needed, you can reopen it by changing its status.",
+      "motivoRechazo": "Reason for rejection (the customer sees it)",
+      "motivoPlaceholder": "E.g.: we couldn't find parts for that printer model.",
+      "motivoRequerido": "Write the reason for the rejection",
+      "motivoMinimo_one": "Write at least {{count}} character",
+      "motivoMinimo_other": "Write at least {{count}} characters",
+      "rechazar": "Reject request",
+      "guardando": "Saving...",
+      "confirmar": "Yes, change it",
+      "toastEstado": "Request #{{id}} is now {{estado}}"
+    }
   },
   "captura": {
     "titulo": "Product photos",
