@@ -24,6 +24,7 @@ export interface EstadoCaptura {
   fotos: number; // fotos recibidas desde el celular
   maxFotos: number; // las que se pueden mandar desde el celular (una por producto)
   expiraEn: string;
+  cerrada: boolean; // el admin ya mandó el lote a analizar: el celular no puede subir más fotos
 }
 
 export interface CapturaCreada extends EstadoCaptura {
@@ -45,6 +46,28 @@ async function formConFotos(archivos: File[]) {
 export const analizarFotos = async (archivos: File[], signal?: AbortSignal) =>
   pedir<SugerenciaProducto>("/analizar", { method: "POST", body: await formConFotos(archivos), signal });
 
+// Dónde está una foto que vino del celular: en la captura del BE, en la posición "indice"
+export interface OrigenFoto {
+  token: string;
+  indice: number;
+}
+
+// Analiza una foto que ya está en el BE (llegó del celular), sin volver a subirla
+export const analizarFotoCaptura = (origen: OrigenFoto, signal?: AbortSignal) =>
+  pedir<SugerenciaProducto>(`/captura/${origen.token}/analizar/${origen.indice}`, { method: "POST", signal }, urlAdmin);
+
+// Análisis de una foto del lote. Si vino del celular se analiza la copia del BE; si la captura
+// ya venció (404) o la foto es de la computadora, se sube el archivo.
+export async function analizarFotoLote(foto: File, origen: OrigenFoto | undefined, signal?: AbortSignal) {
+  if (!origen) return analizarFotos([foto], signal);
+  try {
+    return await analizarFotoCaptura(origen, signal);
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return analizarFotos([foto], signal);
+    throw e;
+  }
+}
+
 export const crearCaptura = () => pedir<CapturaCreada>("/captura", { method: "POST" }, urlAdmin);
 
 export const estadoCaptura = (token: string, signal?: AbortSignal) =>
@@ -62,7 +85,11 @@ export async function descargarFotoCaptura(token: string, indice: number, signal
   return new File([blob], `celular-${indice + 1}.${extension}`, { type: blob.type });
 }
 
-export const cancelarCaptura = (token: string) => pedir<void>(`/captura/${token}`, { method: "DELETE" }, urlAdmin);
+// Cierra la captura a nuevas fotos del celular (sin borrarla) y devuelve la cantidad final
+export const cerrarCaptura = (token: string) =>
+  pedir<EstadoCaptura>(`/captura/${token}/cerrar`, { method: "POST" }, urlAdmin);
+
+export const cancelarCaptura =(token: string) => pedir<void>(`/captura/${token}`, { method: "DELETE" }, urlAdmin);
 
 // URL que abre el celular. Si en la PC se entra por localhost, se usa la IP de la red que
 // detectó el BE (desde el celular "localhost" es el propio celular). null si no hay IP.
