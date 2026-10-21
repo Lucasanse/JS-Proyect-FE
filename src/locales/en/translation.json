@@ -455,6 +455,7 @@
       "estado": {
         "esperando": "Waiting",
         "analizando": "Analyzing",
+        "pausado": "Waiting for the AI",
         "listo": "To review",
         "error": "Error",
         "guardado": "Saved",
@@ -462,6 +463,7 @@
       },
       "ayudaEsperando": "This photo is analyzed after the previous ones. You can fill in the details by hand if you want.",
       "ayudaAnalizando": "The AI is analyzing this photo. Meanwhile you can enter the price and stock.",
+      "ayudaPausado": "The AI reached its usage limit. The analysis will continue by itself in a few seconds; meanwhile you can fill in the details by hand.",
       "ayudaListo": "Check the details the AI filled in, enter the price and stock, and save to move on to the next one.",
       "reintentar": "Retry analysis",
       "descartar": "Discard this product",
@@ -563,6 +565,7 @@
     "enviando_other": "Sending {{count}} photos...",
     "listo": "Sent. You can take another one or continue on the computer.",
     "maxFotos": "You can send up to {{max}} photos in total",
+    "cerrada": "The batch was already sent to the computer. To add more products, create a new QR code from the computer.",
     "vencido": "This link is invalid or has expired. Create a new QR code from the computer.",
     "error": "The photos couldn't be sent. Please try again."
   },
