@@ -13,12 +13,18 @@ import { useToast } from "../../components/Toast/toastContext";
 import ProductoFormModal from "./ProductoFormModal";
 import EliminarProductoModal from "./EliminarProductoModal";
 import { IconoImagen } from "./IconosAdmin";
+import Precio from "../../components/Precio/Precio";
 
-const formatoPrecio = new Intl.NumberFormat("es-AR", {
-  style: "currency",
-  currency: "ARS",
-  minimumFractionDigits: 2,
-});
+// Precio en la moneda elegida y, debajo, en qué moneda quedó fijo el producto
+function PrecioAdmin({ p }: { p: ProductoAdmin }) {
+  const { t } = useTranslation();
+  return (
+    <span className="inline-flex flex-col items-end">
+      <Precio precio={p.precio} precioUsd={p.precioUsd} />
+      <span className="text-[11px] font-normal text-muted">{t(`admin.fijoEn.${p.monedaBase}`)}</span>
+    </span>
+  );
+}
 
 const ESTADOS: FiltroEstado[] = ["todos", "activos", "inactivos"];
 
@@ -306,7 +312,7 @@ export default function AdminProductos() {
                     </td>
                     <td className="px-4 py-3 text-muted">{p.categoria.nombre}</td>
                     <td className="px-4 py-3 text-right font-semibold whitespace-nowrap text-ink">
-                      {formatoPrecio.format(p.precio)}
+                      <PrecioAdmin p={p} />
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Stock stock={p.stock} />
@@ -327,7 +333,7 @@ export default function AdminProductos() {
                 <dl className="mt-3 grid grid-cols-3 gap-2 text-sm">
                   <div>
                     <dt className="text-xs text-muted">{t("admin.col.precio")}</dt>
-                    <dd className="font-semibold text-ink">{formatoPrecio.format(p.precio)}</dd>
+                    <dd className="font-semibold text-ink"><PrecioAdmin p={p} /></dd>
                   </div>
                   <div>
                     <dt className="text-xs text-muted">{t("admin.col.stock")}</dt>

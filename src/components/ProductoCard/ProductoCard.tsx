@@ -3,13 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import type { ProductoResumen } from "../../services/productos";
 import { useSession } from "../../services/auth-client";
+import Precio from "../Precio/Precio";
 import { useCarrito } from "../CarritoProvider/carritoContext";
-
-const formatoPrecio = new Intl.NumberFormat("es-AR", {
-  style: "currency",
-  currency: "ARS",
-  minimumFractionDigits: 2,
-});
 
 interface Props {
   producto: ProductoResumen;
@@ -92,9 +87,9 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
         </Link>
       </h3>
 
-      <p className="mt-auto text-xl font-semibold text-ink">
-        {formatoPrecio.format(producto.precio)}
-      </p>
+      <div className="mt-auto">
+        <Precio precio={producto.precio} className="text-xl font-semibold text-ink" />
+      </div>
 
       {/* flex-wrap: si la card es angosta, el botón baja a otra línea en vez de desbordarse */}
       <div className="relative z-10 flex flex-wrap items-center gap-2">

@@ -13,7 +13,9 @@
     "cerrarSesion": "Cerrar sesión",
     "iniciarSesion": "Iniciar sesión",
     "carrito": "Carrito",
-    "admin": "Admin"
+    "admin": "Admin",
+    "idioma": "Idioma",
+    "menuUsuario": "Menú de usuario"
   },
   "detalle": {
     "idInvalido": "El ID del producto no es válido.",
@@ -258,7 +260,9 @@
     "confirmarPedido": "Confirmar pedido",
     "eliminarPedido": "Eliminar pedido",
     "confirmarEliminar": "¿Querés eliminar todos los productos del carrito?",
-    "errorEliminar": "No se pudo eliminar el pedido"
+    "errorEliminar": "No se pudo eliminar el pedido",
+    "total": "Total",
+    "avisoDebitoPesos": "Se debita en pesos: vas a pagar {{total}} (cotización: 1 USD = {{cotizacion}}). El valor en dólares es informativo."
   },
   "login": {
     "titulo": "Iniciar sesión",
@@ -434,7 +438,11 @@
       "atributosAyuda": "completá los que conozcas",
       "numeroInvalido": "Tiene que ser un número",
       "ej": "Ej:",
-      "fotoAlGuardar": "Foto del análisis con IA: se sube al guardar el producto."
+      "fotoAlGuardar": "Foto del análisis con IA: se sube al guardar el producto.",
+      "moneda": "Moneda del precio",
+      "equivalePesos": "Se cobra en pesos: {{pesos}} hoy. Se actualiza con la cotización.",
+      "precioUsdAyuda": "El precio queda en dólares y el valor en pesos se actualiza con la cotización.",
+      "fijarEn": "Fijar precio en"
     },
     "ia": {
       "titulo": "Autocompletar con IA",
@@ -642,6 +650,10 @@
       "sesionesActivas": "Sesiones abiertas",
       "noOtroAdmin": "No se puede deshabilitar a otro administrador",
       "adminNoSeDeshabilita": "Los administradores no se pueden deshabilitar desde el panel."
+    },
+    "fijoEn": {
+      "USD": "Fijo en dólares",
+      "ARS": "Fijo en pesos"
     }
   },
   "captura": {
@@ -705,5 +717,14 @@
   "avisoRetiro": {
     "titulo": "Información importante sobre tu pedido",
     "descripcion": "Todas las compras son con retiro en el local. Para retirar es indispensable presentar la factura o comprobante de compra."
+  },
+  "precio": {
+    "cotizacionTiempoReal": "Cotización en tiempo real de {{valor}}",
+    "infoCotizacion": "Información de la cotización",
+    "actualizadaEl": "Actualizada el {{fecha}}",
+    "desactualizada": "Cotización desactualizada, última actualización: {{fecha}}",
+    "seCobraEnPesos": "Valor informativo, no forma parte del método de pago. Se cobra en pesos.",
+    "cotizacionDelDia": "cotización del {{fecha}}",
+    "moneda": "Moneda"
   }
 }
