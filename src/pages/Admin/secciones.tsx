@@ -45,6 +45,6 @@ export const SECCIONES_ADMIN: SeccionAdmin[] = [
     tituloKey: "admin.menu.usuarios",
     descripcionKey: "admin.inicio.usuarios",
     icono: <IconoUsuarios />,
-    disponible: false,
+    disponible: true,
   },
 ];
