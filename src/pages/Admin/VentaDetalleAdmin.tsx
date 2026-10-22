@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import Precio from "../../components/Precio/Precio";
 import {
   obtenerVentaAdminPorId,
   actualizarEstadoVentaAdmin,
@@ -172,9 +173,15 @@ export const VentaDetalleAdmin = () => {
               <span className="text-sm font-bold text-ink">
                 Total pagado por el cliente
               </span>
-              <span className="text-xl font-black text-accent">
-                ${venta.total}
-              </span>
+              {venta.cotizacionUsd && venta.cotizacionFecha ? (
+                <Precio
+                  precio={Number(venta.total)}
+                  cotizacion={{ valor: Number(venta.cotizacionUsd), fecha: venta.cotizacionFecha }}
+                  className="text-right text-xl font-black text-accent"
+                />
+              ) : (
+                <span className="text-xl font-black text-accent">${venta.total}</span>
+              )}
             </div>
           </div>
         </div>

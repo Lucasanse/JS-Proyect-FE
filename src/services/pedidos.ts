@@ -18,6 +18,8 @@ export interface Compra {
   items: number;
   metodoPago: string;
   idPagoMp: string | null;
+  cotizacionUsd: number | null; // cotización del dólar guardada al emitir la compra (informativa)
+  cotizacionFecha: string | null;
   productos: ProductoComprado[]; // <--- Acá anidamos la otra interfaz
 }
 

@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import jsLogo from "../../assets/js-logo.png";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../CarritoProvider/carritoContext";
+import MenuDesplegable from "../MenuDesplegable/MenuDesplegable";
+import SelectorMoneda from "../SelectorMoneda/SelectorMoneda";
 import { SwitchLenguaje } from "../SwitchLenguaje/SwitchLenguaje";
 import { CampanaNotificaciones } from "../Notificaciones/Campana";
 
@@ -81,19 +83,15 @@ export default function Navbar() {
             {isPending ? (
               <span className="text-sm text-muted">{t("nav.cargando")}</span>
             ) : session ? (
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-ink">
-                  {t("nav.hola")}{" "}
-                  <strong className="text-primary">{session.user.name}</strong>
-                </span>
-
-                <Link
-                  to="/logout"
-                  className="rounded-lg border border-line bg-surface-alt px-4 py-2 text-sm font-semibold text-ink hover:bg-line transition-colors"
-                >
-                  {t("nav.cerrarSesion")}
-                </Link>
-              </div>
+              <MenuDesplegable
+                trigger={
+                  <span className="font-medium">
+                    {t("nav.hola")} <strong className="text-primary">{session.user.name}</strong>
+                  </span>
+                }
+                ariaLabel={t("nav.menuUsuario")}
+                opciones={[{ clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" }]}
+              />
             ) : (
               <Link
                 to="/login"
@@ -103,6 +101,9 @@ export default function Navbar() {
               </Link>
             )}
           </div>
+
+          <SelectorMoneda />
+          <SwitchLenguaje />
 
           <Link
             to="/carrito"
@@ -117,8 +118,6 @@ export default function Navbar() {
               </span>
             )}
           </Link>
-
-          <SwitchLenguaje />
         </div>
       </div>
 
@@ -152,19 +151,16 @@ export default function Navbar() {
                 {t("nav.cargando")}
               </span>
             ) : session ? (
-              <>
-                <span className="px-3 text-sm font-medium text-ink">
-                  {t("nav.hola")}{" "}
-                  <strong className="text-primary">{session.user.name}</strong>
-                </span>
-                <Link
-                  to="/logout"
-                  onClick={close}
-                  className="rounded-lg border border-line bg-surface-alt px-4 py-3 text-center text-sm font-semibold text-ink transition-colors hover:bg-line"
-                >
-                  {t("nav.cerrarSesion")}
-                </Link>
-              </>
+              <MenuDesplegable
+                align="left"
+                trigger={
+                  <span className="font-medium">
+                    {t("nav.hola")} <strong className="text-primary">{session.user.name}</strong>
+                  </span>
+                }
+                ariaLabel={t("nav.menuUsuario")}
+                opciones={[{ clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" }]}
+              />
             ) : (
               <Link
                 to="/login"
