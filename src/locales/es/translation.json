@@ -207,7 +207,16 @@
       "servicios_other": "Servicios",
       "sinComentarios": "Sin comentarios."
     },
-    "y": "y"
+    "y": "y",
+    "historialEstados": {
+      "titulo": "Historial de estados",
+      "creada": "Solicitud creada:",
+      "a": "pasó a",
+      "actual": "Actual",
+      "por": "por {{nombre}}",
+      "porCliente": "por el cliente ({{nombre}})",
+      "vacio": "Todavía no hay cambios de estado."
+    }
   },
   "aviso": {
     "agregado": "Agregado al carrito",
@@ -215,7 +224,6 @@
   },
   "buscador": {
     "placeholder": "Buscar productos...",
-    "buscar": "Buscar",
     "filtros": "Filtros",
     "categoria": "Categoría",
     "todasCategorias": "Todas las categorías",
@@ -224,7 +232,8 @@
     "precioMin": "Precio mín.",
     "precioMax": "Precio máx.",
     "enStock": "En stock",
-    "limpiar": "Limpiar filtros"
+    "limpiar": "Limpiar filtros",
+    "rangoInvalido": "El precio mínimo no puede ser mayor que el máximo"
   },
   "carrito": {
     "titulo": "Carrito",
@@ -261,7 +270,9 @@
     "entrando": "Entrando...",
     "sinCuenta": "¿No tienes cuenta?",
     "registrate": "Regístrate aquí",
-    "credencialesIncorrectas": "Credenciales incorrectas"
+    "credencialesIncorrectas": "Credenciales incorrectas",
+    "deshabilitadaTitulo": "Tu cuenta está deshabilitada",
+    "deshabilitadaTexto": "Un administrador deshabilitó tu cuenta, por eso no podés ingresar. Si creés que es un error, comunicate con el comercio."
   },
   "register": {
     "titulo": "Crear cuenta",
@@ -554,6 +565,83 @@
       "guardando": "Guardando...",
       "confirmar": "Sí, cambiar",
       "toastEstado": "Solicitud #{{id}}: ahora está {{estado}}"
+    },
+    "us": {
+      "titulo": "Usuarios",
+      "subtitulo": "Cuentas registradas en la tienda",
+      "cantidad_one": "{{count}} usuario",
+      "cantidad_other": "{{count}} usuarios",
+      "buscar": "Buscar por nombre o email...",
+      "filtro": {
+        "todos": "Todos",
+        "habilitados": "Habilitados",
+        "deshabilitados": "Deshabilitados"
+      },
+      "col": {
+        "nombre": "Nombre",
+        "email": "Email",
+        "rol": "Rol",
+        "alta": "Fecha de alta",
+        "estado": "Estado"
+      },
+      "rol": {
+        "ADMIN": "Admin",
+        "CLIENTE": "Cliente"
+      },
+      "vos": "vos",
+      "habilitado": "Habilitado",
+      "deshabilitado": "Deshabilitado",
+      "switchAria": "Cuenta de {{nombre}} habilitada",
+      "ayudaDeshabilitar": "Deshabilitar: no va a poder iniciar sesión",
+      "ayudaHabilitar": "Habilitar: vuelve a poder iniciar sesión",
+      "noPropia": "No podés deshabilitar tu propia cuenta",
+      "sinUsuarios": "Todavía no hay usuarios registrados.",
+      "sinResultados": "No hay usuarios que coincidan con la búsqueda.",
+      "errorCarga": "No se pudieron cargar los usuarios",
+      "deshabilitarTitulo": "Deshabilitar cuenta",
+      "habilitarTitulo": "Habilitar cuenta",
+      "deshabilitarPregunta": "¿Deshabilitar la cuenta de {{nombre}}?",
+      "habilitarPregunta": "¿Volver a habilitar la cuenta de {{nombre}}?",
+      "deshabilitarAviso": "Se le cierra la sesión al instante y no va a poder volver a ingresar hasta que la habilites de nuevo. Sus compras y solicitudes se conservan.",
+      "habilitarAviso": "Va a poder iniciar sesión de nuevo con su email y contraseña.",
+      "deshabilitar": "Deshabilitar",
+      "habilitar": "Habilitar",
+      "guardando": "Guardando...",
+      "toastHabilitado": "La cuenta de {{nombre}} está habilitada",
+      "toastDeshabilitado": "La cuenta de {{nombre}} está deshabilitada",
+      "volver": "Volver a usuarios",
+      "usuario": "Usuario",
+      "noEncontrado": "Este usuario no existe.",
+      "errorCargaDetalle": "No se pudo cargar el usuario",
+      "datos": "Datos personales",
+      "telefono": "Teléfono",
+      "direccion": "Dirección",
+      "cargo": "Cargo",
+      "idioma": "Idioma",
+      "idiomas": {
+        "es": "Español",
+        "en": "Inglés"
+      },
+      "actualizado": "Última actualización",
+      "verificado": "Verificado",
+      "compras_one": "Compras ({{count}})",
+      "compras_other": "Compras ({{count}})",
+      "compra": "Compra",
+      "productos_one": "{{count}} producto",
+      "productos_other": "{{count}} productos",
+      "sinCompras": "Todavía no hizo compras.",
+      "solicitudes_one": "Solicitudes de servicio técnico ({{count}})",
+      "solicitudes_other": "Solicitudes de servicio técnico ({{count}})",
+      "sinSolicitudes": "Todavía no pidió servicio técnico.",
+      "mostrandoUltimas_one": "Se muestra la última.",
+      "mostrandoUltimas_other": "Se muestran las últimas {{count}}.",
+      "verTodasSolicitudes": "Ver todas sus solicitudes →",
+      "cuenta": "Cuenta",
+      "explicacionHabilitado": "Puede iniciar sesión y usar la tienda.",
+      "explicacionDeshabilitado": "No puede iniciar sesión. Sus compras y solicitudes se conservan.",
+      "sesionesActivas": "Sesiones abiertas",
+      "noOtroAdmin": "No se puede deshabilitar a otro administrador",
+      "adminNoSeDeshabilita": "Los administradores no se pueden deshabilitar desde el panel."
     }
   },
   "captura": {

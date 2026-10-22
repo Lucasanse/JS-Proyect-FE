@@ -207,7 +207,16 @@
       "servicios_other": "Services",
       "sinComentarios": "No comments."
     },
-    "y": "and"
+    "y": "and",
+    "historialEstados": {
+      "titulo": "Status history",
+      "creada": "Request created:",
+      "a": "changed to",
+      "actual": "Current",
+      "por": "by {{nombre}}",
+      "porCliente": "by the customer ({{nombre}})",
+      "vacio": "No status changes yet."
+    }
   },
   "aviso": {
     "agregado": "Added to cart",
@@ -215,7 +224,6 @@
   },
   "buscador": {
     "placeholder": "Search products...",
-    "buscar": "Search",
     "filtros": "Filters",
     "categoria": "Category",
     "todasCategorias": "All categories",
@@ -224,7 +232,8 @@
     "precioMin": "Min. price",
     "precioMax": "Max. price",
     "enStock": "In stock",
-    "limpiar": "Clear filters"
+    "limpiar": "Clear filters",
+    "rangoInvalido": "The minimum price can't be higher than the maximum"
   },
   "carrito": {
     "titulo": "Cart",
@@ -261,7 +270,9 @@
     "entrando": "Signing in...",
     "sinCuenta": "Don't have an account?",
     "registrate": "Sign up here",
-    "credencialesIncorrectas": "Incorrect credentials"
+    "credencialesIncorrectas": "Incorrect credentials",
+    "deshabilitadaTitulo": "Your account is disabled",
+    "deshabilitadaTexto": "An administrator disabled your account, so you can't sign in. If you think this is a mistake, please contact the store."
   },
   "register": {
     "titulo": "Create account",
@@ -553,6 +564,83 @@
       "guardando": "Saving...",
       "confirmar": "Yes, change it",
       "toastEstado": "Request #{{id}} is now {{estado}}"
+    },
+    "us": {
+      "titulo": "Users",
+      "subtitulo": "Accounts registered in the store",
+      "cantidad_one": "{{count}} user",
+      "cantidad_other": "{{count}} users",
+      "buscar": "Search by name or email...",
+      "filtro": {
+        "todos": "All",
+        "habilitados": "Enabled",
+        "deshabilitados": "Disabled"
+      },
+      "col": {
+        "nombre": "Name",
+        "email": "Email",
+        "rol": "Role",
+        "alta": "Signed up",
+        "estado": "Status"
+      },
+      "rol": {
+        "ADMIN": "Admin",
+        "CLIENTE": "Customer"
+      },
+      "vos": "you",
+      "habilitado": "Enabled",
+      "deshabilitado": "Disabled",
+      "switchAria": "{{nombre}}'s account enabled",
+      "ayudaDeshabilitar": "Disable: they won't be able to sign in",
+      "ayudaHabilitar": "Enable: they can sign in again",
+      "noPropia": "You can't disable your own account",
+      "sinUsuarios": "There are no registered users yet.",
+      "sinResultados": "No users match your search.",
+      "errorCarga": "Users could not be loaded",
+      "deshabilitarTitulo": "Disable account",
+      "habilitarTitulo": "Enable account",
+      "deshabilitarPregunta": "Disable {{nombre}}'s account?",
+      "habilitarPregunta": "Enable {{nombre}}'s account again?",
+      "deshabilitarAviso": "They are signed out immediately and won't be able to sign in until you enable the account again. Their purchases and requests are kept.",
+      "habilitarAviso": "They will be able to sign in again with their email and password.",
+      "deshabilitar": "Disable",
+      "habilitar": "Enable",
+      "guardando": "Saving...",
+      "toastHabilitado": "{{nombre}}'s account is enabled",
+      "toastDeshabilitado": "{{nombre}}'s account is disabled",
+      "volver": "Back to users",
+      "usuario": "User",
+      "noEncontrado": "This user doesn't exist.",
+      "errorCargaDetalle": "The user could not be loaded",
+      "datos": "Personal details",
+      "telefono": "Phone",
+      "direccion": "Address",
+      "cargo": "Position",
+      "idioma": "Language",
+      "idiomas": {
+        "es": "Spanish",
+        "en": "English"
+      },
+      "actualizado": "Last updated",
+      "verificado": "Verified",
+      "compras_one": "Purchases ({{count}})",
+      "compras_other": "Purchases ({{count}})",
+      "compra": "Purchase",
+      "productos_one": "{{count}} item",
+      "productos_other": "{{count}} items",
+      "sinCompras": "No purchases yet.",
+      "solicitudes_one": "Tech support requests ({{count}})",
+      "solicitudes_other": "Tech support requests ({{count}})",
+      "sinSolicitudes": "No tech support requests yet.",
+      "mostrandoUltimas_one": "Showing the latest one.",
+      "mostrandoUltimas_other": "Showing the latest {{count}}.",
+      "verTodasSolicitudes": "See all their requests →",
+      "cuenta": "Account",
+      "explicacionHabilitado": "They can sign in and use the store.",
+      "explicacionDeshabilitado": "They can't sign in. Their purchases and requests are kept.",
+      "sesionesActivas": "Open sessions",
+      "noOtroAdmin": "Another administrator can't be disabled",
+      "adminNoSeDeshabilita": "Administrators can't be disabled from the panel."
     }
   },
   "captura": {
