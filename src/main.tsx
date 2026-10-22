@@ -17,6 +17,8 @@ import AdminProductos from "./pages/Admin/AdminProductos.tsx";
 import AdminLayout from "./layouts/AdminLayout.tsx";
 import AdminServicioTecnico from "./pages/Admin/AdminServicioTecnico.tsx";
 import AdminSolicitudDetalle from "./pages/Admin/AdminSolicitudDetalle.tsx";
+import AdminUsuarios from "./pages/Admin/AdminUsuarios.tsx";
+import AdminUsuarioDetalle from "./pages/Admin/AdminUsuarioDetalle.tsx";
 import Captura from "./pages/Captura/Captura.tsx";
 import { PantallaEstadoPago } from "./pages/EstadoPago/EstadoPago.tsx";
 import { MisCompras } from "./pages/MisCompras/MisCompras.tsx";
@@ -56,6 +58,8 @@ const router = createBrowserRouter([
           { path: "servicio-tecnico/:id", element: <AdminSolicitudDetalle /> },
           { path: "ventas", element: <VentasAdmin /> },
           { path: "ventas/:id", element: <VentaDetalleAdmin /> },
+          { path: "usuarios", element: <AdminUsuarios /> },
+          { path: "usuarios/:id", element: <AdminUsuarioDetalle /> },
         ],
       },
     ],

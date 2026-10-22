@@ -3,24 +3,35 @@ import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { signIn, useSession } from "../../services/auth-client";
+import { CODIGO_USUARIO_DESHABILITADO } from "../../services/adminUsuarios";
 
 export default function Login() {
   const { t } = useTranslation();
   const { data: session } = useSession();
-  if (session) return <Navigate to="/logout" replace />;
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  // Cuenta deshabilitada por un admin: se muestra un aviso aparte, no como error de credenciales
+  const [deshabilitada, setDeshabilitada] = useState(false);
   const [cargando, setCargando] = useState(false);
+
+  // Los hooks van antes de este return para que se llamen siempre en el mismo orden
+  if (session) return <Navigate to="/logout" replace />;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
+    setDeshabilitada(false);
     setCargando(true);
 
     const { error } = await signIn.email({ email, password });
     setCargando(false);
+
+    if (error?.code === CODIGO_USUARIO_DESHABILITADO) {
+      setDeshabilitada(true);
+      return;
+    }
 
     if (error) {
       setErrorMsg(error.message || t("login.credencialesIncorrectas"));
@@ -39,6 +50,13 @@ export default function Login() {
         <p className="mt-2 text-muted text-center">
           {t("login.bienvenida")}
         </p>
+
+        {deshabilitada && (
+          <div role="alert" className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <p className="font-semibold">{t("login.deshabilitadaTitulo")}</p>
+            <p className="mt-1">{t("login.deshabilitadaTexto")}</p>
+          </div>
+        )}
 
         {errorMsg && (
           <div className="mt-4 rounded-lg bg-red-100 border border-red-300 px-4 py-2 text-sm text-red-700 text-center">

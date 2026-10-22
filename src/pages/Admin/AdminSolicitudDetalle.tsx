@@ -15,10 +15,11 @@ import Modal from "../../components/Modal/Modal";
 import EstadoBadge from "../../components/ServicioTecnico/EstadoBadge";
 import ErrorCarga from "../../components/ServicioTecnico/ErrorCarga";
 import DetalleServicio from "../../components/ServicioTecnico/DetalleServicio";
+import HistorialEstados from "../../components/ServicioTecnico/HistorialEstados";
 import { tituloSolicitud } from "../../components/ServicioTecnico/textosSolicitud";
 import { claseInput } from "./estilosForm";
 
-// /admin/servicio-tecnico/:id: datos de la solicitud, historial, responder y cambiar estado.
+// /admin/servicio-tecnico/:id: datos de la solicitud, historial de estados, responder y cambiar estado.
 export default function AdminSolicitudDetalle() {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -99,9 +100,13 @@ export default function AdminSolicitudDetalle() {
               )}
             </div>
 
-            {/* Columna lateral: estado y datos del cliente */}
+            {/* Columna lateral: estado, historial de estados y datos del cliente */}
             <aside className="space-y-6 lg:sticky lg:top-24">
               <CambiarEstado solicitud={solicitud} onCambiado={setSolicitud} onConflicto={recargar} />
+
+              <Tarjeta titulo={t("servicioTecnico.historialEstados.titulo")}>
+                <HistorialEstados historial={solicitud.historial} mostrarAutor />
+              </Tarjeta>
 
               <Tarjeta titulo={t("admin.st.cliente")}>
                 <dl className="space-y-2 text-sm">

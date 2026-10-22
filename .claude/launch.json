@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "be",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "D:/Github/JS-Proyect-BE", "run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "fe",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "D:/Github/JS-Proyect-FE", "run", "dev"],
+      "port": 5173
+    }
+  ]
+}

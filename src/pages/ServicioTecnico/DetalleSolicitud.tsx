@@ -15,9 +15,11 @@ import { tituloSolicitud } from "../../components/ServicioTecnico/textosSolicitu
 import { formatoFecha } from "../../components/ServicioTecnico/formatoFecha";
 import ListaServicios from "../../components/ServicioTecnico/ListaServicios";
 import AvisoPrecio from "../../components/ServicioTecnico/AvisoPrecio";
+import HistorialEstados from "../../components/ServicioTecnico/HistorialEstados";
 
 // /servicio-tecnico/:id: lo que ve el cliente de una solicitud, todo como texto y listas
-// (sin tarjetas ni botones): estado, respuestas del comercio, lo que se va a hacer y sus comentarios.
+// (sin tarjetas ni botones): estado, respuestas del comercio, lo que se va a hacer, sus comentarios
+// y el historial de estados.
 export default function DetalleSolicitud() {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -139,6 +141,11 @@ function Detalle({ solicitud: s }: { solicitud: SolicitudDetalle }) {
           <p className="whitespace-pre-wrap break-words text-muted">{s.descripcion}</p>
         </Seccion>
       )}
+
+      {/* Cada cambio de estado con su fecha y hora */}
+      <Seccion titulo={t("servicioTecnico.historialEstados.titulo")}>
+        <HistorialEstados historial={s.historial} />
+      </Seccion>
     </>
   );
 }
