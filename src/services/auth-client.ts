@@ -12,6 +12,7 @@ export const authClient = createAuthClient({
         cargo: { type: "string", required: false },
         direccion: { type: "string", required: false },
         telefono: { type: "string", required: false },
+        habilitado: { type: "boolean", input: false },
       },
     }),
   ],
