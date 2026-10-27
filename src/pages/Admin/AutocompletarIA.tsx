@@ -77,7 +77,7 @@ export default function AutocompletarIA({ onAnalizarLote }: Props) {
       else setError("");
       const nuevas = archivos
         .slice(0, Math.max(lugar, 0))
-        .map((archivo) => ({ id: siguienteId.current++, archivo, origen, vista: URL.createObjectURL(archivo) });
+        .map((archivo) => ({ id: siguienteId.current++, archivo, origen, vista: URL.createObjectURL(archivo) }));
       if (nuevas.length === 0) return;
       fotosActuales.current = [...fotosActuales.current, ...nuevas];
       setFotos(fotosActuales.current);
