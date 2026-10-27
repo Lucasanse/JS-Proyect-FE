@@ -7,6 +7,7 @@ export interface Cotizacion {
   tipo: string;
   fechaActualizacion: string;
   desactualizada: boolean;
+  recibidaEn?: number; // cuándo la recibió el navegador (para la copia guardada)
 }
 
 const URL_COTIZACION = `${BASE_URL}/api/cotizacion`;
@@ -14,9 +15,10 @@ const CLAVE_CACHE = "cotizacionUsd";
 const REFRESCO_MS = 30 * 60 * 1000;
 const MAX_ANTIGUEDAD_MS = 2 * 60 * 60 * 1000;
 
-// Una copia guardada hace mucho (ej. la API estuvo caída) se marca como desactualizada
+// Una copia recibida hace mucho (ej. la API estuvo caída) se marca como desactualizada. Se mide desde
+// que llegó al navegador: la fecha de DolarApi solo cambia cuando cambia el valor.
 function marcarSiEsVieja(c: Cotizacion): Cotizacion {
-  const vieja = Date.now() - new Date(c.fechaActualizacion).getTime() > MAX_ANTIGUEDAD_MS;
+  const vieja = !c.recibidaEn || Date.now() - c.recibidaEn > MAX_ANTIGUEDAD_MS;
   return vieja ? { ...c, desactualizada: true } : c;
 }
 
@@ -50,6 +52,7 @@ export async function actualizarCotizacion(signal?: AbortSignal) {
       tipo: d.tipo ?? "",
       fechaActualizacion: d.fechaActualizacion,
       desactualizada: !!d.desactualizada,
+      recibidaEn: Date.now(),
     };
     try {
       localStorage.setItem(CLAVE_CACHE, JSON.stringify(c));
@@ -80,7 +83,7 @@ function suscribir(oyente: () => void) {
   };
 }
 
-// Cotización compartida por todas las pantallas (una sola consulta, refresco cada 30 min).
+// Cotización compartida por todas las pantallas (una consulta al abrir la página y refresco cada 30 min).
 // Devuelve null mientras no haya ninguna disponible.
 export function useCotizacion(): Cotizacion | null {
   return useSyncExternalStore(suscribir, () => actual);
