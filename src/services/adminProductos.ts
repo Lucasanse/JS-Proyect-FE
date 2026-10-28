@@ -8,7 +8,9 @@ export interface ProductoAdmin {
   nombre: string;
   descripcion: string;
   marca: { id: number; nombre: string };
-  precio: number;
+  precio: number; // en pesos
+  monedaBase: "USD" | "ARS"; // moneda en la que queda fijo el precio
+  precioUsd: number | null; // valor fijo en dólares (solo con monedaBase USD)
   stock: number;
   imagenUrl: string | null;
   activo: boolean;
@@ -53,7 +55,8 @@ export interface ProductoInput {
   descripcion: string;
   idMarca: number;
   idCategoria: number;
-  precio: number;
+  precio: number; // en la moneda elegida
+  moneda: "ARS" | "USD";
   stock: number;
   imagenUrl: string | null;
   traduccionEn: { nombre: string; descripcion: string } | null;
