@@ -13,7 +13,9 @@
     "cerrarSesion": "Log out",
     "iniciarSesion": "Log in",
     "carrito": "Cart",
-    "admin": "Admin"
+    "admin": "Admin",
+    "idioma": "Language",
+    "menuUsuario": "User menu"
   },
   "home": {
     "heroTitulo": "The tech you're looking for,",
@@ -258,7 +260,9 @@
     "confirmarPedido": "Confirm order",
     "eliminarPedido": "Delete order",
     "confirmarEliminar": "Do you want to remove all products from the cart?",
-    "errorEliminar": "Could not delete the order"
+    "errorEliminar": "Could not delete the order",
+    "total": "Total",
+    "avisoDebitoPesos": "You are charged in pesos: you will pay {{total}} (rate: 1 USD = {{cotizacion}}). The dollar value is for reference only."
   },
   "login": {
     "titulo": "Log in",
@@ -434,7 +438,11 @@
       "atributosAyuda": "fill in the ones you know",
       "numeroInvalido": "It must be a number",
       "ej": "E.g.",
-      "fotoAlGuardar": "Photo from the AI analysis: it's uploaded when you save the product."
+      "fotoAlGuardar": "Photo from the AI analysis: it's uploaded when you save the product.",
+      "moneda": "Price currency",
+      "equivalePesos": "Charged in pesos: {{pesos}} today. It updates with the exchange rate.",
+      "precioUsdAyuda": "The price stays in dollars and the peso value updates with the exchange rate.",
+      "fijarEn": "Fix price in"
     },
     "ia": {
       "titulo": "Autofill with AI",
@@ -641,6 +649,10 @@
       "sesionesActivas": "Open sessions",
       "noOtroAdmin": "Another administrator can't be disabled",
       "adminNoSeDeshabilita": "Administrators can't be disabled from the panel."
+    },
+    "fijoEn": {
+      "USD": "Fixed in dollars",
+      "ARS": "Fixed in pesos"
     }
   },
   "captura": {
@@ -700,5 +712,14 @@
   "avisoRetiro": {
     "titulo": "Important pickup information",
     "descripcion": "All purchases are strictly for in-store pickup. Presenting your invoice or receipt is required when picking up your order."
+  },
+  "precio": {
+    "cotizacionTiempoReal": "Real-time exchange rate of {{valor}}",
+    "infoCotizacion": "Exchange rate info",
+    "actualizadaEl": "Updated on {{fecha}}",
+    "desactualizada": "Outdated rate, last updated: {{fecha}}",
+    "seCobraEnPesos": "Reference value only, not part of the payment method. You are charged in pesos.",
+    "cotizacionDelDia": "rate from {{fecha}}",
+    "moneda": "Currency"
   }
 }

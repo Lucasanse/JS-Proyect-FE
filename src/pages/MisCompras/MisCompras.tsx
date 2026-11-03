@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { obtenerPedidos, type Compra } from "../../services/pedidos";
 import { useSession } from "../../services/auth-client";
+import Precio from "../../components/Precio/Precio";
 import AvisoCarrito from "../../components/AvisoCarrito/AvisoCarrito";
 import { AvisoRetiroLocal } from "../../components/AvisoDomicilio/AvisoDomicilio";
 export const MisCompras = () => {
@@ -120,9 +121,16 @@ export const MisCompras = () => {
                   <span className="text-sm text-muted">{compra.fecha}</span>
                 </div>
                 <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-                  <span className="text-lg font-bold text-ink">
-                    ${compra.total}
-                  </span>
+                  {/* Cotización guardada al emitir la compra, no la de hoy */}
+                  {compra.cotizacionUsd && compra.cotizacionFecha ? (
+                    <Precio
+                      precio={compra.total}
+                      cotizacion={{ valor: compra.cotizacionUsd, fecha: compra.cotizacionFecha }}
+                      className="text-right text-lg font-bold text-ink"
+                    />
+                  ) : (
+                    <span className="text-lg font-bold text-ink">${compra.total}</span>
+                  )}
                   {formatearEstado(compra.status)}
                 </div>
               </div>

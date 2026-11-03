@@ -28,6 +28,8 @@ import { estaCerrado, type FotoLote, type ItemLote } from "./lote";
 import { IconoImagen } from "./IconosAdmin";
 import { claseInput } from "./estilosForm";
 import { analizarFotoLote, cancelarCaptura, type SugerenciaProducto } from "../../services/analisisIA";
+import { useCotizacion } from "../../services/cotizacion";
+import { formatearArs } from "../../services/moneda";
 import { reducirFoto } from "../../services/reducirFoto";
 
 // Si la IA responde 429 (límite de uso), el lote se frena y se reintenta la misma foto tras
@@ -61,7 +63,8 @@ interface Campos {
   nombre: string;
   idCategoria: string;
   idMarca: string;
-  precio: string;
+  precio: string; // en la moneda elegida
+  moneda: "ARS" | "USD";
   stock: string;
   descripcion: string;
   imagenUrl: string;
@@ -101,7 +104,9 @@ const camposIniciales = (p: ProductoAdmin | null): Campos => ({
   nombre: p?.nombre ?? "",
   idCategoria: p ? String(p.categoria.id) : "",
   idMarca: p ? String(p.marca.id) : "",
-  precio: p ? String(p.precio) : "",
+  // El precio queda fijo en la moneda elegida; en un producto nuevo viene en dólares
+  moneda: p ? p.monedaBase : "USD",
+  precio: p ? String(p.precioUsd ?? p.precio) : "",
   stock: p ? String(p.stock) : "",
   descripcion: p?.descripcion ?? "",
   imagenUrl: p?.imagenUrl ?? "",
@@ -166,6 +171,7 @@ function aInput(c: Campos, valores: Valores, tipo: TipoComponente | undefined): 
     idCategoria: Number(c.idCategoria),
     idMarca: Number(c.idMarca),
     precio: Number(c.precio),
+    moneda: c.moneda,
     stock: Number(c.stock),
     descripcion: c.descripcion.trim(),
     imagenUrl: c.imagenUrl.trim() || null,
@@ -202,9 +208,12 @@ function erroresDelBackend(error: ApiError): Errores {
 
 export default function ProductoFormModal({ producto, categorias, onCerrar, onGuardado }: Props) {
   const { t } = useTranslation();
+  const cotizacion = useCotizacion();
   const esNuevo = producto === null;
   const formRef = useRef<HTMLFormElement>(null);
   const [campos, setCampos] = useState(() => camposIniciales(producto));
+  // Sin cotización no se puede fijar en dólares: un producto nuevo se ve y se guarda en pesos
+  const moneda = !cotizacion && campos.moneda === "USD" && producto?.monedaBase !== "USD" ? "ARS" : campos.moneda;
   const [valores, setValores] = useState(() => valoresIniciales(producto));
   const [errores, setErrores] = useState<Errores>({});
   const [errorGeneral, setErrorGeneral] = useState("");
@@ -274,7 +283,7 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
     if (errores[clave]) setErrores((prev) => ({ ...prev, [clave]: undefined }));
   };
 
-  const cambiar = (campo: keyof Campos, valor: string) => {
+  const cambiar = <K extends keyof Campos>(campo: K, valor: Campos[K]) => {
     setCampos((prev) => ({ ...prev, [campo]: valor }));
     // El error de un campo se borra apenas se lo corrige
     limpiarError(campo);
@@ -512,7 +521,7 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
 
     setGuardando(true);
     try {
-      let datos = aInput(campos, valores, tipo);
+      let datos = { ...aInput(campos, valores, tipo), moneda };
       // La foto elegida del análisis se sube ahora. Si después falla el guardado, queda
       // como URL en el formulario para no volver a subirla al reintentar.
       if (fotoProducto) {
@@ -660,14 +669,39 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <Campo id="campo-precio" label={t("admin.form.precio")} error={errores.precio} requerido>
-                  <div className="relative">
-                    <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">$</span>
-                    <InputPrecio
-                      {...propsDe("precio")}
-                      onValor={(v) => cambiar("precio", v)}
-                      className={`${propsDe("precio").className} pl-7`}
-                    />
+                  <div className="flex gap-2">
+                    <div className="relative min-w-0 flex-1">
+                      <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">
+                        {moneda === "USD" ? "US$" : "$"}
+                      </span>
+                      <InputPrecio
+                        {...propsDe("precio")}
+                        onValor={(v) => cambiar("precio", v)}
+                        className={`${propsDe("precio").className} ${moneda === "USD" ? "pl-11" : "pl-7"}`}
+                      />
+                    </div>
+                    <div className="inline-flex shrink-0 self-start rounded-lg border border-line bg-surface-alt p-1 text-xs font-semibold" role="group" aria-label={t("admin.form.fijarEn")}>
+                      {(["ARS", "USD"] as const).map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          aria-pressed={moneda === m}
+                          onClick={() => cambiar("moneda", m)}
+                          disabled={m === "USD" && !cotizacion}
+                          className={`cursor-pointer rounded-md px-2.5 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${moneda === m ? "bg-primary text-surface" : "text-muted hover:text-ink"}`}
+                        >
+                          {m}
+                        </button>
+                      ))}
+                    </div>
                   </div>
+                  {moneda === "USD" && cotizacion && (
+                    <p className="mt-1 text-xs text-muted">
+                      {Number(campos.precio) > 0
+                        ? t("admin.form.equivalePesos", { pesos: formatearArs(Math.round(Number(campos.precio) * cotizacion.valor * 100) / 100) })
+                        : t("admin.form.precioUsdAyuda")}
+                    </p>
+                  )}
                 </Campo>
                 <Campo id="campo-stock" label={t("admin.form.stock")} error={errores.stock} requerido>
                   <input {...propsDe("stock")} type="number" inputMode="numeric" min="0" step="1" placeholder="0" />

@@ -1,16 +1,17 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import MenuDesplegable from "../MenuDesplegable/MenuDesplegable";
 import { useSession } from "../../services/auth-client";
 
 const URL_IDIOMA_USUARIO = "http://localhost:3000/api/usuario/idioma";
 
 const IDIOMAS = [
-  { codigo: "es", etiqueta: "ES" },
-  { codigo: "en", etiqueta: "EN" },
+  { codigo: "es", nombre: "Español" },
+  { codigo: "en", nombre: "English" },
 ] as const;
 
 export function SwitchLenguaje() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: session } = useSession();
   const idiomaActual = (i18n.resolvedLanguage || "es").slice(0, 2);
 
@@ -56,26 +57,15 @@ export function SwitchLenguaje() {
   };
 
   return (
-    <div className="inline-flex rounded-lg border border-line bg-surface-alt p-1 text-xs font-semibold">
-      {IDIOMAS.map(({ codigo, etiqueta }) => {
-        const activo = idiomaActual === codigo;
-
-        return (
-          <button
-            key={codigo}
-            type="button"
-            onClick={() => cambiarIdioma(codigo)}
-            aria-pressed={activo}
-            className={`cursor-pointer rounded-md px-2.5 py-1 transition-colors ${
-              activo
-                ? "bg-primary text-surface"
-                : "text-muted hover:text-ink"
-            }`}
-          >
-            {etiqueta}
-          </button>
-        );
-      })}
-    </div>
+    <MenuDesplegable
+      trigger={idiomaActual.toUpperCase()}
+      ariaLabel={t("nav.idioma")}
+      opciones={IDIOMAS.map(({ codigo, nombre }) => ({
+        clave: codigo,
+        etiqueta: nombre,
+        activa: idiomaActual === codigo,
+        onClick: () => cambiarIdioma(codigo),
+      }))}
+    />
   );
 }
