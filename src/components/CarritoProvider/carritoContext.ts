@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 import type { CarritoDetalle } from "../../services/carrito";
+import type { ComponenteElegido } from "../../services/armador";
 
 export interface CarritoContextValue {
   carrito: CarritoDetalle | null; // null = sin sesión o todavía cargando
@@ -8,6 +9,8 @@ export interface CarritoContextValue {
   cambiarCantidad: (idProducto: number, cantidad: number) => Promise<void>;
   quitar: (idProducto: number) => Promise<void>;
   vaciar: () => Promise<void>;
+  // Agrega todos los componentes del armador de PC (el BE rechaza armados incompatibles o incompletos)
+  agregarArmado: (componentes: ComponenteElegido[]) => Promise<void>;
   // Cuántas unidades de un producto ya hay en el carrito
   cantidadEnCarrito: (idProducto: number) => number;
 }
