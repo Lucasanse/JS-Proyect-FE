@@ -1,4 +1,5 @@
 // src/pages/Detalles.tsx
+import Precio from "../../components/Precio/Precio";
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -202,9 +203,7 @@ export default function Detalles() {
             {/* Precio y Estado de Stock */}
             <div className="mt-5 pb-5 border-b border-slate-100 flex flex-wrap items-baseline justify-between gap-4">
               <div>
-                <span className="text-3xl sm:text-4xl font-black text-slate-900">
-                  ${producto.precio.toLocaleString("es-AR")}
-                </span>
+                <Precio precio={producto.precio} className="text-3xl sm:text-4xl font-black text-slate-900" />
                 <p className="text-xs text-slate-400 mt-1">
                   {t("detalle.impuestosIncluidos")}
                 </p>

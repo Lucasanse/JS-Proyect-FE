@@ -52,6 +52,9 @@ export type DetalleVenta = {
 // Extendemos VentaAdmin para incluir los detalles
 export type VentaDetalleAdmin = VentaAdmin & {
   detalles: DetalleVenta[];
+  // Prisma serializa el decimal como texto
+  cotizacionUsd?: string | null;
+  cotizacionFecha?: string | null;
 };
 
 // Función para traer una venta específica

@@ -4,16 +4,13 @@ import { useTranslation } from "react-i18next";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../../components/CarritoProvider/carritoContext";
 import type { ItemCarrito } from "../../services/carrito";
+import Precio from "../../components/Precio/Precio";
+import { useCotizacion } from "../../services/cotizacion";
+import { formatearArs, formatearUsd, useMoneda } from "../../services/moneda";
 import { ContenedorCompraCarrito } from "../../components/Comprar/ComprarUnidad";
 
-// Por ahora todo se muestra en pesos. Para sumar dólares, agregar otra fila
-// en el resumen con su propio formato (ej. currency: "USD") y la cotización.
+// Los precios se ven en la moneda elegida en el navbar, pero el cobro es siempre en pesos
 const MONEDA = "ARS";
-const formatoPrecio = new Intl.NumberFormat("es-AR", {
-  style: "currency",
-  currency: MONEDA,
-  minimumFractionDigits: 2,
-});
 
 export default function Carrito() {
   const { t } = useTranslation();
@@ -212,19 +209,15 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
         </div>
 
         <div className="hidden w-36 flex-col items-end sm:flex">
-          <span className="text-sm text-muted">
-            {formatoPrecio.format(producto.precio)}
-          </span>
-          <span className="text-lg font-bold text-ink">
-            {formatoPrecio.format(subtotal)}
-          </span>
+          <Precio precio={producto.precio} className="text-sm text-muted" />
+          <Precio precio={subtotal} className="text-lg font-bold text-ink" />
         </div>
       </div>
 
       {/* En mobile el precio va debajo */}
-      <p className="text-right text-sm font-bold text-ink sm:hidden">
-        {formatoPrecio.format(subtotal)}
-      </p>
+      <div className="text-right sm:hidden">
+        <Precio precio={subtotal} className="text-sm font-bold text-ink" />
+      </div>
       {error && <p className="text-xs text-primary">{error}</p>}
     </li>
   );
@@ -235,6 +228,9 @@ function Resumen() {
   const { carrito, vaciar } = useCarrito();
   const [error, setError] = useState("");
   const { data: session } = useSession();
+  const moneda = useMoneda();
+  const cotizacion = useCotizacion();
+  const enUsd = moneda === "USD" && !!cotizacion;
   if (!carrito) return null;
 
   // No se puede confirmar si algún producto quedó sin stock suficiente
@@ -260,18 +256,27 @@ function Resumen() {
         <div className="flex justify-between py-3">
           <dt className="text-ink">{t("carrito.subtotal")}</dt>
           <dd className="font-semibold text-ink">
-            {formatoPrecio.format(carrito.total)}
+            <Precio precio={carrito.total} />
           </dd>
         </div>
         <div className="flex justify-between py-3">
           <dt className="font-bold text-ink">
-            {t("carrito.totalPagar", { moneda: MONEDA })}
+            {enUsd ? t("carrito.total") : t("carrito.totalPagar", { moneda: MONEDA })}
           </dt>
           <dd className="font-bold text-ink">
-            {formatoPrecio.format(carrito.total)}
+            <Precio precio={carrito.total} className="font-bold text-ink" />
           </dd>
         </div>
       </dl>
+
+      {enUsd && cotizacion && (
+        <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+          {t("carrito.avisoDebitoPesos", {
+            total: formatearArs(carrito.total),
+            cotizacion: formatearUsd(cotizacion.valor),
+          })}
+        </p>
+      )}
 
       {hayProblemasDeStock && (
         <p className="text-sm text-primary">{t("carrito.ajustarCantidades")}</p>
