@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useSession } from "../../services/auth-client";
 import * as api from "../../services/carrito";
+import { agregarArmadoAlCarrito, type ComponenteElegido } from "../../services/armador";
 import { CarritoContext } from "./carritoContext";
 import AvisoCarrito from "../AvisoCarrito/AvisoCarrito";
 import type { ProductoResumen } from "../../services/productos";
@@ -48,6 +49,7 @@ export default function CarritoProvider({ children }: { children: ReactNode }) {
       setCarrito(await api.modificarCantidad(idProducto, cantidad)),
     quitar: async (idProducto: number) => setCarrito(await api.quitarDelCarrito(idProducto)),
     vaciar: async () => setCarrito(await api.vaciarCarrito()),
+    agregarArmado: async (componentes: ComponenteElegido[]) => setCarrito(await agregarArmadoAlCarrito(componentes)),
     cantidadEnCarrito: (idProducto: number) =>
       carrito?.items.find((i) => i.producto.id === idProducto)?.cantidad ?? 0,
   };

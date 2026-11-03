@@ -68,7 +68,175 @@
   },
   "armarPc": {
     "titulo": "Build your PC",
-    "enConstruccion": "Page under construction."
+    "intro": "Choose each part step by step. We only show the ones that are compatible with what you already picked, so you don't need to know about sockets or form factors.",
+    "pasosLabel": "Build steps",
+    "pasoDe": "Step {{numero}} of {{total}}",
+    "progresoObligatorios": "{{listos}} of {{total}} required parts chosen",
+    "estado": {
+      "listo": "Done",
+      "pendiente": "Pending",
+      "opcional": "Optional"
+    },
+    "cantidadProductos_one": "{{count}} product",
+    "cantidadProductos_other": "{{count}} products",
+    "cerrarAviso": "Close notice",
+    "avisoQuitado": "We removed {{nombre}} because it was no longer compatible: {{motivo}}.",
+    "avisoCantidad": "The quantity couldn't be changed: {{motivo}}.",
+    "armadoDescartado": "Your previous build had products that are no longer available, so we started over.",
+    "errorValidar": "We couldn't check compatibility. Please try again.",
+    "errorCargar": "Products couldn't be loaded",
+    "anterior": "Back",
+    "siguiente": "Next: {{paso}}",
+    "tipos": {
+      "Motherboard": "Motherboard",
+      "CPU": "Processor",
+      "RAM": "RAM",
+      "Gabinete": "Case",
+      "GPU": "Graphics card",
+      "Almacenamiento": "Storage",
+      "Fuente": "Power supply",
+      "Perifericos": "Peripherals"
+    },
+    "pasos": {
+      "Motherboard": {
+        "titulo": "1. Choose the motherboard",
+        "ayuda": "It's the board everything plugs into. It decides which processor and memory you can use."
+      },
+      "CPU": {
+        "titulo": "2. Choose the processor",
+        "ayuda": "It's the brain of the PC. We show the ones that fit your motherboard."
+      },
+      "RAM": {
+        "titulo": "3. Choose the RAM",
+        "ayuda": "More memory lets you keep more programs open at once. For gaming, 16 GB or more is recommended. You can pick several identical modules."
+      },
+      "Gabinete": {
+        "titulo": "4. Choose the case",
+        "ayuda": "It's the box that holds everything. The motherboard, graphics card and power supply must fit inside."
+      },
+      "GPU": {
+        "titulo": "5. Choose the graphics card",
+        "ayuda": "It handles graphics: the most important part for gaming or video editing."
+      },
+      "Almacenamiento": {
+        "titulo": "6. Choose the storage",
+        "ayuda": "It's where the system, programs and your files are stored. An NVMe SSD makes everything load much faster. You can add more than one drive, for example an NVMe for the system and a hard drive for your files."
+      },
+      "Fuente": {
+        "titulo": "7. Choose the power supply",
+        "ayuda": "It powers the whole computer. We only show the ones that are enough for what you picked, with a safety margin."
+      },
+      "Perifericos": {
+        "titulo": "8. Add peripherals (optional)",
+        "ayuda": "Monitor, mouse, keyboard, headset... You can add several or skip this step."
+      }
+    },
+    "gpuOpcional": "Optional: your processor has integrated graphics, so you can use the PC without a graphics card.",
+    "conexionesMother": "You can add several drives as long as they fit your {{nombre}}: it has {{m2}} M.2 slots and {{sata}} SATA ports.",
+    "gpuObligatoria": "Required: your processor has no integrated graphics, without a graphics card you won't get any picture.",
+    "sinCompatibles": "There are no products compatible with your choices. Try changing a part from a previous step.",
+    "categorias": {
+      "Monitores": "Monitors",
+      "Teclados": "Keyboards",
+      "Mouse": "Mice",
+      "Auriculares": "Headsets",
+      "Perifericos": "Other"
+    },
+    "filtrarCategoria": "Filter by category",
+    "todas": "All",
+    "sinPerifericos": "There are no products in this category.",
+    "verIncompatibles_one": "See {{count}} product that isn't compatible",
+    "verIncompatibles_other": "See {{count}} products that aren't compatible",
+    "cargando": "Loading…",
+    "sugerida": "Suggested",
+    "elegido": "Selected",
+    "elegir": "Choose",
+    "agregar": "Add",
+    "elegirIgual": "Choose and remove {{nombres}}",
+    "elegirIgualDetalle": "Choosing this product removes {{nombres}} from your build",
+    "quitar": "Remove",
+    "cantidad": "Quantity",
+    "sinStock": "Out of stock",
+    "incompatibilidad": {
+      "SOCKET_CPU_MOTHER": "the processor uses socket {{socketCpu}} and the motherboard is for {{socketMother}}",
+      "MEMORIA_CPU_MOTHER": "the motherboard uses {{tipoMother}} memory and the processor only supports {{soportada}}",
+      "TIPO_RAM_MOTHER": "the memory is {{tipoRam}} and the motherboard uses {{tipoMother}}",
+      "TIPO_RAM_CPU": "the memory is {{tipoRam}} and the processor only supports {{soportada}}",
+      "SLOTS_RAM": "that's {{modulos}} memory modules and the motherboard has {{slots}} slots",
+      "CAPACIDAD_RAM": "that's {{capacidad}} GB of memory and the motherboard supports up to {{maxima}} GB",
+      "FORMATO_MOTHER_GABINETE": "the motherboard is {{formato}} and the case only fits {{soportados}}",
+      "LARGO_GPU_GABINETE": "the graphics card is {{largo}} mm long and the case fits up to {{maximo}} mm",
+      "FORMATO_FUENTE_GABINETE": "the power supply is {{formato}} and the case only fits {{soportados}}",
+      "CONECTOR_GPU_FUENTE": "the graphics card needs a 12V-2x6 (16-pin) connector and the power supply doesn't have one",
+      "CONEXION_ALMACENAMIENTO": "that's {{cantidad}} {{conexion}} drives and the motherboard has {{disponibles}} {{conexion}} connections",
+      "POTENCIA_FUENTE": "the power supply is {{potencia}} W and the computer needs at least {{recomendada}} W",
+      "LARGO_FUENTE_GABINETE": "the power supply is {{largo}} mm long and the case fits up to {{maximo}} mm"
+    },
+    "especificaciones": {
+      "Socket": "Socket",
+      "Tipo de RAM": "Memory",
+      "Formato": "Form factor",
+      "Slots de memoria": "RAM slots",
+      "Nucleos": "Cores",
+      "Memoria soportada": "Memory",
+      "Graficos integrados": "Integrated graphics",
+      "Tipo": "Type",
+      "Capacidad": "Capacity",
+      "Frecuencia": "Speed",
+      "Modulos": "Modules",
+      "Motherboards soportadas": "Motherboards",
+      "Largo maximo de GPU": "GPU up to",
+      "Fuentes soportadas": "Power supplies",
+      "Memoria": "Memory",
+      "Largo": "Length",
+      "Conectores de energia": "Power",
+      "Potencia": "Wattage",
+      "Certificacion": "Certification",
+      "Largo maximo de fuente": "PSU up to",
+      "Ranuras M.2": "M.2 slots",
+      "Puertos SATA": "SATA ports"
+    },
+    "valores": {
+      "Si": "Yes",
+      "No": "No"
+    },
+    "resumen": "Your PC",
+    "limpiarArmado": "Clear build",
+    "confirmarLimpiar": "Are you sure you want to clear the build? All the chosen parts and peripherals will be removed.",
+    "faltaElegir": "Not chosen yet",
+    "faltaGpu": "Not chosen yet (your processor has no graphics)",
+    "opcional": "Optional",
+    "quitarComponente": "Remove {{nombre}}",
+    "total": "Total",
+    "potenciaVacia": "Choose some parts to see the estimated power draw.",
+    "consumo": "Estimated power draw",
+    "recomendada": "Recommended power supply: {{watts}} W or more (draw + {{margen}}% margin).",
+    "usoFuente": "With your {{watts}} W power supply the computer would use {{uso}}%.",
+    "fuenteSugerida": "Suggested power supply for your build",
+    "usarFuente": "Use this power supply",
+    "sinStockArmado": "Not enough stock: {{nombres}}.",
+    "agregarTodo": "Add all to cart",
+    "agregando": "Adding…",
+    "agregadoCarrito": "Your build was added to the cart",
+    "errorCarrito": "The build couldn't be added to the cart",
+    "completaParaComprar": "Complete the required parts to be able to buy.",
+    "guardar": "Save build",
+    "guardando": "Saving…",
+    "guardado": "Your build was saved",
+    "guardarTitulo": "Save build",
+    "nombreArmado": "Name",
+    "nombrePlaceholder": "E.g. Gaming PC",
+    "errorGuardar": "The build couldn't be saved",
+    "iniciaSesion": "Log in",
+    "paraComprar": "to add the build to the cart or save it.",
+    "misArmados": "My saved builds",
+    "sinArmados": "You haven't saved any builds yet.",
+    "errorArmados": "Your builds couldn't be loaded",
+    "resumenArmado_one": "{{count}} part · {{watts}} W",
+    "resumenArmado_other": "{{count}} parts · {{watts}} W",
+    "cargar": "Load",
+    "eliminar": "Delete",
+    "errorEliminar": "The build couldn't be deleted"
   },
   "servicioTecnico": {
     "titulo": "Tech Support",
