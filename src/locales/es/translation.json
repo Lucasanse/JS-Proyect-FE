@@ -726,5 +726,43 @@
     "seCobraEnPesos": "Valor informativo, no forma parte del método de pago. Se cobra en pesos.",
     "cotizacionDelDia": "cotización del {{fecha}}",
     "moneda": "Moneda"
+  },
+  "comparador": {
+    "titulo": "Comparador de Productos",
+    "descripcion": "Contrastá especificaciones técnicas, consumo y precios en tiempo real.",
+    "ariaFiltro": "Filtro de productos",
+    "ariaSlots": "Slots de selección de productos",
+    "ariaTabla": "Tabla comparativa"
+  },
+
+  "selectorCategoria": {
+    "label": "Categoría a comparar",
+    "cargando": "Cargando categorías...",
+    "errorSelect": "Error al cargar",
+    "errorTexto": "Error al cargar categorías"
+  },
+  "selectorProducto": {
+    "buscando": "Buscando productos...",
+    "errorSelect": "Error al cargar",
+    "sinProductos": "Sin productos",
+    "seleccionar": "+ Seleccionar producto",
+    "yaSeleccionado": " (Ya seleccionado)"
+  },
+  "slotProducto": {
+    "slot": "Slot",
+    "vaciar": "Vaciar",
+    "quitar": "✕ Quitar",
+    "esperando": "Esperando selección"
+  },
+  "tablaComparativa": {
+    "especificaciones": "Especificaciones",
+    "respectoMinimo": "+{{diff}}% respecto al valor más bajo ({{min}})",
+    "frases": {
+      "esMejor": "Es mejor",
+      "masRapido": "Más rápido",
+      "rindeMas": "Rinde más",
+      "superior": "Superior",
+      "destaca": "Destaca"
+    }
   }
 }
