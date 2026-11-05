@@ -50,7 +50,10 @@
     "especificacionesTitulo": "Technical Specifications",
     "atributosPara": "Compatibility and performance attributes for",
     "consumoRequerido": "Required power: {{watts}} W",
-    "sinAtributos": "No additional technical attributes registered for this component."
+    "sinAtributos": "No additional technical attributes registered for this component.",
+    "necesitaGpuTitulo": "Needs a graphics card",
+    "necesitaGpu": "This processor has no integrated graphics: the computer needs a graphics card to display anything. If you don't have one, choose it in the PC builder.",
+    "armarPc": "Build your PC"
   },
   "footer": {
     "descripcion": "Hardware, components and tech support.",
@@ -202,7 +205,7 @@
     },
     "resumen": "Your PC",
     "limpiarArmado": "Clear build",
-    "confirmarLimpiar": "Are you sure you want to clear the build? All the chosen parts and peripherals will be removed.",
+    "confirmarLimpiar": "Are you sure you want to clear the build? All the chosen parts, peripherals and services will be removed.",
     "faltaElegir": "Not chosen yet",
     "faltaGpu": "Not chosen yet (your processor has no graphics)",
     "opcional": "Optional",
@@ -236,7 +239,12 @@
     "resumenArmado_other": "{{count}} parts · {{watts}} W",
     "cargar": "Load",
     "eliminar": "Delete",
-    "errorEliminar": "The build couldn't be deleted"
+    "errorEliminar": "The build couldn't be deleted",
+    "servicios": {
+      "titulo": "Services",
+      "aviso": "Keep in mind that assembling the computer can take up to 2 business days.",
+      "error": "The services couldn't be loaded"
+    }
   },
   "servicioTecnico": {
     "titulo": "Tech Support",

@@ -36,7 +36,10 @@
     "especificacionesTitulo": "Especificaciones Técnicas",
     "atributosPara": "Atributos de compatibilidad y rendimiento para",
     "consumoRequerido": "Consumo requerido: {{watts}} W",
-    "sinAtributos": "No hay atributos técnicos adicionales registrados para este componente."
+    "sinAtributos": "No hay atributos técnicos adicionales registrados para este componente.",
+    "necesitaGpuTitulo": "Necesita placa de video",
+    "necesitaGpu": "Este procesador no tiene gráficos integrados: para que la PC dé imagen hay que sumarle una placa de video. Si no tenés una, elegila en el armador.",
+    "armarPc": "Armar tu PC"
   },
   "home": {
     "heroTitulo": "La tecnología que buscás,",
@@ -202,7 +205,7 @@
     },
     "resumen": "Tu PC",
     "limpiarArmado": "Limpiar armado",
-    "confirmarLimpiar": "¿Estás seguro de que querés limpiar el armado? Se van a quitar todos los componentes y periféricos elegidos.",
+    "confirmarLimpiar": "¿Estás seguro de que querés limpiar el armado? Se van a quitar todos los componentes, periféricos y servicios elegidos.",
     "faltaElegir": "Falta elegir",
     "faltaGpu": "Falta elegir (tu procesador no tiene video)",
     "opcional": "Opcional",
@@ -236,7 +239,12 @@
     "resumenArmado_other": "{{count}} componentes · {{watts}} W",
     "cargar": "Cargar",
     "eliminar": "Eliminar",
-    "errorEliminar": "No se pudo eliminar el armado"
+    "errorEliminar": "No se pudo eliminar el armado",
+    "servicios": {
+      "titulo": "Servicios",
+      "aviso": "Tené en cuenta que el armado del equipo puede demorar hasta 2 días hábiles.",
+      "error": "No se pudieron cargar los servicios"
+    }
   },
   "servicioTecnico": {
     "titulo": "Servicio técnico",

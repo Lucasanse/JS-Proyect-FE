@@ -74,6 +74,12 @@ export interface ComponenteElegido {
   cantidad: number;
 }
 
+// Lo que se compra con el armado: un componente, un periférico o un servicio (armado, instalación de Windows...)
+export interface ItemArmado {
+  producto: ProductoResumen;
+  cantidad: number;
+}
+
 export interface PresetArmado {
   id: number;
   nombre: string;
@@ -94,7 +100,7 @@ export class ArmadorError extends Error {
 }
 
 // Lo que se manda al BE: solo ids y cantidades
-const aSeleccion = (componentes: ComponenteElegido[]) =>
+const aSeleccion = (componentes: ItemArmado[]) =>
   componentes.map((c) => ({ idProducto: c.producto.id, cantidad: c.cantidad }));
 
 // credentials: "include" manda la cookie de sesión de Better Auth al BE.
@@ -127,7 +133,9 @@ export const validarArmado = (componentes: ComponenteElegido[], signal?: AbortSi
 export const obtenerFuenteSugerida = (componentes: ComponenteElegido[], signal?: AbortSignal) =>
   post<FuenteSugeridaRespuesta>("/fuente-sugerida", { seleccion: aSeleccion(componentes) }, signal);
 
-export const agregarArmadoAlCarrito =(componentes: ComponenteElegido[]) =>
+export const obtenerServicios = (signal?: AbortSignal) => pedir<ProductoResumen[]>("/servicios", { signal });
+
+export const agregarArmadoAlCarrito = (componentes: ItemArmado[]) =>
   post<CarritoDetalle>("/carrito", { seleccion: aSeleccion(componentes) });
 
 export const listarPresets = (signal?: AbortSignal) => pedir<PresetArmado[]>("/presets", { signal });

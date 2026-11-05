@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Precio from "../../components/Precio/Precio";
@@ -17,12 +17,15 @@ import {
   type ProductoArmador,
   type ValidacionArmado,
 } from "../../services/armador";
+import type { ProductoResumen } from "../../services/productos";
+import ServiciosArmado from "./ServiciosArmado";
 import { especificacionDe, useTextosArmador } from "./textosArmador";
 import type { Seleccion } from "./ArmarPc";
 
 interface Props {
   seleccion: Seleccion;
   perifericos: ComponenteElegido[];
+  servicios: ProductoResumen[];
   validacion: ValidacionArmado | null;
   potencia: PotenciaCalculada | null;
   fuenteSugerida: ProductoArmador | null;
@@ -31,6 +34,7 @@ interface Props {
   onQuitar: (producto: ProductoArmador) => void;
   onQuitarPeriferico: (idProducto: number) => void;
   onElegir: (producto: ProductoArmador) => void;
+  onServicios: Dispatch<SetStateAction<ProductoResumen[]>>;
   onVaciar: () => void;
   onGuardado: () => void;
 }
@@ -39,6 +43,7 @@ interface Props {
 export default function ResumenArmado({
   seleccion,
   perifericos,
+  servicios,
   validacion,
   potencia,
   fuenteSugerida,
@@ -47,6 +52,7 @@ export default function ResumenArmado({
   onQuitar,
   onQuitarPeriferico,
   onElegir,
+  onServicios,
   onVaciar,
   onGuardado,
 }: Props) {
@@ -59,11 +65,12 @@ export default function ResumenArmado({
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
 
-  // Todo lo que se compra o se guarda: los componentes y los periféricos
+  // Lo que se guarda: los componentes y los periféricos. Al comprar se suman los servicios elegidos.
   const componentes = [...TIPOS_ARMADOR.flatMap((t2) => seleccion[t2] ?? []), ...perifericos];
-  const total = componentes.reduce((acc, c) => acc + c.producto.precio * c.cantidad, 0);
+  const aComprar = [...componentes, ...servicios.map((producto) => ({ producto, cantidad: 1 }))];
+  const total = aComprar.reduce((acc, c) => acc + c.producto.precio * c.cantidad, 0);
   const faltantes = validacion?.faltantes ?? [];
-  const sinStock = componentes.filter((c) => c.producto.stock < c.cantidad);
+  const sinStock = aComprar.filter((c) => c.producto.stock < c.cantidad);
   // El BE también lo rechaza; acá se deshabilita para no llegar a ese error
   const listo = !verificando && !!validacion?.valida && !!validacion.completa && sinStock.length === 0;
 
@@ -77,7 +84,7 @@ export default function ResumenArmado({
     setError("");
     setAgregando(true);
     try {
-      await agregarArmado(componentes);
+      await agregarArmado(aComprar);
       mostrarToast(t("armarPc.agregadoCarrito"), "exito");
     } catch (e) {
       setError(e instanceof Error ? e.message : t("armarPc.errorCarrito"));
@@ -90,7 +97,7 @@ export default function ResumenArmado({
     <aside className="w-full rounded-xl border border-line bg-surface p-4 shadow-sm sm:p-6 lg:sticky lg:top-4 lg:w-96">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-xl font-bold text-ink">{t("armarPc.resumen")}</h2>
-        {componentes.length > 0 && (
+        {aComprar.length > 0 && (
           <button
             type="button"
             onClick={limpiar}
@@ -146,6 +153,8 @@ export default function ResumenArmado({
           );
         })}
       </ul>
+
+      <ServiciosArmado elegidos={servicios} onCambiar={onServicios} />
 
       <div className="mt-3 flex items-center justify-between border-t border-line pt-3">
         <span className="font-semibold text-ink">{t("armarPc.total")}</span>

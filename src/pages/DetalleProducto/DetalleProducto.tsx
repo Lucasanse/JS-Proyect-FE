@@ -125,6 +125,10 @@ export default function Detalles() {
 
   const restante = Math.max(producto.stock - cantidadEnCarrito(producto.id), 0);
   const sinStock = !producto.disponible || restante === 0;
+  // Mismo dato que usa el armador para exigir la GPU
+  const necesitaGpu =
+    producto.tipoComponente === "CPU" &&
+    producto.atributos.some((a) => a.nombre === "Graficos integrados" && a.valor.trim().toLowerCase() === "no");
 
   // VISTA PRINCIPAL DEL PRODUCTO
   return (
@@ -231,6 +235,22 @@ export default function Detalles() {
                 {producto.descripcion}
               </p>
             </div>
+
+            {/* Procesador sin gráficos integrados: sin placa de video no da imagen */}
+            {necesitaGpu && (
+              <div
+                role="note"
+                className="mt-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+              >
+                <p className="font-semibold">{t("detalle.necesitaGpuTitulo")}</p>
+                <p className="mt-1">
+                  {t("detalle.necesitaGpu")}{" "}
+                  <Link to="/armar-pc" className="font-semibold underline hover:text-amber-700">
+                    {t("detalle.armarPc")}
+                  </Link>
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Controles de Compra */}
