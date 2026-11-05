@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  CATEGORIA_SERVICIOS,
   obtenerCategorias,
   obtenerMarcas,
   type Categoria,
@@ -52,7 +53,7 @@ export default function SearchBar({ filtros, onChange }: Props) {
     const controller = new AbortController();
     // Los servicios (armado de PC, instalación de Windows...) se eligen en el armador, no en el catálogo
     obtenerCategorias(controller.signal)
-      .then((lista) => setCategorias(lista.filter((c) => c.nombre !== "Servicios")))
+      .then((lista) => setCategorias(lista.filter((c) => c.nombre !== CATEGORIA_SERVICIOS)))
       .catch(() => {});
     return () => controller.abort();
   }, []);
