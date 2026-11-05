@@ -24,6 +24,7 @@ import { PantallaEstadoPago } from "./pages/EstadoPago/EstadoPago.tsx";
 import { MisCompras } from "./pages/MisCompras/MisCompras.tsx";
 import { VentasAdmin } from "./pages/Admin/AdminPedidos.tsx";
 import { VentaDetalleAdmin } from "./pages/Admin/VentaDetalleAdmin.tsx";
+import { ComparadorPage } from "./pages/Comparador/Comparador.tsx";
 
 // Todas las rutas hijas se muestran dentro de MainLayout (Navbar + Footer)
 const router = createBrowserRouter([
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
       { path: "detalleProducto/:id", element: <DetalleProducto /> },
       { path: "checkout/:estado", element: <PantallaEstadoPago /> },
       { path: "misCompras", element: <MisCompras /> },
+      { path: "comparador", element: <ComparadorPage /> },
       // Panel de administración (solo rol ADMIN, lo controla AdminLayout).
       // Cada sección nueva va como ruta hija y en el menú de AdminLayout.
       {

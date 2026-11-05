@@ -1,4 +1,4 @@
-import i18n from "../i18n";
+import i18n from "../locales";
 import { url, urlCategorias, urlMarcas } from "./api";
 
 // Tipos que devuelve GET /api/productos (ver catalogo.types.ts en el BE).
