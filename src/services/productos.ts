@@ -3,6 +3,11 @@ import { url, urlCategorias, urlMarcas } from "./api";
 
 // Tipos que devuelve GET /api/productos (ver catalogo.types.ts en el BE).
 
+// Armado de PC, instalación de Windows...: se venden con el armado, no en el catálogo,
+// y no manejan stock (ver /admin/servicios)
+export const CATEGORIA_SERVICIOS = "Servicios";
+export const esServicio = (p: { categoria: { nombre: string } }) => p.categoria.nombre === CATEGORIA_SERVICIOS;
+
 export interface ProductoResumen {
   id: number;
   nombre: string;

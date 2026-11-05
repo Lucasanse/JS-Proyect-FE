@@ -16,4 +16,5 @@ export const urlCompras = `${BASE_URL}/api/compras`;
 export const urlNotificaciones = `${BASE_URL}/api/notificaciones`;
 export const urlPedidosAdmin = `${BASE_URL}/api/admin/ventas`;
 export const urlAdminUsuarios = `${urlAdmin}/usuarios`;
+export const urlAdminServicios = `${urlAdmin}/servicios`;
 export const urlArmador = `${BASE_URL}/api/armador`;

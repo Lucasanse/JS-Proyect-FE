@@ -438,7 +438,8 @@
     "confirmarEliminar": "¿Querés eliminar todos los productos del carrito?",
     "errorEliminar": "No se pudo eliminar el pedido",
     "total": "Total",
-    "avisoDebitoPesos": "Se debita en pesos: vas a pagar {{total}} (cotización: 1 USD = {{cotizacion}}). El valor en dólares es informativo."
+    "avisoDebitoPesos": "Se debita en pesos: vas a pagar {{total}} (cotización: 1 USD = {{cotizacion}}). El valor en dólares es informativo.",
+    "servicio": "Servicio"
   },
   "login": {
     "titulo": "Iniciar sesión",
@@ -687,14 +688,16 @@
       "prontoAyuda": "Esta sección todavía no está disponible",
       "inicio": "Inicio",
       "usuarios": "Usuarios",
-      "misCompras": "Mis compras"
+      "misCompras": "Mis compras",
+      "servicios": "Servicios"
     },
     "inicio": {
       "titulo": "¿Qué querés hacer?",
       "productos": "Dar de alta, editar, eliminar o desactivar productos. Los cambios de precio y stock se ven al instante en la tienda.",
       "servicioTecnico": "Responder las solicitudes de servicio técnico y actualizar su estado a medida que avanza la reparación.",
       "ventas": "Ver el listado de ventas realizadas, consultar el detalle de cada una y actualizar su estado.",
-      "usuarios": "Consultar los usuarios registrados y habilitar o deshabilitar sus cuentas."
+      "usuarios": "Consultar los usuarios registrados y habilitar o deshabilitar sus cuentas.",
+      "servicios": "Precios de los servicios que se venden con el armado (armado de PC, instalación de Windows y Office) y si se ofrecen o no."
     },
     "esComponente": "Componente de PC",
     "st": {
@@ -830,6 +833,27 @@
     "fijoEn": {
       "USD": "Fijo en dólares",
       "ARS": "Fijo en pesos"
+    },
+    "serv": {
+      "titulo": "Servicios",
+      "subtitulo": "Precios y disponibilidad de los servicios.",
+      "armado": {
+        "titulo": "Armado de PC",
+        "descripcion": "Se ofrecen en el resumen de Armá tu PC y se cobran junto con el armado. Si desactivas una deja de ofrecerse",
+        "vacio": "Todavía no hay servicios cargados. Corré el seed del backend para crearlos."
+      },
+      "precioActual": "Precio actual:",
+      "precio": "Precio de {{nombre}}",
+      "guardar": "Guardar",
+      "precioInvalido": "El precio tiene que ser mayor a 0",
+      "activo": "Activo",
+      "inactivo": "Inactivo",
+      "switchAria": "Ofrecer {{nombre}}",
+      "toastPrecio": "Guardamos el nuevo precio de {{nombre}}",
+      "toastActivado": "{{nombre}} se vuelve a ofrecer en el armador",
+      "toastDesactivado": "{{nombre}} ya no se ofrece en el armador",
+      "errorCarga": "No se pudieron cargar los servicios",
+      "errorGuardar": "No se pudo guardar el cambio"
     }
   },
   "captura": {

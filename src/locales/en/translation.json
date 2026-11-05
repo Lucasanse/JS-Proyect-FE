@@ -438,7 +438,8 @@
     "confirmarEliminar": "Do you want to remove all products from the cart?",
     "errorEliminar": "Could not delete the order",
     "total": "Total",
-    "avisoDebitoPesos": "You are charged in pesos: you will pay {{total}} (rate: 1 USD = {{cotizacion}}). The dollar value is for reference only."
+    "avisoDebitoPesos": "You are charged in pesos: you will pay {{total}} (rate: 1 USD = {{cotizacion}}). The dollar value is for reference only.",
+    "servicio": "Service"
   },
   "login": {
     "titulo": "Log in",
@@ -686,14 +687,16 @@
       "pronto": "Soon",
       "prontoAyuda": "This section is not available yet",
       "inicio": "Home",
-      "usuarios": "Users"
+      "usuarios": "Users",
+      "servicios": "Services"
     },
     "inicio": {
       "titulo": "What do you want to do?",
       "productos": "Add, edit, delete or deactivate products. Price and stock changes show up in the store right away.",
       "servicioTecnico": "Reply to tech support requests and update their status as the repair moves forward.",
       "ventas": "See the list of sales, check the details of each one and update its status.",
-      "usuarios": "Browse registered users and enable or disable their accounts."
+      "usuarios": "Browse registered users and enable or disable their accounts.",
+      "servicios": "Prices of the services sold with a PC build (assembly, Windows and Office installation) and whether they are offered."
     },
     "esComponente": "PC component",
     "st": {
@@ -829,6 +832,27 @@
     "fijoEn": {
       "USD": "Fixed in dollars",
       "ARS": "Fixed in pesos"
+    },
+    "serv": {
+      "titulo": "Services",
+      "subtitulo": "Prices and availability of the services. They don't appear in the catalog: they are offered in Build your PC.",
+      "armado": {
+        "titulo": "PC build",
+        "descripcion": "Offered in the Build your PC summary and charged together with the build. If you deactivate one, it is no longer offered.",
+        "vacio": "There are no services yet. Run the backend seed to create them."
+      },
+      "precioActual": "Current price:",
+      "precio": "Price of {{nombre}}",
+      "guardar": "Save",
+      "precioInvalido": "The price must be greater than 0",
+      "activo": "Active",
+      "inactivo": "Inactive",
+      "switchAria": "Offer {{nombre}}",
+      "toastPrecio": "The new price of {{nombre}} was saved",
+      "toastActivado": "{{nombre}} is offered in the PC builder again",
+      "toastDesactivado": "{{nombre}} is no longer offered in the PC builder",
+      "errorCarga": "The services couldn't be loaded",
+      "errorGuardar": "The change couldn't be saved"
     }
   },
   "captura": {
