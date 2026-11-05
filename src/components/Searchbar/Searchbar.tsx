@@ -50,7 +50,10 @@ export default function SearchBar({ filtros, onChange }: Props) {
   // Opciones de los selects. Si fallan, solo queda la opción "Todas".
   useEffect(() => {
     const controller = new AbortController();
-    obtenerCategorias(controller.signal).then(setCategorias).catch(() => {});
+    // Los servicios (armado de PC, instalación de Windows...) se eligen en el armador, no en el catálogo
+    obtenerCategorias(controller.signal)
+      .then((lista) => setCategorias(lista.filter((c) => c.nombre !== "Servicios")))
+      .catch(() => {});
     return () => controller.abort();
   }, []);
 

@@ -20,6 +20,7 @@ import PasoPerifericos from "./PasoPerifericos";
 import ResumenArmado from "./ResumenArmado";
 import MisArmados from "./MisArmados";
 import { especificacionDe, useTextosArmador } from "./textosArmador";
+import type { ProductoResumen } from "../../services/productos";
 
 // Lo elegido en cada paso: un producto, o varios en almacenamiento (ver TIPOS_MULTIPLES)
 export type Seleccion = Partial<Record<TipoArmador, ComponenteElegido[]>>;
@@ -27,6 +28,7 @@ export type Seleccion = Partial<Record<TipoArmador, ComponenteElegido[]>>;
 // Lo elegido queda en la pestaña: si hay que iniciar sesión para comprar, no se pierde el armado
 const CLAVE_STORAGE = "armarPc.seleccion";
 const CLAVE_STORAGE_PERIFERICOS = "armarPc.perifericos";
+const CLAVE_STORAGE_SERVICIOS = "armarPc.servicios";
 const ESPERA_POTENCIA_MS = 300;
 
 const aLista = (seleccion: Seleccion) => TIPOS_ARMADOR.flatMap((t) => seleccion[t] ?? []);
@@ -52,12 +54,23 @@ function leerPerifericos(): ComponenteElegido[] {
   }
 }
 
+function leerServicios(): ProductoResumen[] {
+  try {
+    const guardados = JSON.parse(sessionStorage.getItem(CLAVE_STORAGE_SERVICIOS) || "[]");
+    return Array.isArray(guardados) ? guardados : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function ArmarPc() {
   const { t, i18n } = useTranslation();
   const textos = useTextosArmador();
   const [seleccion, setSeleccion] = useState<Seleccion>(leerGuardada);
   // Monitor, mouse, teclado...: no tienen reglas de compatibilidad, así que se cambian sin validar
   const [perifericos, setPerifericos] = useState<ComponenteElegido[]>(leerPerifericos);
+  // Armado de la PC, instalación de Windows...: se eligen en el resumen y se compran con el armado
+  const [servicios, setServicios] = useState<ProductoResumen[]>(leerServicios);
   const [paso, setPaso] = useState(0);
   const [validacion, setValidacion] = useState<ValidacionArmado | null>(null);
   const [sugerencia, setSugerencia] = useState<FuenteSugeridaRespuesta | null>(null);
@@ -160,10 +173,11 @@ export default function ArmarPc() {
     try {
       sessionStorage.setItem(CLAVE_STORAGE, JSON.stringify(seleccion));
       sessionStorage.setItem(CLAVE_STORAGE_PERIFERICOS, JSON.stringify(perifericos));
+      sessionStorage.setItem(CLAVE_STORAGE_SERVICIOS, JSON.stringify(servicios));
     } catch {
       // Sin storage disponible el armado solo se pierde al recargar
     }
-  }, [seleccion, perifericos]);
+  }, [seleccion, perifericos, servicios]);
 
   // Potencia y fuente sugerida: se recalculan en cada cambio, con debounce para no
   // pedirlas de más cuando se cambian varias cosas seguidas
@@ -317,6 +331,7 @@ export default function ArmarPc() {
           <ResumenArmado
             seleccion={seleccion}
             perifericos={perifericos}
+            servicios={servicios}
             validacion={validacion}
             potencia={hayComponentes ? (sugerencia?.potencia ?? validacion?.potencia ?? null) : null}
             fuenteSugerida={hayComponentes ? fuenteSugerida : null}
@@ -325,8 +340,10 @@ export default function ArmarPc() {
             onQuitar={quitar}
             onQuitarPeriferico={quitarPeriferico}
             onElegir={elegir}
+            onServicios={setServicios}
             onVaciar={() => {
               setPerifericos([]);
+              setServicios([]);
               aplicarCambio({});
             }}
             onGuardado={() => setVersionPresets((v) => v + 1)}
