@@ -17,6 +17,7 @@ import AdminProductos from "./pages/Admin/AdminProductos.tsx";
 import AdminLayout from "./layouts/AdminLayout.tsx";
 import AdminServicioTecnico from "./pages/Admin/AdminServicioTecnico.tsx";
 import AdminSolicitudDetalle from "./pages/Admin/AdminSolicitudDetalle.tsx";
+import AdminServicios from "./pages/Admin/AdminServicios.tsx";
 import AdminUsuarios from "./pages/Admin/AdminUsuarios.tsx";
 import AdminUsuarioDetalle from "./pages/Admin/AdminUsuarioDetalle.tsx";
 import Captura from "./pages/Captura/Captura.tsx";
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
           { path: "productos", element: <AdminProductos /> },
           { path: "servicio-tecnico", element: <AdminServicioTecnico /> },
           { path: "servicio-tecnico/:id", element: <AdminSolicitudDetalle /> },
+          { path: "servicios", element: <AdminServicios /> },
           { path: "ventas", element: <VentasAdmin /> },
           { path: "ventas/:id", element: <VentaDetalleAdmin /> },
           { path: "usuarios", element: <AdminUsuarios /> },
