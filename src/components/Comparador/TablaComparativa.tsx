@@ -17,7 +17,6 @@ const FRASES_KEYS = [
 export const TablaComparativa = ({ productos }: TablaComparativaProps) => {
   const { t } = useTranslation();
 
-  //Normalizamos para poder tener todos los atributos de un producto
   const productosNormalizados = useMemo(() => {
     return productos.map((p) => {
       const atributosCompletos = p.atributos ? [...p.atributos] : [];
@@ -60,23 +59,25 @@ export const TablaComparativa = ({ productos }: TablaComparativaProps) => {
     return null;
   };
 
-  if (productos.length < 2) return null;
+  // Bloqueo estricto: la tabla solo existe si hay exactamente 2 productos
+  if (productos.length !== 2) return null;
 
   return (
     <div className="w-full overflow-x-auto rounded-xl border border-line bg-surface shadow-sm">
-      <table className="w-full text-left border-collapse min-w-150">
+      {/* min-w-[600px] fuerza a que la tabla mantenga su ancho en móviles, activando el scroll horizontal nativo */}
+      <table className="w-full text-left border-collapse min-w-[600px] sm:min-w-full">
         <thead>
           <tr className="bg-surface-alt/50 border-b border-line">
-            <th className="p-4 font-bold text-xs text-ink w-1/4">
+            <th className="p-4 font-bold text-xs text-ink w-1/3">
               {t("tablaComparativa.especificaciones", "Especificaciones")}
             </th>
             {productosNormalizados.map((prod, idx) => (
-              <th key={prod.id || idx} className="p-4 text-xs">
-                <span className="text-[10px] text-accent uppercase block">
+              <th key={prod.id || idx} className="p-4 text-xs w-1/3">
+                <span className="text-[10px] text-accent uppercase block truncate">
                   {prod.marca}
                 </span>
                 <span
-                  className="font-bold text-ink truncate block"
+                  className="font-bold text-ink line-clamp-2"
                   title={prod.nombre}
                 >
                   {prod.nombre}
@@ -92,11 +93,12 @@ export const TablaComparativa = ({ productos }: TablaComparativaProps) => {
               const attr = p.atributos?.find((a) => a.nombre === nombreAttr);
               return attr ? `${attr.valor} ${attr.unidad || ""}`.trim() : "-";
             });
-            //Atributos excluidos
+
             const noSeCompara =
               nombreAttr.toLowerCase().includes("socket") ||
               nombreAttr.toLowerCase().includes("precio") ||
               nombreAttr.toLowerCase().includes("consumo");
+
             const valoresNumericos = valoresCrudos.map(extraerNumero);
 
             const numerosValidos = valoresNumericos.filter(
@@ -106,6 +108,7 @@ export const TablaComparativa = ({ productos }: TablaComparativaProps) => {
 
             const minValor = tieneNumeros ? Math.min(...numerosValidos) : null;
             const maxValor = tieneNumeros ? Math.max(...numerosValidos) : null;
+
             return (
               <tr
                 key={filaIdx}
@@ -148,7 +151,7 @@ export const TablaComparativa = ({ productos }: TablaComparativaProps) => {
 
                     porcentajeBadge = (
                       <span
-                        className={`ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap ${
+                        className={`ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-block mt-1 sm:mt-0 ${
                           esElMaximo
                             ? "bg-green-500/10 text-green-600 border border-green-500/20"
                             : "bg-blue-500/10 text-blue-600 border border-blue-500/20"
@@ -166,7 +169,7 @@ export const TablaComparativa = ({ productos }: TablaComparativaProps) => {
                       key={colIdx}
                       className="p-4 text-xs text-ink align-middle"
                     >
-                      <div className="flex items-center">
+                      <div className="flex flex-wrap items-center">
                         <span
                           className={
                             num === maxValor && tieneNumeros ? "font-bold" : ""

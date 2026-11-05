@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next"; // <-- 1. Importamos el hook
+import { useTranslation } from "react-i18next";
 import type { Categoria } from "../../services/productos";
 import { obtenerCategorias } from "../../services/productos";
 
@@ -14,11 +14,11 @@ export const SelectorCategoria = ({
   onSeleccionar,
   deshabilitado = false,
 }: SelectorCategoriaProps) => {
-  const { t } = useTranslation(); // <-- 2. Inicializamos la traducción
+  const { t } = useTranslation();
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [cargando, setCargando] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false); // <-- 3. Cambiado a booleano
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     let montado = true;
@@ -40,7 +40,7 @@ export const SelectorCategoria = ({
         }
       } catch (err) {
         if (montado) {
-          setError(true); // Solo marcamos que hubo un error
+          setError(true);
           console.error(err);
         }
       } finally {
@@ -58,18 +58,20 @@ export const SelectorCategoria = ({
   }, []);
 
   return (
-    <div className="flex flex-col gap-1.5 w-full">
-      <label className="text-xs font-semibold text-ink">
-        {/* 4. Traducción del label */}
+    // 1. Agregamos min-w-0 acá para evitar que desborde el Grid en celulares
+    <div className="flex flex-col gap-1.5 w-full min-w-0">
+      {/* 2. Agregamos truncate al label por si el texto es muy largo en algún idioma */}
+      <label className="text-xs font-semibold text-ink truncate">
         {t("selectorCategoria.label", "Categoría a comparar")}
       </label>
 
-      <div className="relative">
+      <div className="relative w-full">
         <select
           value={valorSeleccionado}
           disabled={deshabilitado || cargando || error}
           onChange={(e) => onSeleccionar(e.target.value)}
-          className="w-full text-xs p-2.5 rounded-lg border border-line bg-surface text-ink appearance-none cursor-pointer focus:outline-none focus:border-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          // 3. Agregamos pr-8 (espacio para la flecha) y truncate para evitar desbordes
+          className="w-full min-w-0 text-xs p-2.5 pr-8 truncate rounded-lg border border-line bg-surface text-ink appearance-none cursor-pointer focus:outline-none focus:border-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {cargando && (
             <option value="" disabled>
@@ -89,7 +91,7 @@ export const SelectorCategoria = ({
           ))}
         </select>
 
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-muted">
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-muted bg-surface rounded-r-lg">
           <svg
             className="w-4 h-4"
             fill="none"
@@ -107,7 +109,7 @@ export const SelectorCategoria = ({
       </div>
 
       {error && (
-        <span className="text-[11px] text-red-500">
+        <span className="text-[11px] text-red-500 truncate">
           {t("selectorCategoria.errorTexto", "Error al cargar categorías")}
         </span>
       )}

@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next"; // <-- 1. Importamos el hook
+import { useTranslation } from "react-i18next";
 import { SelectorProducto } from "./SelectorProducto";
 import type { ProductoComparado } from "../../services/comparador.types";
 
@@ -7,10 +7,8 @@ interface SlotProductoProps {
   idProducto: number | null;
   idCategoria?: string;
   producto?: ProductoComparado;
-  puedeEliminarSlot?: boolean;
   onSeleccionar: (idProducto: number) => void;
   onLimpiar: () => void;
-  onEliminarSlot?: () => void;
   idsSeleccionados: (number | null)[];
 }
 
@@ -19,17 +17,14 @@ export const SlotProducto = ({
   idProducto,
   idCategoria,
   producto,
-  puedeEliminarSlot = false,
   onSeleccionar,
   onLimpiar,
-  onEliminarSlot,
   idsSeleccionados,
 }: SlotProductoProps) => {
-  const { t } = useTranslation(); // <-- 2. Inicializamos la traducción
+  const { t } = useTranslation();
 
-  console.log(producto);
   return (
-    <div className="flex flex-col p-4 rounded-xl border border-line bg-surface min-h-80 transition-all shadow-sm">
+    <div className="flex flex-col w-full min-w-0 p-4 rounded-xl border border-line bg-surface min-h-80 transition-all shadow-sm overflow-hidden">
       <div className="flex flex-col gap-3 mb-4 pb-4 border-b border-line/50">
         <div className="flex justify-between items-center">
           <span className="text-[11px] font-bold uppercase text-muted">
@@ -42,14 +37,6 @@ export const SlotProducto = ({
                 className="text-xs font-semibold text-muted hover:text-ink"
               >
                 {t("slotProducto.vaciar", "Vaciar")}
-              </button>
-            )}
-            {puedeEliminarSlot && onEliminarSlot && (
-              <button
-                onClick={onEliminarSlot}
-                className="text-xs font-semibold text-muted hover:text-red-500"
-              >
-                {t("slotProducto.quitar", "✕ Quitar")}
               </button>
             )}
           </div>
@@ -70,22 +57,33 @@ export const SlotProducto = ({
             <div className="w-3/4 h-3 rounded bg-surface-alt" />
           </div>
         ) : producto ? (
-          // Producto cargado
           <div className="flex flex-col gap-3 text-center h-full justify-between">
             <div className="flex-1 flex items-center justify-center">
-              {producto.imagenUrl && (
+              {producto.imagenUrl ? (
                 <img
                   src={producto.imagenUrl}
                   alt={producto.nombre}
-                  className="max-h-28 w-full object-contain p-2 rounded-lg bg-surface-alt/50"
+                  className="max-h-28 max-w-full mx-auto object-contain p-2 rounded-lg bg-surface-alt/50"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://placehold.co/200x200/png?text=Sin+Imagen";
+                    e.currentTarget.onerror = null;
+                  }}
                 />
+              ) : (
+                <div className="h-28 w-full rounded-lg bg-surface-alt/50 flex items-center justify-center text-xs text-muted">
+                  {t("slotProducto.sinFoto", "Sin foto")}
+                </div>
               )}
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-[10px] font-bold text-accent uppercase">
+              <span className="text-[10px] font-bold text-accent uppercase truncate">
                 {producto.marca}
               </span>
-              <h3 className="text-xs font-bold text-ink line-clamp-2 leading-tight">
+              <h3
+                className="text-xs font-bold text-ink line-clamp-2 leading-tight break-words whitespace-normal"
+                title={producto.nombre}
+              >
                 {producto.nombre}
               </h3>
             </div>
@@ -94,7 +92,6 @@ export const SlotProducto = ({
             </span>
           </div>
         ) : (
-          // Slot Vacío
           <div className="flex flex-col items-center justify-center gap-2 h-full text-muted opacity-50">
             <span className="text-xs">
               {t("slotProducto.esperando", "Esperando selección")}
