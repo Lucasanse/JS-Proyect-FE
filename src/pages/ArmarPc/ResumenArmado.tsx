@@ -19,6 +19,7 @@ import {
 } from "../../services/armador";
 import type { ProductoResumen } from "../../services/productos";
 import ServiciosArmado from "./ServiciosArmado";
+import BotonPresupuesto from "../../components/Documentos/BotonPresupuesto";
 import { especificacionDe, useTextosArmador } from "./textosArmador";
 import type { Seleccion } from "./ArmarPc";
 
@@ -213,6 +214,15 @@ export default function ResumenArmado({
           >
             {t("armarPc.guardar")}
           </button>
+          {/* Presupuesto en PDF del armado tal como está (puede estar incompleto), con los servicios elegidos */}
+          <BotonPresupuesto
+            disabled={verificando || aComprar.length === 0}
+            origen={() => ({
+              origen: "armado",
+              seleccion: aComprar.map((c) => ({ idProducto: c.producto.id, cantidad: c.cantidad })),
+            })}
+            className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-line px-4 py-2 font-semibold text-ink hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:text-muted"
+          />
         </div>
       ) : (
         <p className="mt-4 rounded-lg bg-surface-alt p-3 text-sm text-muted">

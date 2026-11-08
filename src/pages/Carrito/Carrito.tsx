@@ -9,6 +9,7 @@ import Precio from "../../components/Precio/Precio";
 import { useCotizacion } from "../../services/cotizacion";
 import { formatearArs, formatearUsd, useMoneda } from "../../services/moneda";
 import { ContenedorCompraCarrito } from "../../components/Comprar/ComprarUnidad";
+import BotonPresupuesto from "../../components/Documentos/BotonPresupuesto";
 
 // Los precios se ven en la moneda elegida en el navbar, pero el cobro es siempre en pesos
 const MONEDA = "ARS";
@@ -300,6 +301,9 @@ function Resumen() {
           idUsuario={session?.user.id}
           disabled={hayProblemasDeStock}
         ></ContenedorCompraCarrito>
+
+        {/* Presupuesto en PDF con lo que hay en el carrito, sin comprar */}
+        <BotonPresupuesto origen={() => ({ origen: "carrito" })} />
 
         <button
           type="button"

@@ -53,7 +53,8 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
   return (
     // El link del nombre se estira (after:inset-0) para que toda la card lleve a /productos/:id.
     // Los controles llevan "relative z-10" para quedar por encima y seguir siendo clickeables.
-    <article className="relative flex flex-col gap-3 rounded-xl border border-line bg-surface p-3 shadow-sm transition duration-200 hover:z-20 hover:scale-105 hover:shadow-lg">
+    // En celular van 2 por fila: menos padding y textos un poco más chicos; el zoom al pasar el mouse solo desde sm.
+    <article className="relative flex min-w-0 flex-col gap-2 rounded-xl border border-line bg-surface p-2 shadow-sm transition duration-200 sm:gap-3 sm:p-3 sm:hover:z-20 sm:hover:scale-105 sm:hover:shadow-lg">
       <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg bg-surface">
         {producto.imagenUrl ? (
           <img
@@ -78,7 +79,7 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
         </button>
       </div>
 
-      <h3 className="line-clamp-2 text-sm font-bold leading-snug text-ink">
+      <h3 className="line-clamp-2 text-[13px] font-bold leading-snug text-ink sm:text-sm">
         <Link
           to={`/detalleProducto/${producto.id}`}
           className="after:absolute after:inset-0 after:rounded-xl hover:text-primary"
@@ -88,12 +89,12 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
       </h3>
 
       <div className="mt-auto">
-        <Precio precio={producto.precio} className="text-xl font-semibold text-ink" />
+        <Precio precio={producto.precio} className="text-base font-semibold text-ink sm:text-xl" />
       </div>
 
       {/* flex-wrap: si la card es angosta, el botón baja a otra línea en vez de desbordarse */}
       <div className="relative z-10 flex flex-wrap items-center gap-2">
-        <div className="flex h-9 items-center rounded-lg border border-line bg-surface">
+        <div className="flex h-9 w-full items-center justify-between rounded-lg border border-line bg-surface sm:w-auto">
           <button
             type="button"
             aria-label={t("card.restar")}
@@ -111,7 +112,7 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
             value={deshabilitado ? 0 : Math.min(cantidad, stock)}
             disabled={deshabilitado}
             onChange={(e) => cambiarCantidad(e.target.valueAsNumber)}
-            className="h-full w-8 [appearance:textfield] bg-transparent text-center text-sm text-ink outline-none disabled:opacity-40 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className="h-full w-8 min-w-0 [appearance:textfield] bg-transparent text-center text-sm text-ink outline-none disabled:opacity-40 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
           <button
             type="button"
@@ -129,7 +130,7 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
           onClick={handleAgregar}
           disabled={deshabilitado || agregando}
           title={topeAlcanzado ? t("card.topeAlcanzado") : undefined}
-          className="flex h-9 grow basis-28 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-primary px-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
+          className="flex h-9 w-full grow cursor-pointer sm:w-auto sm:basis-28 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-primary px-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
         >
           <CartIcon />
           {deshabilitado ? t("card.sinStock") : agregando ? t("card.agregando") : t("card.agregar")}

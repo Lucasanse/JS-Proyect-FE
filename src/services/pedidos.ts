@@ -20,6 +20,7 @@ export interface Compra {
   idPagoMp: string | null;
   cotizacionUsd: number | null; // cotización del dólar guardada al emitir la compra (informativa)
   cotizacionFecha: string | null;
+  facturaDisponible: boolean; // pago acreditado: se puede descargar la factura en PDF
   productos: ProductoComprado[]; // <--- Acá anidamos la otra interfaz
 }
 

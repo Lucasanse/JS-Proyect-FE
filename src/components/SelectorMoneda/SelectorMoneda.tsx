@@ -54,3 +54,68 @@ export default function SelectorMoneda() {
     </div>
   );
 }
+
+// Versión para el menú de celular: botones ARS / USD y la cotización a la vista (no hay hover en el celular)
+export function SelectorMonedaMovil() {
+  const { t, i18n } = useTranslation();
+  const moneda = useMoneda();
+  const cotizacion = useCotizacion();
+  if (!cotizacion) return null;
+
+  const fecha = new Date(cotizacion.fechaActualizacion).toLocaleString(i18n.resolvedLanguage || "es", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <BotonesSegmentados
+        etiqueta={t("nav.moneda")}
+        opciones={MONEDAS.map((m) => ({ valor: m, texto: m }))}
+        activo={moneda}
+        onElegir={(m) => cambiarMoneda(m as Moneda)}
+      />
+      <p className="px-3 text-xs text-muted">
+        {t("precio.cotizacionTiempoReal", { valor: formatearUsd(cotizacion.valor).replace("US$", "USD") })} ·{" "}
+        {cotizacion.desactualizada ? t("precio.desactualizada", { fecha }) : t("precio.actualizadaEl", { fecha })}
+      </p>
+    </div>
+  );
+}
+
+// Fila "Etiqueta  [A][B]" con la opción elegida resaltada. Se usa para moneda e idioma en el menú de celular.
+export function BotonesSegmentados({
+  etiqueta,
+  opciones,
+  activo,
+  onElegir,
+}: {
+  etiqueta: string;
+  opciones: { valor: string; texto: string }[];
+  activo: string;
+  onElegir: (valor: string) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 px-3">
+      <span className="text-[15px] font-medium text-ink">{etiqueta}</span>
+      <div role="radiogroup" aria-label={etiqueta} className="flex overflow-hidden rounded-lg border border-line">
+        {opciones.map((o) => (
+          <button
+            key={o.valor}
+            type="button"
+            role="radio"
+            aria-checked={activo === o.valor}
+            onClick={() => onElegir(o.valor)}
+            className={`cursor-pointer px-3 py-1.5 text-sm font-semibold transition-colors ${
+              activo === o.valor ? "bg-primary text-white" : "bg-surface text-ink hover:bg-surface-alt"
+            }`}
+          >
+            {o.texto}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}

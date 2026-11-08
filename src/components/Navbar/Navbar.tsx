@@ -5,8 +5,9 @@ import jsLogo from "../../assets/js-logo.png";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../CarritoProvider/carritoContext";
 import MenuDesplegable from "../MenuDesplegable/MenuDesplegable";
-import SelectorMoneda from "../SelectorMoneda/SelectorMoneda";
+import SelectorMoneda, { BotonesSegmentados, SelectorMonedaMovil } from "../SelectorMoneda/SelectorMoneda";
 import { SwitchLenguaje } from "../SwitchLenguaje/SwitchLenguaje";
+import { IDIOMAS, useIdioma, type CodigoIdioma } from "../SwitchLenguaje/idioma";
 import { CampanaNotificaciones } from "../Notificaciones/Campana";
 
 // Guardamos la clave de traducción (labelKey) en lugar del texto fijo
@@ -27,6 +28,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
   const { t } = useTranslation();
+  const { idiomaActual, cambiarIdioma } = useIdioma();
   const { data: session, isPending } = useSession();
   const { carrito } = useCarrito();
   const cantidadCarrito = carrito?.cantidadTotal ?? 0;
@@ -37,6 +39,11 @@ export default function Navbar() {
     ...(session?.user?.id
       ? [{ to: `/miscompras`, labelKey: "nav.misCompras" }]
       : []),
+  ];
+  // Opciones del menú del usuario ("Hola, ...")
+  const opcionesUsuario = [
+    { clave: "presupuestos", etiqueta: t("nav.misPresupuestos"), to: "/mis-presupuestos" },
+    { clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" },
   ];
   return (
     <header className="sticky top-0 z-50 w-full border-b-4 border-primary bg-surface shadow-sm">
@@ -90,7 +97,7 @@ export default function Navbar() {
                   </span>
                 }
                 ariaLabel={t("nav.menuUsuario")}
-                opciones={[{ clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" }]}
+                opciones={opcionesUsuario}
               />
             ) : (
               <Link
@@ -102,8 +109,11 @@ export default function Navbar() {
             )}
           </div>
 
-          <SelectorMoneda />
-          <SwitchLenguaje />
+          {/* En celular, moneda e idioma van dentro del menú hamburguesa (siguen montados para sincronizar el idioma) */}
+          <div className="hidden items-center gap-3 md:flex">
+            <SelectorMoneda />
+            <SwitchLenguaje />
+          </div>
 
           <Link
             to="/carrito"
@@ -144,23 +154,28 @@ export default function Navbar() {
             </NavLink>
           )}
 
-          {/* Sesión (en mobile vive dentro del menú) */}
-          <div className="mt-2 flex flex-col gap-2 border-t border-line pt-3">
+          {/* Sesión (en mobile vive dentro del menú, con sus opciones a la vista) */}
+          <div className="mt-2 flex flex-col gap-1 border-t border-line pt-3">
             {isPending ? (
               <span className="px-3 text-sm text-muted">
                 {t("nav.cargando")}
               </span>
             ) : session ? (
-              <MenuDesplegable
-                align="left"
-                trigger={
-                  <span className="font-medium">
-                    {t("nav.hola")} <strong className="text-primary">{session.user.name}</strong>
-                  </span>
-                }
-                ariaLabel={t("nav.menuUsuario")}
-                opciones={[{ clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" }]}
-              />
+              <>
+                <span className="px-3 pb-1 text-sm text-muted">
+                  {t("nav.hola")} <strong className="text-primary">{session.user.name}</strong>
+                </span>
+                {opcionesUsuario.map((o) => (
+                  <NavLink
+                    key={o.clave}
+                    to={o.to}
+                    onClick={close}
+                    className={(s) => `${linkClass(s)} py-3`}
+                  >
+                    {o.etiqueta}
+                  </NavLink>
+                ))}
+              </>
             ) : (
               <Link
                 to="/login"
@@ -170,6 +185,20 @@ export default function Navbar() {
                 {t("nav.iniciarSesion")}
               </Link>
             )}
+          </div>
+
+          {/* Preferencias: idioma y moneda */}
+          <div className="mt-2 flex flex-col gap-3 border-t border-line pt-3">
+            <span className="px-3 text-xs font-semibold uppercase tracking-wide text-muted">
+              {t("nav.preferencias")}
+            </span>
+            <BotonesSegmentados
+              etiqueta={t("nav.idioma")}
+              opciones={IDIOMAS.map((i) => ({ valor: i.codigo, texto: i.nombre }))}
+              activo={idiomaActual}
+              onElegir={(codigo) => cambiarIdioma(codigo as CodigoIdioma)}
+            />
+            <SelectorMonedaMovil />
           </div>
         </nav>
       )}

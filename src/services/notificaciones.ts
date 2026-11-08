@@ -7,6 +7,13 @@ export interface Notificacion {
   leida: boolean;
   fecha: string;
   idVenta: number | null;
+  idDocumento?: number | null; // presupuesto o factura disponible
+  documento?: {
+    id: number;
+    tipo: "PRESUPUESTO" | "FACTURA";
+    numero: string;
+    idVenta: number | null;
+  } | null;
   tipo: string;
 }
 

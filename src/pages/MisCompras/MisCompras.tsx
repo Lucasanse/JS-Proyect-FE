@@ -5,6 +5,8 @@ import { useSession } from "../../services/auth-client";
 import Precio from "../../components/Precio/Precio";
 import AvisoCarrito from "../../components/AvisoCarrito/AvisoCarrito";
 import { AvisoRetiroLocal } from "../../components/AvisoDomicilio/AvisoDomicilio";
+import BotonDescarga from "../../components/Documentos/BotonDescarga";
+import { descargarFactura } from "../../services/documentos";
 export const MisCompras = () => {
   const { t } = useTranslation();
   const [compras, setCompras] = useState<Compra[]>([]);
@@ -134,6 +136,16 @@ export const MisCompras = () => {
                   {formatearEstado(compra.status)}
                 </div>
               </div>
+
+              {/* La factura solo existe una vez acreditado el pago */}
+              {compra.facturaDisponible && (
+                <div className="mb-4 flex justify-end">
+                  <BotonDescarga
+                    etiqueta={t("documentos.descargarFactura")}
+                    descargar={() => descargarFactura(compra.id)}
+                  />
+                </div>
+              )}
 
               {/* Lista de Productos Comprados */}
               <div className="flex flex-col gap-3">

@@ -15,7 +15,10 @@
     "carrito": "Cart",
     "admin": "Admin",
     "idioma": "Language",
-    "menuUsuario": "User menu"
+    "menuUsuario": "User menu",
+    "misPresupuestos": "My quotes",
+    "preferencias": "Preferences",
+    "moneda": "Currency"
   },
   "home": {
     "heroTitulo": "The tech you're looking for,",
@@ -67,7 +70,9 @@
     "faq": "FAQ",
     "contacto": "Contact",
     "iniciarSesion": "Log in",
-    "misPedidos": "My orders"
+    "misPedidos": "My orders",
+    "quienesSomos": "About us",
+    "escribirWhatsapp": "Message us on WhatsApp"
   },
   "armarPc": {
     "titulo": "Build your PC",
@@ -875,7 +880,12 @@
       "descripcion": "Your payment was processed successfully and your order is being prepared.",
       "comprobante": "Receipt",
       "orden": "Order",
-      "botonSeguir": "Continue shopping"
+      "botonSeguir": "Continue shopping",
+      "verFactura": "View invoice",
+      "descargarFactura": "Download",
+      "preparandoFactura": "Preparing your invoice...",
+      "facturaMasTarde": "Your invoice will be available in My purchases in a few minutes.",
+      "irMisCompras": "Go to My purchases"
     },
     "pendiente": {
       "titulo": "Pending payment",
@@ -921,5 +931,48 @@
     "seCobraEnPesos": "Reference value only, not part of the payment method. You are charged in pesos.",
     "cotizacionDelDia": "rate from {{fecha}}",
     "moneda": "Currency"
+  },
+  "documentos": {
+    "generarPresupuesto": "Generate quote",
+    "generando": "Generating quote...",
+    "presupuestoListo": "Quote No. {{numero}} generated. You can also find it in My quotes.",
+    "errorGenerar": "The quote could not be generated.",
+    "descargarFactura": "Download invoice",
+    "descargando": "Downloading...",
+    "errorDescargar": "The file could not be downloaded.",
+    "misPresupuestos": "My quotes",
+    "sinPresupuestos": "You haven't generated any quotes yet. You can do it from the cart or from Build your PC.",
+    "errorPresupuestos": "Your quotes could not be loaded.",
+    "presupuestoNumero": "Quote No. {{numero}}",
+    "productos": "{{count}} products",
+    "productos_one": "{{count}} product",
+    "productos_other": "{{count}} products",
+    "descargar": "Download PDF",
+    "origen": {
+      "CARRITO": "From the cart",
+      "PRESET": "Saved build",
+      "ARMADO": "Build your PC",
+      "VENTA": "Purchase"
+    },
+    "verDocumento": "View in My purchases",
+    "descargarDocumento": "Download PDF"
+  },
+  "quienesSomos": {
+    "titulo": "About us",
+    "intro": "We are a computer store in Allen. We sell printer supplies, computer accessories and peripherals, notebooks and PCs, and we have our own tech support service.",
+    "queHacemos": "What we do",
+    "rubros": {
+      "insumos": "Printer supplies",
+      "accesorios": "Computer accessories and peripherals",
+      "notebooks": "Notebooks and PCs",
+      "servicioTecnico": "Tech support"
+    },
+    "horarios": "Opening hours",
+    "dias": "Monday to Friday",
+    "contacto": "Contact",
+    "direccion": "Address",
+    "escribirWhatsapp": "Message us on WhatsApp",
+    "dondeEstamos": "Where we are",
+    "mapa": "Map of J.S. Computación"
   }
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Precio from "../../components/Precio/Precio";
 import ErrorCarga from "../../components/ServicioTecnico/ErrorCarga";
+import BotonPresupuesto from "../../components/Documentos/BotonPresupuesto";
 import { useToast } from "../../components/Toast/toastContext";
 import { useSession } from "../../services/auth-client";
 import { eliminarPreset, listarPresets, type ComponenteElegido, type PresetArmado } from "../../services/armador";
@@ -94,6 +95,10 @@ export default function MisArmados({ version, onCargar }: Props) {
                   {t("armarPc.eliminar")}
                 </button>
               </div>
+              <BotonPresupuesto
+                origen={() => ({ origen: "preset", idPreset: preset.id })}
+                className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-line px-3 py-1 text-sm font-semibold text-ink hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+              />
             </li>
           ))}
         </ul>
