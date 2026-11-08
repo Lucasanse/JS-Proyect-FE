@@ -721,5 +721,42 @@
     "seCobraEnPesos": "Reference value only, not part of the payment method. You are charged in pesos.",
     "cotizacionDelDia": "rate from {{fecha}}",
     "moneda": "Currency"
+  },
+  "comparador": {
+    "titulo": "Product Comparator",
+    "descripcion": "Compare technical specs, power consumption, and prices in real-time.",
+    "ariaFiltro": "Product filter",
+    "ariaSlots": "Product selection slots",
+    "ariaTabla": "Comparison table"
+  },
+  "selectorCategoria": {
+    "label": "Category to compare",
+    "cargando": "Loading categories...",
+    "errorSelect": "Error loading",
+    "errorTexto": "Error loading categories"
+  },
+  "selectorProducto": {
+    "buscando": "Searching products...",
+    "errorSelect": "Error loading",
+    "sinProductos": "No products",
+    "seleccionar": "+ Select product",
+    "yaSeleccionado": " (Already selected)"
+  },
+  "slotProducto": {
+    "slot": "Slot",
+    "vaciar": "Clear",
+    "quitar": "✕ Remove",
+    "esperando": "Waiting for selection"
+  },
+  "tablaComparativa": {
+    "especificaciones": "Specifications",
+    "respectoMinimo": "+{{diff}}% compared to the lowest value ({{min}})",
+    "frases": {
+      "esMejor": "Is better",
+      "masRapido": "Faster",
+      "rindeMas": "More efficient",
+      "superior": "Superior",
+      "destaca": "Stands out"
+    }
   }
 }
