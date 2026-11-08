@@ -15,7 +15,10 @@
     "carrito": "Carrito",
     "admin": "Admin",
     "idioma": "Idioma",
-    "menuUsuario": "Menú de usuario"
+    "menuUsuario": "Menú de usuario",
+    "misPresupuestos": "Mis presupuestos",
+    "preferencias": "Preferencias",
+    "moneda": "Moneda"
   },
   "detalle": {
     "idInvalido": "El ID del producto no es válido.",
@@ -67,7 +70,9 @@
     "faq": "Preguntas frecuentes",
     "contacto": "Contacto",
     "iniciarSesion": "Iniciar sesión",
-    "misPedidos": "Mis pedidos"
+    "misPedidos": "Mis pedidos",
+    "quienesSomos": "Quiénes somos",
+    "escribirWhatsapp": "Escribinos por WhatsApp"
   },
   "armarPc": {
     "titulo": "Armá tu PC",
@@ -880,7 +885,12 @@
       "descripcion": "Tu pago fue procesado con éxito y tu pedido ya está siendo preparado.",
       "comprobante": "Comprobante",
       "orden": "Orden",
-      "botonSeguir": "Seguir comprando"
+      "botonSeguir": "Seguir comprando",
+      "verFactura": "Ver factura",
+      "descargarFactura": "Descargar",
+      "preparandoFactura": "Preparando tu factura...",
+      "facturaMasTarde": "Tu factura va a estar disponible en Mis compras en unos minutos.",
+      "irMisCompras": "Ir a Mis compras"
     },
     "pendiente": {
       "titulo": "Pago pendiente",
@@ -926,5 +936,48 @@
     "seCobraEnPesos": "Valor informativo, no forma parte del método de pago. Se cobra en pesos.",
     "cotizacionDelDia": "cotización del {{fecha}}",
     "moneda": "Moneda"
+  },
+  "documentos": {
+    "generarPresupuesto": "Generar presupuesto",
+    "generando": "Generando presupuesto...",
+    "presupuestoListo": "Presupuesto N° {{numero}} generado. También lo encontrás en Mis presupuestos.",
+    "errorGenerar": "No se pudo generar el presupuesto.",
+    "descargarFactura": "Descargar factura",
+    "descargando": "Descargando...",
+    "errorDescargar": "No se pudo descargar el archivo.",
+    "misPresupuestos": "Mis presupuestos",
+    "sinPresupuestos": "Todavía no generaste presupuestos. Podés hacerlo desde el carrito o desde Armá tu PC.",
+    "errorPresupuestos": "No se pudieron cargar tus presupuestos.",
+    "presupuestoNumero": "Presupuesto N° {{numero}}",
+    "productos": "{{count}} productos",
+    "productos_one": "{{count}} producto",
+    "productos_other": "{{count}} productos",
+    "descargar": "Descargar PDF",
+    "origen": {
+      "CARRITO": "Desde el carrito",
+      "PRESET": "Armado guardado",
+      "ARMADO": "Armá tu PC",
+      "VENTA": "Compra"
+    },
+    "verDocumento": "Ver en Mis compras",
+    "descargarDocumento": "Descargar PDF"
+  },
+  "quienesSomos": {
+    "titulo": "Quiénes somos",
+    "intro": "Somos un local de computación en Allen. Vendemos insumos para impresoras, accesorios y periféricos, notebooks y PCs, y tenemos servicio técnico propio.",
+    "queHacemos": "Qué hacemos",
+    "rubros": {
+      "insumos": "Insumos para impresoras",
+      "accesorios": "Accesorios y periféricos para computadoras",
+      "notebooks": "Notebooks y PCs",
+      "servicioTecnico": "Servicio técnico"
+    },
+    "horarios": "Horarios",
+    "dias": "Lunes a viernes",
+    "contacto": "Contacto",
+    "direccion": "Dirección",
+    "escribirWhatsapp": "Escribinos por WhatsApp",
+    "dondeEstamos": "Dónde estamos",
+    "mapa": "Mapa de J.S. Computación"
   }
 }
