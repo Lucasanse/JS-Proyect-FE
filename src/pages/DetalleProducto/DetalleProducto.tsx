@@ -48,7 +48,16 @@ export default function Detalles() {
       setAgregando(false);
     }
   };
+  //Comparador
 
+  const handleComparar = (e: React.MouseEvent) => {
+    // Evita que el click se propague al contenedor padre (por si la tarjeta entera es un link)
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Redirige al comparador con el ID en los query params
+    navigate(`/comparador?ids=${id}`);
+  };
   useEffect(() => {
     const idNumero = Number(id);
     if (!id || isNaN(idNumero) || idNumero <= 0) {
@@ -154,7 +163,7 @@ export default function Detalles() {
       {/* Tarjeta Principal: Imagen + Compra */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-sm">
         {/* Columna Izquierda: Imagen del Producto */}
-        <div className="lg:col-span-6 flex items-center justify-center bg-slate-50 rounded-xl p-8 border border-slate-100 relative min-h-[340px]">
+        <div className="lg:col-span-6 flex items-center justify-center bg-slate-50 rounded-xl p-8 border border-slate-100 relative min-h-85">
           {producto.esComponentePC && (
             <span className="absolute top-4 left-4 bg-slate-900 text-white text-xs font-semibold px-3 py-1 rounded-full z-10 tracking-wide uppercase">
               {producto.tipoComponente}
@@ -197,6 +206,19 @@ export default function Detalles() {
               <span className="text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
                 {producto.categoria.nombre}
               </span>
+
+              {/* Nuevo Botón de Comparar */}
+              <button
+                onClick={handleComparar}
+                className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all shadow-sm active:scale-95"
+              >
+                <img
+                  src="/balanza.svg"
+                  alt="Icono comparar"
+                  className="w-4 h-4 opacity-70"
+                />
+                {t("detalle.comparar", "Comparar")}
+              </button>
             </div>
 
             {/* Título */}
@@ -207,7 +229,10 @@ export default function Detalles() {
             {/* Precio y Estado de Stock */}
             <div className="mt-5 pb-5 border-b border-slate-100 flex flex-wrap items-baseline justify-between gap-4">
               <div>
-                <Precio precio={producto.precio} className="text-3xl sm:text-4xl font-black text-slate-900" />
+                <Precio
+                  precio={producto.precio}
+                  className="text-3xl sm:text-4xl font-black text-slate-900"
+                />
                 <p className="text-xs text-slate-400 mt-1">
                   {t("detalle.impuestosIncluidos")}
                 </p>
