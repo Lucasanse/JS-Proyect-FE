@@ -21,3 +21,12 @@ export function useTextosArmador() {
 // Valor de una especificación del producto (ej. "Potencia" de la fuente)
 export const especificacionDe = (producto: ProductoArmador | undefined, nombre: string) =>
   producto?.especificaciones.find((e) => e.nombre === nombre)?.valor;
+
+// Para qué marca de procesador es un motherboard, según su socket (AM4/AM5 o LGA...)
+export function plataformaDe(producto: ProductoArmador): "AMD" | "Intel" | null {
+  if (producto.paso !== "Motherboard") return null;
+  const socket = especificacionDe(producto, "Socket")?.toUpperCase() ?? "";
+  if (socket.startsWith("AM")) return "AMD";
+  if (socket.startsWith("LGA")) return "Intel";
+  return null;
+}

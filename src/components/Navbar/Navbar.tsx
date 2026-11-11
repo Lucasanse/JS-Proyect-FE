@@ -90,7 +90,10 @@ export default function Navbar() {
                   </span>
                 }
                 ariaLabel={t("nav.menuUsuario")}
-                opciones={[{ clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" }]}
+                opciones={[
+                  { clave: "presets", etiqueta: t("nav.misArmados"), to: "/presets" },
+                  { clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" },
+                ]}
               />
             ) : (
               <Link
@@ -159,7 +162,10 @@ export default function Navbar() {
                   </span>
                 }
                 ariaLabel={t("nav.menuUsuario")}
-                opciones={[{ clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" }]}
+                opciones={[
+                  { clave: "presets", etiqueta: t("nav.misArmados"), to: "/presets" },
+                  { clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" },
+                ]}
               />
             ) : (
               <Link

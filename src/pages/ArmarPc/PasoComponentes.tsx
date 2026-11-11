@@ -13,7 +13,8 @@ import {
   type ProductoArmador,
   type TipoArmador,
 } from "../../services/armador";
-import { especificacionDe, useTextosArmador } from "./textosArmador";
+import { especificacionDe, plataformaDe, useTextosArmador } from "./textosArmador";
+import VistaProducto, { BadgePlataforma } from "./VistaProducto";
 import type { Seleccion } from "./ArmarPc";
 
 interface Props {
@@ -203,6 +204,8 @@ export function TarjetaProducto({
 }: TarjetaProps) {
   const { t } = useTranslation();
   const textos = useTextosArmador();
+  const [viendo, setViendo] = useState(false);
+  const plataforma = plataformaDe(producto);
   const incompatible = !!motivos;
   const sinStock = producto.stock <= 0;
   const conCantidad = TIPOS_CON_CANTIDAD.includes(producto.paso);
@@ -214,17 +217,37 @@ export function TarjetaProducto({
         elegido ? "border-primary bg-primary-light" : "border-line bg-surface"
       } ${incompatible ? "opacity-70" : ""}`}
     >
-      <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-line bg-surface">
+      {/* La foto abre el resumen del producto (foto grande y descripción) */}
+      <button
+        type="button"
+        onClick={() => setViendo(true)}
+        aria-label={t("armarPc.verDetalle", { nombre: producto.nombre })}
+        title={t("armarPc.verDetalle", { nombre: producto.nombre })}
+        className="group relative flex h-16 w-16 shrink-0 cursor-zoom-in items-center justify-center overflow-hidden rounded-md border border-line bg-surface transition-shadow hover:border-primary hover:shadow-md"
+      >
         {producto.imagenUrl ? (
-          <img src={producto.imagenUrl} alt="" loading="lazy" className="h-full w-full object-contain p-1" />
+          <img
+            src={producto.imagenUrl}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-contain p-1 transition-transform group-hover:scale-110"
+          />
         ) : (
           <span className="text-[10px] text-muted">{t("card.sinImagen")}</span>
         )}
-      </div>
+        <span className="absolute right-0.5 bottom-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-ink/70 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+          <svg aria-hidden viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+            <circle cx="11" cy="11" r="6" />
+            <path d="m20 20-4.3-4.3" />
+          </svg>
+        </span>
+      </button>
+      {viendo && <VistaProducto producto={producto} onCerrar={() => setViendo(false)} />}
 
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-sm font-semibold text-ink">{producto.nombre}</h3>
+          {plataforma && <BadgePlataforma plataforma={plataforma} />}
           {elegido && (
             <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-white">
               ✓ {t("armarPc.elegido")}
