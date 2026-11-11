@@ -23,6 +23,7 @@ import AdminUsuarioDetalle from "./pages/Admin/AdminUsuarioDetalle.tsx";
 import Captura from "./pages/Captura/Captura.tsx";
 import { PantallaEstadoPago } from "./pages/EstadoPago/EstadoPago.tsx";
 import { MisCompras } from "./pages/MisCompras/MisCompras.tsx";
+import Presets from "./pages/Presets/Presets.tsx";
 import { VentasAdmin } from "./pages/Admin/AdminPedidos.tsx";
 import { VentaDetalleAdmin } from "./pages/Admin/VentaDetalleAdmin.tsx";
 import { ComparadorPage } from "./pages/Comparador/Comparador.tsx";
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
       { path: "detalleProducto/:id", element: <DetalleProducto /> },
       { path: "checkout/:estado", element: <PantallaEstadoPago /> },
       { path: "misCompras", element: <MisCompras /> },
+      { path: "presets", element: <Presets /> },
       { path: "comparador", element: <ComparadorPage /> },
       // Panel de administración (solo rol ADMIN, lo controla AdminLayout).
       // Cada sección nueva va como ruta hija y en el menú de AdminLayout.

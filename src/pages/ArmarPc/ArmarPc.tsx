@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   PASOS_ARMADOR,
-  PASO_PERIFERICOS,
   TIPOS_ARMADOR,
   ArmadorError,
+  esPasoExtra,
   obtenerFuenteSugerida,
   permiteVarios,
   validarArmado,
@@ -12,61 +12,31 @@ import {
   type FuenteSugeridaRespuesta,
   type PasoArmador,
   type ProductoArmador,
-  type TipoArmador,
   type ValidacionArmado,
 } from "../../services/armador";
 import PasoComponentes from "./PasoComponentes";
 import PasoPerifericos from "./PasoPerifericos";
 import ResumenArmado from "./ResumenArmado";
-import MisArmados from "./MisArmados";
 import { especificacionDe, useTextosArmador } from "./textosArmador";
 import type { ProductoResumen } from "../../services/productos";
+import {
+  guardarEnPestana,
+  leerPerifericos,
+  leerSeleccion,
+  leerServicios,
+  type Seleccion,
+} from "./armadoPestana";
 
-// Lo elegido en cada paso: un producto, o varios en almacenamiento (ver TIPOS_MULTIPLES)
-export type Seleccion = Partial<Record<TipoArmador, ComponenteElegido[]>>;
+export type { Seleccion } from "./armadoPestana";
 
-// Lo elegido queda en la pestaña: si hay que iniciar sesión para comprar, no se pierde el armado
-const CLAVE_STORAGE = "armarPc.seleccion";
-const CLAVE_STORAGE_PERIFERICOS = "armarPc.perifericos";
-const CLAVE_STORAGE_SERVICIOS = "armarPc.servicios";
 const ESPERA_POTENCIA_MS = 300;
 
 const aLista = (seleccion: Seleccion) => TIPOS_ARMADOR.flatMap((t) => seleccion[t] ?? []);
 
-function leerGuardada(): Seleccion {
-  try {
-    const guardada = JSON.parse(sessionStorage.getItem(CLAVE_STORAGE) || "{}");
-    // Antes se guardaba un producto por paso, sin lista
-    return Object.fromEntries(
-      TIPOS_ARMADOR.flatMap((t) => (guardada[t] ? [[t, [guardada[t]].flat()]] : [])),
-    );
-  } catch {
-    return {};
-  }
-}
-
-function leerPerifericos(): ComponenteElegido[] {
-  try {
-    const guardados = JSON.parse(sessionStorage.getItem(CLAVE_STORAGE_PERIFERICOS) || "[]");
-    return Array.isArray(guardados) ? guardados : [];
-  } catch {
-    return [];
-  }
-}
-
-function leerServicios(): ProductoResumen[] {
-  try {
-    const guardados = JSON.parse(sessionStorage.getItem(CLAVE_STORAGE_SERVICIOS) || "[]");
-    return Array.isArray(guardados) ? guardados : [];
-  } catch {
-    return [];
-  }
-}
-
 export default function ArmarPc() {
   const { t, i18n } = useTranslation();
   const textos = useTextosArmador();
-  const [seleccion, setSeleccion] = useState<Seleccion>(leerGuardada);
+  const [seleccion, setSeleccion] = useState<Seleccion>(leerSeleccion);
   // Monitor, mouse, teclado...: no tienen reglas de compatibilidad, así que se cambian sin validar
   const [perifericos, setPerifericos] = useState<ComponenteElegido[]>(leerPerifericos);
   // Armado de la PC, instalación de Windows...: se eligen en el resumen y se compran con el armado
@@ -77,8 +47,6 @@ export default function ArmarPc() {
   const [verificando, setVerificando] = useState(false);
   const [avisos, setAvisos] = useState<string[]>([]);
   const [error, setError] = useState("");
-  // Cambia al guardar un armado, para que "Mis armados" se actualice
-  const [versionPresets, setVersionPresets] = useState(0);
   // Cada cambio tiene un número: si llega la respuesta de uno viejo, se descarta
   const ultimoCambio = useRef(0);
   const pasoActual = PASOS_ARMADOR[paso];
@@ -116,7 +84,7 @@ export default function ArmarPc() {
           // No se quitan el que se acaba de elegir ni, al sumar un disco, los otros discos
           const pasoCambiado = cambio.producto?.paso;
           const protegidos = new Set(
-            pasoCambiado && pasoCambiado !== PASO_PERIFERICOS && permiteVarios(pasoCambiado)
+            pasoCambiado && !esPasoExtra(pasoCambiado) && permiteVarios(pasoCambiado)
               ? (actual[pasoCambiado] ?? []).map((e) => e.producto.id)
               : [cambio.producto?.id],
           );
@@ -166,17 +134,11 @@ export default function ArmarPc() {
   useEffect(() => {
     if (validadoAlEntrar.current) return;
     validadoAlEntrar.current = true;
-    aplicarCambio(leerGuardada(), { alEntrar: true });
+    aplicarCambio(leerSeleccion(), { alEntrar: true });
   }, [aplicarCambio]);
 
   useEffect(() => {
-    try {
-      sessionStorage.setItem(CLAVE_STORAGE, JSON.stringify(seleccion));
-      sessionStorage.setItem(CLAVE_STORAGE_PERIFERICOS, JSON.stringify(perifericos));
-      sessionStorage.setItem(CLAVE_STORAGE_SERVICIOS, JSON.stringify(servicios));
-    } catch {
-      // Sin storage disponible el armado solo se pierde al recargar
-    }
+    guardarEnPestana(seleccion, perifericos, servicios);
   }, [seleccion, perifericos, servicios]);
 
   // Potencia y fuente sugerida: se recalculan en cada cambio, con debounce para no
@@ -199,7 +161,7 @@ export default function ArmarPc() {
   // En almacenamiento el producto se suma a los otros discos; en el resto reemplaza al elegido
   const elegir = (producto: ProductoArmador) => {
     const tipo = producto.paso;
-    if (tipo === PASO_PERIFERICOS) return;
+    if (esPasoExtra(tipo)) return;
     const actuales = seleccion[tipo] ?? [];
     if (actuales.some((e) => e.producto.id === producto.id)) return;
     const lista = permiteVarios(tipo)
@@ -210,27 +172,17 @@ export default function ArmarPc() {
 
   const cambiarCantidad = (producto: ProductoArmador, cantidad: number) => {
     const tipo = producto.paso;
-    if (tipo === PASO_PERIFERICOS) return;
+    if (esPasoExtra(tipo)) return;
     const lista = (seleccion[tipo] ?? []).map((e) => (e.producto.id === producto.id ? { ...e, cantidad } : e));
     aplicarCambio({ ...seleccion, [tipo]: lista }, { producto, soloCantidad: true });
   };
 
   const quitar = (producto: ProductoArmador) => {
     const tipo = producto.paso;
-    if (tipo === PASO_PERIFERICOS) return;
+    if (esPasoExtra(tipo)) return;
     const siguiente = { ...seleccion, [tipo]: (seleccion[tipo] ?? []).filter((e) => e.producto.id !== producto.id) };
     if (siguiente[tipo]?.length === 0) delete siguiente[tipo];
     aplicarCambio(siguiente);
-  };
-
-  const cargarArmado = (componentes: ComponenteElegido[]) => {
-    const nueva: Seleccion = {};
-    for (const c of componentes) {
-      if (c.producto.paso !== PASO_PERIFERICOS) (nueva[c.producto.paso] ??= []).push(c);
-    }
-    setPerifericos(componentes.filter((c) => c.producto.paso === PASO_PERIFERICOS));
-    setPaso(0);
-    aplicarCambio(nueva);
   };
 
   const agregarPeriferico = (producto: ProductoArmador) =>
@@ -251,12 +203,11 @@ export default function ArmarPc() {
         <h1 className="text-3xl font-bold text-ink">{t("armarPc.titulo")}</h1>
         <p className="mt-2 max-w-3xl text-muted">{t("armarPc.intro")}</p>
 
-        <MisArmados version={versionPresets} onCargar={cargarArmado} />
 
         <Pasos
           paso={paso}
           seleccion={seleccion}
-          cantidadPerifericos={perifericos.length}
+          perifericos={perifericos}
           faltantes={validacion?.faltantes.map((f) => f.tipo) ?? []}
           onIr={setPaso}
         />
@@ -286,8 +237,10 @@ export default function ArmarPc() {
 
         <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className="min-w-0 flex-1">
-            {pasoActual === PASO_PERIFERICOS ? (
+            {esPasoExtra(pasoActual) ? (
               <PasoPerifericos
+                key={pasoActual}
+                paso={pasoActual}
                 perifericos={perifericos}
                 onAgregar={agregarPeriferico}
                 onCantidad={cambiarCantidadPeriferico}
@@ -346,7 +299,6 @@ export default function ArmarPc() {
               setServicios([]);
               aplicarCambio({});
             }}
-            onGuardado={() => setVersionPresets((v) => v + 1)}
           />
         </div>
       </div>
@@ -359,23 +311,24 @@ export default function ArmarPc() {
 function Pasos({
   paso,
   seleccion,
-  cantidadPerifericos,
+  perifericos,
   faltantes,
   onIr,
 }: {
   paso: number;
   seleccion: Seleccion;
-  cantidadPerifericos: number;
+  perifericos: ComponenteElegido[];
   faltantes: PasoArmador[];
   onIr: (paso: number) => void;
 }) {
   const { t } = useTranslation();
   const textos = useTextosArmador();
-  // La GPU solo es obligatoria si el procesador no tiene video (lo dice la validación); los periféricos nunca
-  const esObligatorio = (tipo: PasoArmador) =>
-    (tipo !== "GPU" && tipo !== PASO_PERIFERICOS) || faltantes.includes(tipo);
+  // La GPU solo es obligatoria si el procesador no tiene video (lo dice la validación); monitor y periféricos nunca
+  const esObligatorio = (tipo: PasoArmador) => (tipo !== "GPU" && !esPasoExtra(tipo)) || faltantes.includes(tipo);
+  const elegidosEn = (tipo: PasoArmador) =>
+    esPasoExtra(tipo) ? perifericos.filter((p) => p.producto.paso === tipo) : (seleccion[tipo] ?? []);
   const estados = PASOS_ARMADOR.map((tipo) => {
-    const elegido = tipo === PASO_PERIFERICOS ? cantidadPerifericos > 0 : !!seleccion[tipo]?.length;
+    const elegido = elegidosEn(tipo).length > 0;
     return elegido ? "listo" : esObligatorio(tipo) ? "pendiente" : "opcional";
   });
   const obligatorios = PASOS_ARMADOR.filter(esObligatorio);
@@ -384,8 +337,7 @@ function Pasos({
   // Debajo del nombre: lo que se eligió en ese paso, o si falta / es opcional
   const detalleDe = (tipo: PasoArmador, estado: string) => {
     if (estado !== "listo") return t(`armarPc.estado.${estado}`);
-    if (tipo === PASO_PERIFERICOS) return t("armarPc.cantidadProductos", { count: cantidadPerifericos });
-    const elegidos = seleccion[tipo] ?? [];
+    const elegidos = elegidosEn(tipo);
     return elegidos.length > 1 ? t("armarPc.cantidadProductos", { count: elegidos.length }) : (elegidos[0]?.producto.nombre ?? "");
   };
 
@@ -400,7 +352,7 @@ function Pasos({
       </div>
 
       {/* Una columna por paso: la barra muestra el estado y, desde md, el nombre y el detalle debajo */}
-      <ol className="grid grid-cols-8 gap-1.5">
+      <ol className="grid grid-cols-9 gap-1.5">
         {PASOS_ARMADOR.map((tipo, i) => {
           const actual = i === paso;
           const estado = estados[i];

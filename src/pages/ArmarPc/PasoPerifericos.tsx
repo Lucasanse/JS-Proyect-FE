@@ -2,24 +2,26 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ErrorCarga from "../../components/ServicioTecnico/ErrorCarga";
 import {
-  PASO_PERIFERICOS,
   obtenerCompatibles,
   type ComponenteElegido,
+  type PasoExtra,
   type ProductoArmador,
 } from "../../services/armador";
 import { ListaCargando, TarjetaProducto } from "./PasoComponentes";
 import { useTextosArmador } from "./textosArmador";
 
 interface Props {
+  paso: PasoExtra; // "Monitor" o "Perifericos" (mouse, teclado, auriculares...)
   perifericos: ComponenteElegido[];
   onAgregar: (producto: ProductoArmador) => void;
   onCantidad: (idProducto: number, cantidad: number) => void;
   onQuitar: (idProducto: number) => void;
 }
 
-// Paso opcional: monitor, mouse, teclado, auriculares... No tienen reglas de compatibilidad,
-// así que se muestran todos y se puede agregar más de uno. Se filtran por categoría.
-export default function PasoPerifericos({ perifericos, onAgregar, onCantidad, onQuitar }: Props) {
+// Pasos opcionales: el monitor y los demás periféricos (mouse, teclado, auriculares...). No tienen
+// reglas de compatibilidad, así que se muestran todos y se puede agregar más de uno.
+// Si el paso tiene varias categorías, se pueden filtrar.
+export default function PasoPerifericos({ paso, perifericos, onAgregar, onCantidad, onQuitar }: Props) {
   const { t, i18n } = useTranslation();
   const textos = useTextosArmador();
   const [productos, setProductos] = useState<ProductoArmador[] | null>(null);
@@ -34,7 +36,7 @@ export default function PasoPerifericos({ perifericos, onAgregar, onCantidad, on
 
   useEffect(() => {
     const controller = new AbortController();
-    obtenerCompatibles(PASO_PERIFERICOS, [], controller.signal)
+    obtenerCompatibles(paso, [], controller.signal)
       .then((data) => {
         setProductos(data.productos);
         setRespuesta({ clave, error: "" });
@@ -45,7 +47,7 @@ export default function PasoPerifericos({ perifericos, onAgregar, onCantidad, on
         }
       });
     return () => controller.abort();
-  }, [clave, t]);
+  }, [clave, paso, t]);
 
   // Categorías en el orden en que vienen (el BE ordena por categoría y precio)
   const categorias = [...new Set((productos ?? []).map((p) => p.categoria.nombre))];
@@ -53,8 +55,8 @@ export default function PasoPerifericos({ perifericos, onAgregar, onCantidad, on
 
   return (
     <div className="rounded-xl border border-line bg-surface p-4 shadow-sm sm:p-6">
-      <h2 className="text-xl font-bold text-ink">{t(`armarPc.pasos.${PASO_PERIFERICOS}.titulo`)}</h2>
-      <p className="mt-1 text-sm text-muted">{t(`armarPc.pasos.${PASO_PERIFERICOS}.ayuda`)}</p>
+      <h2 className="text-xl font-bold text-ink">{t(`armarPc.pasos.${paso}.titulo`)}</h2>
+      <p className="mt-1 text-sm text-muted">{t(`armarPc.pasos.${paso}.ayuda`)}</p>
 
       {error ? (
         <ErrorCarga mensaje={error} onReintentar={() => setReintento((r) => r + 1)} />
@@ -62,21 +64,23 @@ export default function PasoPerifericos({ perifericos, onAgregar, onCantidad, on
         <ListaCargando />
       ) : (
         <>
-          <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={t("armarPc.filtrarCategoria")}>
-            {[null, ...categorias].map((c) => (
-              <button
-                key={c ?? "todas"}
-                type="button"
-                aria-pressed={categoria === c}
-                onClick={() => setCategoria(c)}
-                className={`cursor-pointer rounded-full border px-3 py-1 text-sm font-semibold transition-colors ${
-                  categoria === c ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink hover:border-primary"
-                }`}
-              >
-                {c ? textos.categoria(c) : t("armarPc.todas")}
-              </button>
-            ))}
-          </div>
+          {categorias.length > 1 && (
+            <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={t("armarPc.filtrarCategoria")}>
+              {[null, ...categorias].map((c) => (
+                <button
+                  key={c ?? "todas"}
+                  type="button"
+                  aria-pressed={categoria === c}
+                  onClick={() => setCategoria(c)}
+                  className={`cursor-pointer rounded-full border px-3 py-1 text-sm font-semibold transition-colors ${
+                    categoria === c ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink hover:border-primary"
+                  }`}
+                >
+                  {c ? textos.categoria(c) : t("armarPc.todas")}
+                </button>
+              ))}
+            </div>
+          )}
 
           {visibles.length === 0 ? (
             <p className="mt-4 rounded-lg border border-line bg-surface-alt p-4 text-sm text-muted">
