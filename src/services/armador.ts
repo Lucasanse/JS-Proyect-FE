@@ -10,14 +10,20 @@ import type { ProductoResumen } from "./productos";
 export const TIPOS_ARMADOR = ["Motherboard", "CPU", "RAM", "Gabinete", "GPU", "Almacenamiento", "Fuente"] as const;
 export type TipoArmador = (typeof TIPOS_ARMADOR)[number];
 
-// Paso opcional del final: monitor, mouse, teclado... Se puede elegir más de uno y
-// no tienen reglas de compatibilidad ni consumo.
+// Pasos opcionales del final: el monitor y los demás periféricos (mouse, teclado...).
+// Se puede elegir más de uno y no tienen reglas de compatibilidad ni consumo.
+export const PASO_MONITOR = "Monitor";
+export const CATEGORIA_MONITORES = "Monitores";
 export const PASO_PERIFERICOS = "Perifericos";
-export type PasoArmador = TipoArmador | typeof PASO_PERIFERICOS;
-export const PASOS_ARMADOR: readonly PasoArmador[] = [...TIPOS_ARMADOR, PASO_PERIFERICOS];
+export const PASOS_EXTRA = [PASO_MONITOR, PASO_PERIFERICOS] as const;
+export type PasoExtra = (typeof PASOS_EXTRA)[number];
+export const esPasoExtra = (paso: string): paso is PasoExtra => (PASOS_EXTRA as readonly string[]).includes(paso);
+
+export type PasoArmador = TipoArmador | PasoExtra;
+export const PASOS_ARMADOR: readonly PasoArmador[] = [...TIPOS_ARMADOR, ...PASOS_EXTRA];
 
 // En estos pasos se puede elegir más de una unidad (ej. 2 módulos de memoria)
-export const TIPOS_CON_CANTIDAD: readonly PasoArmador[] = ["RAM", "Almacenamiento", PASO_PERIFERICOS];
+export const TIPOS_CON_CANTIDAD: readonly PasoArmador[] = ["RAM", "Almacenamiento", ...PASOS_EXTRA];
 export const CANTIDAD_MAXIMA = 4;
 
 // En estos pasos se pueden elegir varios productos distintos (ej. un NVMe y un disco rígido),
@@ -26,7 +32,7 @@ export const TIPOS_MULTIPLES: readonly PasoArmador[] = ["Almacenamiento"];
 export const permiteVarios = (paso: PasoArmador) => TIPOS_MULTIPLES.includes(paso);
 
 export interface ProductoArmador extends ProductoResumen {
-  paso: PasoArmador; // tipo de componente, o "Perifericos"
+  paso: PasoArmador; // tipo de componente, "Monitor" o "Perifericos"
   watts: number;
   especificaciones: { nombre: string; valor: string; unidad: string | null }[];
 }

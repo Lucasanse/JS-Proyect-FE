@@ -10,6 +10,7 @@
     "notificaciones": "Notificaciones",
     "cargando": "Cargando...",
     "hola": "Hola,",
+    "misArmados": "Mis armados PC",
     "cerrarSesion": "Cerrar sesión",
     "iniciarSesion": "Iniciar sesión",
     "carrito": "Carrito",
@@ -103,6 +104,7 @@
       "GPU": "Placa de video",
       "Almacenamiento": "Almacenamiento",
       "Fuente": "Fuente",
+      "Monitor": "Monitor",
       "Perifericos": "Periféricos"
     },
     "pasos": {
@@ -134,9 +136,13 @@
         "titulo": "7. Elegí la fuente",
         "ayuda": "Le da energía a todo el equipo. Solo te mostramos las que alcanzan para lo que elegiste, con margen de seguridad."
       },
+      "Monitor": {
+        "titulo": "8. Elegí un monitor (opcional)",
+        "ayuda": "Podés sumar uno o más monitores, o saltear este paso si ya tenés."
+      },
       "Perifericos": {
-        "titulo": "8. Sumá periféricos (opcional)",
-        "ayuda": "Monitor, mouse, teclado, auriculares... Podés agregar varios o saltear este paso."
+        "titulo": "9. Sumá periféricos (opcional)",
+        "ayuda": "Mouse, teclado, auriculares... Podés agregar varios o saltear este paso."
       }
     },
     "gpuOpcional": "Opcional: tu procesador tiene gráficos integrados, así que podés usar la PC sin placa de video.",
@@ -230,26 +236,28 @@
     "completaParaComprar": "Completá los componentes obligatorios para poder comprar.",
     "guardar": "Guardar armado",
     "guardando": "Guardando…",
-    "guardado": "Guardamos tu armado",
+    "guardado": "Guardamos tu armado. Lo encontrás en tu perfil, arriba a la derecha, en «Mis armados PC».",
     "guardarTitulo": "Guardar armado",
+    "guardarAyuda": "Después lo vas a encontrar en tu perfil (arriba a la derecha, donde está tu nombre), en «Mis armados PC».",
     "nombreArmado": "Nombre",
     "nombrePlaceholder": "Ej: PC para jugar",
     "errorGuardar": "No se pudo guardar el armado",
     "iniciaSesion": "Iniciá sesión",
     "paraComprar": "para agregar el armado al carrito o guardarlo.",
-    "misArmados": "Mis armados guardados",
-    "sinArmados": "Todavía no guardaste ningún armado.",
     "errorArmados": "No se pudieron cargar tus armados",
     "resumenArmado_one": "{{count}} componente · {{watts}} W",
     "resumenArmado_other": "{{count}} componentes · {{watts}} W",
-    "cargar": "Cargar",
     "eliminar": "Eliminar",
     "errorEliminar": "No se pudo eliminar el armado",
     "servicios": {
       "titulo": "Servicios",
       "aviso": "Tené en cuenta que el armado del equipo puede demorar hasta 2 días hábiles.",
       "error": "No se pudieron cargar los servicios"
-    }
+    },
+    "plataforma": "Para {{marca}}",
+    "verDetalle": "Ver foto y descripción de {{nombre}}",
+    "especificacionesTitulo": "Especificaciones",
+    "sinDescripcion": "Este producto no tiene descripción."
   },
   "servicioTecnico": {
     "titulo": "Servicio técnico",
@@ -979,5 +987,52 @@
     "escribirWhatsapp": "Escribinos por WhatsApp",
     "dondeEstamos": "Dónde estamos",
     "mapa": "Mapa de J.S. Computación"
+  },
+  "comparador": {
+    "titulo": "Comparador de Productos",
+    "descripcion": "Contrastá especificaciones técnicas, consumo y precios en tiempo real.",
+    "ariaFiltro": "Filtro de productos",
+    "ariaSlots": "Slots de selección de productos",
+    "ariaTabla": "Tabla comparativa"
+  },
+  "selectorCategoria": {
+    "label": "Categoría a comparar",
+    "cargando": "Cargando categorías...",
+    "errorSelect": "Error al cargar",
+    "errorTexto": "Error al cargar categorías"
+  },
+  "selectorProducto": {
+    "buscando": "Buscando productos...",
+    "errorSelect": "Error al cargar",
+    "sinProductos": "Sin productos",
+    "seleccionar": "+ Seleccionar producto",
+    "yaSeleccionado": " (Ya seleccionado)"
+  },
+  "slotProducto": {
+    "slot": "Slot",
+    "vaciar": "Vaciar",
+    "quitar": "✕ Quitar",
+    "esperando": "Esperando selección"
+  },
+  "tablaComparativa": {
+    "especificaciones": "Especificaciones",
+    "respectoMinimo": "+{{diff}}% respecto al valor más bajo ({{min}})",
+    "frases": {
+      "esMejor": "Es mejor",
+      "masRapido": "Más rápido",
+      "rindeMas": "Rinde más",
+      "superior": "Superior",
+      "destaca": "Destaca"
+    }
+  },
+  "presets": {
+    "titulo": "Mis armados PC",
+    "subtitulo": "Los armados de PC que guardaste. Abrí uno en el armador para cambiarlo o comprarlo.",
+    "paraVer": "para ver tus armados guardados.",
+    "sinArmados": "Todavía no guardaste ningún armado.",
+    "armarUno": "Armá tu PC",
+    "abrir": "Abrir en el armador",
+    "confirmarEliminar": "¿Estás seguro de que querés eliminar \"{{nombre}}\"? No se puede deshacer.",
+    "eliminado": "Eliminamos \"{{nombre}}\""
   }
 }

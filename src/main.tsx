@@ -25,8 +25,10 @@ import { PantallaEstadoPago } from "./pages/EstadoPago/EstadoPago.tsx";
 import { MisCompras } from "./pages/MisCompras/MisCompras.tsx";
 import MisPresupuestos from "./pages/MisPresupuestos/MisPresupuestos.tsx";
 import QuienesSomos from "./pages/QuienesSomos/QuienesSomos.tsx";
+import Presets from "./pages/Presets/Presets.tsx";
 import { VentasAdmin } from "./pages/Admin/AdminPedidos.tsx";
 import { VentaDetalleAdmin } from "./pages/Admin/VentaDetalleAdmin.tsx";
+import { ComparadorPage } from "./pages/Comparador/Comparador.tsx";
 
 // Todas las rutas hijas se muestran dentro de MainLayout (Navbar + Footer)
 const router = createBrowserRouter([
@@ -51,6 +53,8 @@ const router = createBrowserRouter([
       { path: "misCompras", element: <MisCompras /> },
       { path: "mis-presupuestos", element: <MisPresupuestos /> },
       { path: "quienes-somos", element: <QuienesSomos /> },
+      { path: "presets", element: <Presets /> },
+      { path: "comparador", element: <ComparadorPage /> },
       // Panel de administración (solo rol ADMIN, lo controla AdminLayout).
       // Cada sección nueva va como ruta hija y en el menú de AdminLayout.
       {
