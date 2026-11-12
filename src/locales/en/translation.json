@@ -10,6 +10,7 @@
     "notificaciones": "Notifications",
     "cargando": "Loading...",
     "hola": "Hello,",
+    "misArmados": "My PC builds",
     "cerrarSesion": "Log out",
     "iniciarSesion": "Log in",
     "carrito": "Cart",
@@ -103,6 +104,7 @@
       "GPU": "Graphics card",
       "Almacenamiento": "Storage",
       "Fuente": "Power supply",
+      "Monitor": "Monitor",
       "Perifericos": "Peripherals"
     },
     "pasos": {
@@ -134,9 +136,13 @@
         "titulo": "7. Choose the power supply",
         "ayuda": "It powers the whole computer. We only show the ones that are enough for what you picked, with a safety margin."
       },
+      "Monitor": {
+        "titulo": "8. Choose a monitor (optional)",
+        "ayuda": "You can add one or more monitors, or skip this step if you already have one."
+      },
       "Perifericos": {
-        "titulo": "8. Add peripherals (optional)",
-        "ayuda": "Monitor, mouse, keyboard, headset... You can add several or skip this step."
+        "titulo": "9. Add peripherals (optional)",
+        "ayuda": "Mouse, keyboard, headset... You can add several or skip this step."
       }
     },
     "gpuOpcional": "Optional: your processor has integrated graphics, so you can use the PC without a graphics card.",
@@ -230,26 +236,28 @@
     "completaParaComprar": "Complete the required parts to be able to buy.",
     "guardar": "Save build",
     "guardando": "Saving…",
-    "guardado": "Your build was saved",
+    "guardado": "Your build was saved. You'll find it in your profile, top right, under “My PC builds”.",
     "guardarTitulo": "Save build",
+    "guardarAyuda": "You'll find it later in your profile (top right, where your name is), under “My PC builds”.",
     "nombreArmado": "Name",
     "nombrePlaceholder": "E.g. Gaming PC",
     "errorGuardar": "The build couldn't be saved",
     "iniciaSesion": "Log in",
     "paraComprar": "to add the build to the cart or save it.",
-    "misArmados": "My saved builds",
-    "sinArmados": "You haven't saved any builds yet.",
     "errorArmados": "Your builds couldn't be loaded",
     "resumenArmado_one": "{{count}} part · {{watts}} W",
     "resumenArmado_other": "{{count}} parts · {{watts}} W",
-    "cargar": "Load",
     "eliminar": "Delete",
     "errorEliminar": "The build couldn't be deleted",
     "servicios": {
       "titulo": "Services",
       "aviso": "Keep in mind that assembling the computer can take up to 2 business days.",
       "error": "The services couldn't be loaded"
-    }
+    },
+    "plataforma": "For {{marca}}",
+    "verDetalle": "See photo and description of {{nombre}}",
+    "especificacionesTitulo": "Specifications",
+    "sinDescripcion": "This product has no description."
   },
   "servicioTecnico": {
     "titulo": "Tech Support",
@@ -974,5 +982,52 @@
     "escribirWhatsapp": "Message us on WhatsApp",
     "dondeEstamos": "Where we are",
     "mapa": "Map of J.S. Computación"
+  },
+  "comparador": {
+    "titulo": "Product Comparator",
+    "descripcion": "Compare technical specs, power consumption, and prices in real-time.",
+    "ariaFiltro": "Product filter",
+    "ariaSlots": "Product selection slots",
+    "ariaTabla": "Comparison table"
+  },
+  "selectorCategoria": {
+    "label": "Category to compare",
+    "cargando": "Loading categories...",
+    "errorSelect": "Error loading",
+    "errorTexto": "Error loading categories"
+  },
+  "selectorProducto": {
+    "buscando": "Searching products...",
+    "errorSelect": "Error loading",
+    "sinProductos": "No products",
+    "seleccionar": "+ Select product",
+    "yaSeleccionado": " (Already selected)"
+  },
+  "slotProducto": {
+    "slot": "Slot",
+    "vaciar": "Clear",
+    "quitar": "✕ Remove",
+    "esperando": "Waiting for selection"
+  },
+  "tablaComparativa": {
+    "especificaciones": "Specifications",
+    "respectoMinimo": "+{{diff}}% compared to the lowest value ({{min}})",
+    "frases": {
+      "esMejor": "Is better",
+      "masRapido": "Faster",
+      "rindeMas": "More efficient",
+      "superior": "Superior",
+      "destaca": "Stands out"
+    }
+  },
+  "presets": {
+    "titulo": "My PC builds",
+    "subtitulo": "The PC builds you saved. Open one in the PC builder to change it or buy it.",
+    "paraVer": "to see your saved builds.",
+    "sinArmados": "You haven't saved any builds yet.",
+    "armarUno": "Build your PC",
+    "abrir": "Open in the PC builder",
+    "confirmarEliminar": "Are you sure you want to delete \"{{nombre}}\"? This can't be undone.",
+    "eliminado": "\"{{nombre}}\" was deleted"
   }
 }

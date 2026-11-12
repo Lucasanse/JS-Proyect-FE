@@ -42,6 +42,7 @@ export default function Navbar() {
   ];
   // Opciones del menú del usuario ("Hola, ...")
   const opcionesUsuario = [
+    { clave: "presets", etiqueta: t("nav.misArmados"), to: "/presets" },
     { clave: "presupuestos", etiqueta: t("nav.misPresupuestos"), to: "/mis-presupuestos" },
     { clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" },
   ];

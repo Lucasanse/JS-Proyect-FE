@@ -8,8 +8,8 @@ import { useToast } from "../../components/Toast/toastContext";
 import { useSession } from "../../services/auth-client";
 import {
   PASOS_ARMADOR,
-  PASO_PERIFERICOS,
   TIPOS_ARMADOR,
+  esPasoExtra,
   guardarPreset,
   type ComponenteElegido,
   type PasoArmador,
@@ -37,7 +37,6 @@ interface Props {
   onElegir: (producto: ProductoArmador) => void;
   onServicios: Dispatch<SetStateAction<ProductoResumen[]>>;
   onVaciar: () => void;
-  onGuardado: () => void;
 }
 
 // Panel con lo elegido, precio total, consumo estimado y las acciones finales
@@ -55,7 +54,6 @@ export default function ResumenArmado({
   onElegir,
   onServicios,
   onVaciar,
-  onGuardado,
 }: Props) {
   const { t } = useTranslation();
   const textos = useTextosArmador();
@@ -116,10 +114,10 @@ export default function ResumenArmado({
       {/* Un renglón por paso, con lo elegido debajo (en almacenamiento y periféricos puede haber varios) */}
       <ul className="mt-3 divide-y divide-line">
         {PASOS_ARMADOR.map((paso) => {
-          const elegidos = paso === PASO_PERIFERICOS ? perifericos : (seleccion[paso] ?? []);
+          const extra = esPasoExtra(paso);
+          const elegidos = extra ? perifericos.filter((p) => p.producto.paso === paso) : (seleccion[paso] ?? []);
           const falta = faltantes.find((f) => f.tipo === paso);
-          const quitar = (producto: ProductoArmador) =>
-            paso === PASO_PERIFERICOS ? onQuitarPeriferico(producto.id) : onQuitar(producto);
+          const quitar = (producto: ProductoArmador) => (extra ? onQuitarPeriferico(producto.id) : onQuitar(producto));
           return (
             <li key={paso} className="py-2 text-sm">
               <button type="button" onClick={() => onIr(paso)} className="block w-full cursor-pointer text-left">
@@ -142,7 +140,7 @@ export default function ResumenArmado({
                   <button
                     type="button"
                     onClick={() => quitar(producto)}
-                    disabled={verificando && paso !== PASO_PERIFERICOS}
+                    disabled={verificando && !extra}
                     aria-label={t("armarPc.quitarComponente", { nombre: producto.nombre })}
                     className="shrink-0 cursor-pointer rounded px-1 text-muted hover:text-primary disabled:opacity-50"
                   >
@@ -240,7 +238,6 @@ export default function ResumenArmado({
             await guardarPreset(nombre, componentes);
             setGuardando(false);
             mostrarToast(t("armarPc.guardado"), "exito");
-            onGuardado();
           }}
         />
       )}
@@ -309,6 +306,7 @@ function GuardarModal({ onCerrar, onGuardar }: { onCerrar: () => void; onGuardar
   return (
     <Modal titulo={t("armarPc.guardarTitulo")} onCerrar={onCerrar} bloqueado={enviando} cerrarAlClicFuera={false}>
       <form onSubmit={enviar} className="flex flex-col gap-3 p-5">
+        <p className="rounded-lg bg-secondary px-3 py-2 text-sm text-secondary-dark">{t("armarPc.guardarAyuda")}</p>
         <label className="flex flex-col gap-1 text-sm font-semibold text-ink">
           {t("armarPc.nombreArmado")}
           <input
