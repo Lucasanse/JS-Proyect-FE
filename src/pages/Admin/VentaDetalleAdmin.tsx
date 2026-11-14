@@ -143,9 +143,16 @@ export const VentaDetalleAdmin = () => {
                   className="flex justify-between items-center p-4 hover:bg-surface-alt/50 transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    {/* Placeholder para la imagen si la agregás luego */}
-                    <div className="w-12 h-12 bg-surface-alt border border-line rounded flex items-center justify-center text-xs text-muted">
-                      IMG
+                    <div className="w-12 h-12 shrink-0 overflow-hidden bg-surface border border-line rounded flex items-center justify-center text-xs text-muted">
+                      {detalle.producto.imagenUrl ? (
+                        <img
+                          src={detalle.producto.imagenUrl}
+                          alt={detalle.producto.nombre}
+                          className="h-full w-full object-contain p-0.5"
+                        />
+                      ) : (
+                        "IMG"
+                      )}
                     </div>
                     <div>
                       <p className="text-sm font-bold text-ink">

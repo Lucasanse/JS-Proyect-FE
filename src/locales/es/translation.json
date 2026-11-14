@@ -10,6 +10,7 @@
     "notificaciones": "Notificaciones",
     "cargando": "Cargando...",
     "hola": "Hola,",
+    "misArmados": "Mis armados PC",
     "cerrarSesion": "Cerrar sesión",
     "iniciarSesion": "Iniciar sesión",
     "carrito": "Carrito",
@@ -36,7 +37,10 @@
     "especificacionesTitulo": "Especificaciones Técnicas",
     "atributosPara": "Atributos de compatibilidad y rendimiento para",
     "consumoRequerido": "Consumo requerido: {{watts}} W",
-    "sinAtributos": "No hay atributos técnicos adicionales registrados para este componente."
+    "sinAtributos": "No hay atributos técnicos adicionales registrados para este componente.",
+    "necesitaGpuTitulo": "Necesita placa de video",
+    "necesitaGpu": "Este procesador no tiene gráficos integrados: para que la PC dé imagen hay que sumarle una placa de video. Si no tenés una, elegila en el armador.",
+    "armarPc": "Armar tu PC"
   },
   "home": {
     "heroTitulo": "La tecnología que buscás,",
@@ -68,7 +72,187 @@
   },
   "armarPc": {
     "titulo": "Armá tu PC",
-    "enConstruccion": "Página en construcción."
+    "intro": "Elegí paso a paso cada componente. Solo te mostramos los que son compatibles con lo que ya elegiste, así no tenés que saber de sockets ni formatos.",
+    "pasosLabel": "Pasos del armado",
+    "pasoDe": "Paso {{numero}} de {{total}}",
+    "progresoObligatorios": "{{listos}} de {{total}} obligatorios elegidos",
+    "estado": {
+      "listo": "Listo",
+      "pendiente": "Pendiente",
+      "opcional": "Opcional"
+    },
+    "cantidadProductos_one": "{{count}} producto",
+    "cantidadProductos_other": "{{count}} productos",
+    "cerrarAviso": "Cerrar aviso",
+    "avisoQuitado": "Quitamos {{nombre}} porque ya no era compatible: {{motivo}}.",
+    "avisoCantidad": "No se pudo cambiar la cantidad: {{motivo}}.",
+    "armadoDescartado": "Tu armado anterior tenía productos que ya no están disponibles, así que empezamos de nuevo.",
+    "errorValidar": "No se pudo verificar la compatibilidad. Probá de nuevo.",
+    "errorCargar": "No se pudieron cargar los productos",
+    "anterior": "Anterior",
+    "siguiente": "Siguiente: {{paso}}",
+    "tipos": {
+      "Motherboard": "Motherboard",
+      "CPU": "Procesador",
+      "RAM": "Memoria RAM",
+      "Gabinete": "Gabinete",
+      "GPU": "Placa de video",
+      "Almacenamiento": "Almacenamiento",
+      "Fuente": "Fuente",
+      "Monitor": "Monitor",
+      "Perifericos": "Periféricos"
+    },
+    "pasos": {
+      "Motherboard": {
+        "titulo": "1. Elegí el motherboard",
+        "ayuda": "Es la placa donde se conecta todo. Define qué procesador y qué memoria vas a poder usar."
+      },
+      "CPU": {
+        "titulo": "2. Elegí el procesador",
+        "ayuda": "Es el cerebro de la PC. Te mostramos los que encajan en tu motherboard."
+      },
+      "RAM": {
+        "titulo": "3. Elegí la memoria RAM",
+        "ayuda": "Más memoria permite tener más programas abiertos a la vez. Para jugar se recomiendan 16 GB o más. Podés elegir varios módulos iguales."
+      },
+      "Gabinete": {
+        "titulo": "4. Elegí el gabinete",
+        "ayuda": "Es la caja que contiene todo. Tiene que entrar el motherboard, la placa de video y la fuente."
+      },
+      "GPU": {
+        "titulo": "5. Elegí la placa de video",
+        "ayuda": "Se encarga de los gráficos: es la pieza más importante para jugar o editar video."
+      },
+      "Almacenamiento": {
+        "titulo": "6. Elegí el almacenamiento",
+        "ayuda": "Es donde se guardan el sistema, los programas y tus archivos. Un SSD NVMe hace que todo cargue mucho más rápido. Podés sumar más de un disco, por ejemplo un NVMe para el sistema y un disco rígido para tus archivos."
+      },
+      "Fuente": {
+        "titulo": "7. Elegí la fuente",
+        "ayuda": "Le da energía a todo el equipo. Solo te mostramos las que alcanzan para lo que elegiste, con margen de seguridad."
+      },
+      "Monitor": {
+        "titulo": "8. Elegí un monitor (opcional)",
+        "ayuda": "Podés sumar uno o más monitores, o saltear este paso si ya tenés."
+      },
+      "Perifericos": {
+        "titulo": "9. Sumá periféricos (opcional)",
+        "ayuda": "Mouse, teclado, auriculares... Podés agregar varios o saltear este paso."
+      }
+    },
+    "gpuOpcional": "Opcional: tu procesador tiene gráficos integrados, así que podés usar la PC sin placa de video.",
+    "conexionesMother": "Podés sumar varios discos mientras entren en tu {{nombre}}: tiene {{m2}} ranuras M.2 y {{sata}} puertos SATA.",
+    "gpuObligatoria": "Necesaria: tu procesador no tiene gráficos integrados, sin placa de video no vas a tener imagen.",
+    "sinCompatibles": "No hay productos compatibles con lo que elegiste. Probá cambiar algún componente de los pasos anteriores.",
+    "categorias": {
+      "Monitores": "Monitores",
+      "Teclados": "Teclados",
+      "Mouse": "Mouse",
+      "Auriculares": "Auriculares",
+      "Perifericos": "Otros"
+    },
+    "filtrarCategoria": "Filtrar por categoría",
+    "todas": "Todos",
+    "sinPerifericos": "No hay productos en esta categoría.",
+    "verIncompatibles_one": "Ver {{count}} producto que no es compatible",
+    "verIncompatibles_other": "Ver {{count}} productos que no son compatibles",
+    "cargando": "Cargando…",
+    "sugerida": "Sugerida",
+    "elegido": "Elegido",
+    "elegir": "Elegir",
+    "agregar": "Agregar",
+    "elegirIgual": "Elegir y quitar {{nombres}}",
+    "elegirIgualDetalle": "Al elegir este producto se quita {{nombres}} de tu armado",
+    "quitar": "Quitar",
+    "cantidad": "Cantidad",
+    "sinStock": "Sin stock",
+    "incompatibilidad": {
+      "SOCKET_CPU_MOTHER": "el procesador usa socket {{socketCpu}} y el motherboard es para {{socketMother}}",
+      "MEMORIA_CPU_MOTHER": "el motherboard usa memoria {{tipoMother}} y el procesador solo soporta {{soportada}}",
+      "TIPO_RAM_MOTHER": "la memoria es {{tipoRam}} y el motherboard usa {{tipoMother}}",
+      "TIPO_RAM_CPU": "la memoria es {{tipoRam}} y el procesador solo soporta {{soportada}}",
+      "SLOTS_RAM": "son {{modulos}} módulos de memoria y el motherboard tiene {{slots}} ranuras",
+      "CAPACIDAD_RAM": "son {{capacidad}} GB de memoria y el motherboard soporta hasta {{maxima}} GB",
+      "FORMATO_MOTHER_GABINETE": "el motherboard es {{formato}} y el gabinete solo admite {{soportados}}",
+      "LARGO_GPU_GABINETE": "la placa de video mide {{largo}} mm y en el gabinete entran hasta {{maximo}} mm",
+      "FORMATO_FUENTE_GABINETE": "la fuente es {{formato}} y el gabinete solo admite {{soportados}}",
+      "CONECTOR_GPU_FUENTE": "la placa de video necesita un conector 12V-2x6 (16 pines) y la fuente no lo tiene",
+      "CONEXION_ALMACENAMIENTO": "son {{cantidad}} discos {{conexion}} y el motherboard tiene {{disponibles}} conexiones {{conexion}}",
+      "POTENCIA_FUENTE": "la fuente es de {{potencia}} W y el equipo necesita al menos {{recomendada}} W",
+      "LARGO_FUENTE_GABINETE": "la fuente mide {{largo}} mm de largo y en el gabinete entran hasta {{maximo}} mm"
+    },
+    "especificaciones": {
+      "Socket": "Socket",
+      "Tipo de RAM": "Memoria",
+      "Formato": "Formato",
+      "Slots de memoria": "Ranuras RAM",
+      "Nucleos": "Núcleos",
+      "Memoria soportada": "Memoria",
+      "Graficos integrados": "Video integrado",
+      "Tipo": "Tipo",
+      "Capacidad": "Capacidad",
+      "Frecuencia": "Frecuencia",
+      "Modulos": "Módulos",
+      "Motherboards soportadas": "Motherboards",
+      "Largo maximo de GPU": "GPU hasta",
+      "Fuentes soportadas": "Fuentes",
+      "Memoria": "Memoria",
+      "Largo": "Largo",
+      "Conectores de energia": "Energía",
+      "Potencia": "Potencia",
+      "Certificacion": "Certificación",
+      "Largo maximo de fuente": "Fuente hasta",
+      "Ranuras M.2": "Ranuras M.2",
+      "Puertos SATA": "Puertos SATA"
+    },
+    "valores": {
+      "Si": "Sí",
+      "No": "No"
+    },
+    "resumen": "Tu PC",
+    "limpiarArmado": "Limpiar armado",
+    "confirmarLimpiar": "¿Estás seguro de que querés limpiar el armado? Se van a quitar todos los componentes, periféricos y servicios elegidos.",
+    "faltaElegir": "Falta elegir",
+    "faltaGpu": "Falta elegir (tu procesador no tiene video)",
+    "opcional": "Opcional",
+    "quitarComponente": "Quitar {{nombre}}",
+    "total": "Total",
+    "potenciaVacia": "Elegí componentes para ver el consumo estimado.",
+    "consumo": "Consumo estimado",
+    "recomendada": "Fuente recomendada: {{watts}} W o más (consumo + {{margen}} % de margen).",
+    "usoFuente": "Con tu fuente de {{watts}} W el equipo usaría un {{uso}} %.",
+    "fuenteSugerida": "Fuente sugerida para tu armado",
+    "usarFuente": "Usar esta fuente",
+    "sinStockArmado": "Sin stock suficiente: {{nombres}}.",
+    "agregarTodo": "Agregar todo al carrito",
+    "agregando": "Agregando…",
+    "agregadoCarrito": "Agregamos tu armado al carrito",
+    "errorCarrito": "No se pudo agregar el armado al carrito",
+    "completaParaComprar": "Completá los componentes obligatorios para poder comprar.",
+    "guardar": "Guardar armado",
+    "guardando": "Guardando…",
+    "guardado": "Guardamos tu armado. Lo encontrás en tu perfil, arriba a la derecha, en «Mis armados PC».",
+    "guardarTitulo": "Guardar armado",
+    "guardarAyuda": "Después lo vas a encontrar en tu perfil (arriba a la derecha, donde está tu nombre), en «Mis armados PC».",
+    "nombreArmado": "Nombre",
+    "nombrePlaceholder": "Ej: PC para jugar",
+    "errorGuardar": "No se pudo guardar el armado",
+    "iniciaSesion": "Iniciá sesión",
+    "paraComprar": "para agregar el armado al carrito o guardarlo.",
+    "errorArmados": "No se pudieron cargar tus armados",
+    "resumenArmado_one": "{{count}} componente · {{watts}} W",
+    "resumenArmado_other": "{{count}} componentes · {{watts}} W",
+    "eliminar": "Eliminar",
+    "errorEliminar": "No se pudo eliminar el armado",
+    "servicios": {
+      "titulo": "Servicios",
+      "aviso": "Tené en cuenta que el armado del equipo puede demorar hasta 2 días hábiles.",
+      "error": "No se pudieron cargar los servicios"
+    },
+    "plataforma": "Para {{marca}}",
+    "verDetalle": "Ver foto y descripción de {{nombre}}",
+    "especificacionesTitulo": "Especificaciones",
+    "sinDescripcion": "Este producto no tiene descripción."
   },
   "servicioTecnico": {
     "titulo": "Servicio técnico",
@@ -262,7 +446,8 @@
     "confirmarEliminar": "¿Querés eliminar todos los productos del carrito?",
     "errorEliminar": "No se pudo eliminar el pedido",
     "total": "Total",
-    "avisoDebitoPesos": "Se debita en pesos: vas a pagar {{total}} (cotización: 1 USD = {{cotizacion}}). El valor en dólares es informativo."
+    "avisoDebitoPesos": "Se debita en pesos: vas a pagar {{total}} (cotización: 1 USD = {{cotizacion}}). El valor en dólares es informativo.",
+    "servicio": "Servicio"
   },
   "login": {
     "titulo": "Iniciar sesión",
@@ -511,14 +696,16 @@
       "prontoAyuda": "Esta sección todavía no está disponible",
       "inicio": "Inicio",
       "usuarios": "Usuarios",
-      "misCompras": "Mis compras"
+      "misCompras": "Mis compras",
+      "servicios": "Servicios"
     },
     "inicio": {
       "titulo": "¿Qué querés hacer?",
       "productos": "Dar de alta, editar, eliminar o desactivar productos. Los cambios de precio y stock se ven al instante en la tienda.",
       "servicioTecnico": "Responder las solicitudes de servicio técnico y actualizar su estado a medida que avanza la reparación.",
       "ventas": "Ver el listado de ventas realizadas, consultar el detalle de cada una y actualizar su estado.",
-      "usuarios": "Consultar los usuarios registrados y habilitar o deshabilitar sus cuentas."
+      "usuarios": "Consultar los usuarios registrados y habilitar o deshabilitar sus cuentas.",
+      "servicios": "Precios de los servicios que se venden con el armado (armado de PC, instalación de Windows y Office) y si se ofrecen o no."
     },
     "esComponente": "Componente de PC",
     "st": {
@@ -654,6 +841,27 @@
     "fijoEn": {
       "USD": "Fijo en dólares",
       "ARS": "Fijo en pesos"
+    },
+    "serv": {
+      "titulo": "Servicios",
+      "subtitulo": "Precios y disponibilidad de los servicios.",
+      "armado": {
+        "titulo": "Armado de PC",
+        "descripcion": "Se ofrecen en el resumen de Armá tu PC y se cobran junto con el armado. Si desactivas una deja de ofrecerse",
+        "vacio": "Todavía no hay servicios cargados. Corré el seed del backend para crearlos."
+      },
+      "precioActual": "Precio actual:",
+      "precio": "Precio de {{nombre}}",
+      "guardar": "Guardar",
+      "precioInvalido": "El precio tiene que ser mayor a 0",
+      "activo": "Activo",
+      "inactivo": "Inactivo",
+      "switchAria": "Ofrecer {{nombre}}",
+      "toastPrecio": "Guardamos el nuevo precio de {{nombre}}",
+      "toastActivado": "{{nombre}} se vuelve a ofrecer en el armador",
+      "toastDesactivado": "{{nombre}} ya no se ofrece en el armador",
+      "errorCarga": "No se pudieron cargar los servicios",
+      "errorGuardar": "No se pudo guardar el cambio"
     }
   },
   "captura": {
@@ -734,7 +942,6 @@
     "ariaSlots": "Slots de selección de productos",
     "ariaTabla": "Tabla comparativa"
   },
-
   "selectorCategoria": {
     "label": "Categoría a comparar",
     "cargando": "Cargando categorías...",
@@ -764,5 +971,15 @@
       "superior": "Superior",
       "destaca": "Destaca"
     }
+  },
+  "presets": {
+    "titulo": "Mis armados PC",
+    "subtitulo": "Los armados de PC que guardaste. Abrí uno en el armador para cambiarlo o comprarlo.",
+    "paraVer": "para ver tus armados guardados.",
+    "sinArmados": "Todavía no guardaste ningún armado.",
+    "armarUno": "Armá tu PC",
+    "abrir": "Abrir en el armador",
+    "confirmarEliminar": "¿Estás seguro de que querés eliminar \"{{nombre}}\"? No se puede deshacer.",
+    "eliminado": "Eliminamos \"{{nombre}}\""
   }
 }
