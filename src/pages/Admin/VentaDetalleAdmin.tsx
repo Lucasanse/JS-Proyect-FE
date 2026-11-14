@@ -144,22 +144,26 @@ export const VentaDetalleAdmin = () => {
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 shrink-0 overflow-hidden bg-surface border border-line rounded flex items-center justify-center text-xs text-muted">
-                      {detalle.producto.imagenUrl ? (
+                      {detalle.producto?.imagenUrl ? (
                         <img
                           src={detalle.producto.imagenUrl}
                           alt={detalle.producto.nombre}
                           className="h-full w-full object-contain p-0.5"
                         />
+                      ) : detalle.servicio ? (
+                        "SERV"
                       ) : (
                         "IMG"
                       )}
                     </div>
                     <div>
                       <p className="text-sm font-bold text-ink">
-                        {detalle.producto.nombre}
+                        {detalle.producto?.nombre ?? detalle.servicio?.nombre}
                       </p>
                       <p className="text-xs text-muted">
-                        ID Prod: {detalle.producto.idProducto}
+                        {detalle.producto
+                          ? `ID Prod: ${detalle.producto.idProducto}`
+                          : `Servicio #${detalle.servicio?.idServicio}`}
                       </p>
                     </div>
                   </div>

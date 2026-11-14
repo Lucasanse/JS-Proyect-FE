@@ -35,11 +35,37 @@ export type TipoServicio = (typeof TIPOS_SERVICIO)[number];
 export const TIPOS_EQUIPO = ["PC_FIJA", "NOTEBOOK", "IMPRESORA"] as const; // solo REPARACION
 export type TipoEquipo = (typeof TIPOS_EQUIPO)[number];
 
-export const SOFTWARE = ["WIN10", "WIN11", "OFFICE", "WINRAR", "VLC"] as const; // solo INSTALACION_SOFTWARE
-export type Software = (typeof SOFTWARE)[number];
+// Programas para instalar (solo INSTALACION_SOFTWARE): los carga el admin en /admin/servicios,
+// así que no son una lista fija. Se usa el código sin el prefijo SOFTWARE_ (WIN10, OFFICE...).
+export type Software = string;
 
 // Se instala un solo sistema operativo por equipo
 export const SISTEMAS_OPERATIVOS: readonly Software[] = ["WIN10", "WIN11"];
+
+// Precio de cada cosa que se puede pedir, por código: el tipo (LIMPIEZA), el extra (EXTRA_BACKUP)
+// o el programa (SOFTWARE_WIN10). Lo deshabilitado por el admin no viene.
+export interface PrecioServicioTecnico {
+  codigo: string;
+  nombre: string;
+  grupo: "TIPO" | "EXTRA" | "SOFTWARE";
+  precio: number | null; // null = a presupuestar (Reparación, Otro)
+}
+
+export interface PrecioSolicitud {
+  codigo: string;
+  nombre?: string; // como se llamaba al pedirlo (las solicitudes viejas no lo tienen)
+  precio: number | null;
+}
+
+// Instalación de software no tiene precio propio: se cobra cada programa
+export const TIPO_SOFTWARE = "INSTALACION_SOFTWARE";
+
+export const CODIGOS_EXTRA = {
+  conPastaTermica: "EXTRA_PASTA_TERMICA",
+  conBackup: "EXTRA_BACKUP",
+  conSSD: "EXTRA_SSD",
+} as const;
+export const codigoSoftware = (s: Software) => `SOFTWARE_${s}`;
 
 // Si se elige alguno de estos hay que contar qué pasa / qué se necesita; si no, es opcional
 export const DESCRIPCION_OBLIGATORIA: readonly TipoServicio[] = ["REPARACION", "OTRO"];
@@ -53,6 +79,11 @@ export interface SolicitudResumen {
   conPastaTermica: boolean; // solo con LIMPIEZA
   conSSD: boolean; // solo con OPTIMIZACION
   descripcion: string | null;
+  // Precios al pedir el servicio (precio null = a presupuestar) y la suma de los fijos.
+  // No se paga online: se abona en el local cuando se trae el equipo y se confirma el servicio.
+  precios: PrecioSolicitud[];
+  precioEstimado: number;
+  aPresupuestar: boolean;
   estado: EstadoSolicitud;
   fecha: string;
   actualizadoEn: string;
@@ -106,6 +137,9 @@ export const LIMITES = {
 export const SOLICITUDES_POR_PAGINA_ADMIN = 15;
 
 // ── Cliente ──
+
+export const obtenerPreciosServicioTecnico = (signal?: AbortSignal) =>
+  pedir<PrecioServicioTecnico[]>("/precios", { signal }, urlServicioTecnico);
 
 export const crearSolicitud = (datos: SolicitudInput) =>
   pedir<SolicitudDetalle>("", { method: "POST", body: JSON.stringify(datos) }, urlServicioTecnico);

@@ -1,5 +1,5 @@
 import { CATEGORIA_MONITORES, PASO_MONITOR, TIPOS_ARMADOR, esPasoExtra, type ComponenteElegido, type TipoArmador } from "../../services/armador";
-import type { ProductoResumen } from "../../services/productos";
+import type { ServicioArmado } from "../../services/armador";
 
 // El armado en curso queda guardado en la pestaña (sessionStorage): si hay que iniciar sesión
 // para comprar, no se pierde. También lo usa /presets para cargar un armado guardado en el asistente.
@@ -43,12 +43,12 @@ export function leerPerifericos(): ComponenteElegido[] {
   );
 }
 
-export function leerServicios(): ProductoResumen[] {
+export function leerServicios(): ServicioArmado[] {
   const guardados = leer<unknown>(CLAVE_SERVICIOS, []);
   return Array.isArray(guardados) ? guardados : [];
 }
 
-export function guardarEnPestana(seleccion: Seleccion, perifericos: ComponenteElegido[], servicios: ProductoResumen[]) {
+export function guardarEnPestana(seleccion: Seleccion, perifericos: ComponenteElegido[], servicios: ServicioArmado[]) {
   guardar(CLAVE_SELECCION, seleccion);
   guardar(CLAVE_PERIFERICOS, perifericos);
   guardar(CLAVE_SERVICIOS, servicios);

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useSession } from "../../services/auth-client";
 import * as api from "../../services/carrito";
-import { agregarArmadoAlCarrito, type ItemArmado } from "../../services/armador";
+import { agregarArmadoAlCarrito, type ItemArmado, type ServicioArmado } from "../../services/armador";
 import { CarritoContext } from "./carritoContext";
 import AvisoCarrito from "../AvisoCarrito/AvisoCarrito";
 import type { ProductoResumen } from "../../services/productos";
@@ -42,16 +42,18 @@ export default function CarritoProvider({ children }: { children: ReactNode }) {
     agregar: async (idProducto: number, cantidad: number) => {
       const data = await api.agregarAlCarrito(idProducto, cantidad);
       setCarrito(data);
-      const item = data.items.find((i) => i.producto.id === idProducto);
-      if (item) setAviso({ id: Date.now(), producto: item.producto, cantidad });
+      const item = data.items.find((i) => i.producto?.id === idProducto);
+      if (item?.producto) setAviso({ id: Date.now(), producto: item.producto, cantidad });
     },
     cambiarCantidad: async (idProducto: number, cantidad: number) =>
       setCarrito(await api.modificarCantidad(idProducto, cantidad)),
     quitar: async (idProducto: number) => setCarrito(await api.quitarDelCarrito(idProducto)),
+    quitarServicio: async (idServicio: number) => setCarrito(await api.quitarServicioDelCarrito(idServicio)),
     vaciar: async () => setCarrito(await api.vaciarCarrito()),
-    agregarArmado: async (componentes: ItemArmado[]) => setCarrito(await agregarArmadoAlCarrito(componentes)),
+    agregarArmado: async (componentes: ItemArmado[], servicios: ServicioArmado[]) =>
+      setCarrito(await agregarArmadoAlCarrito(componentes, servicios)),
     cantidadEnCarrito: (idProducto: number) =>
-      carrito?.items.find((i) => i.producto.id === idProducto)?.cantidad ?? 0,
+      carrito?.items.find((i) => i.producto?.id === idProducto)?.cantidad ?? 0,
   };
 
   return (

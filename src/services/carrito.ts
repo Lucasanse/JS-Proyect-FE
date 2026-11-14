@@ -1,13 +1,14 @@
 import { urlCarrito } from "./api";
 import type { ProductoResumen } from "./productos";
+import type { ServicioArmado } from "./armador";
 
 // Tipos que devuelve /api/carrito (ver catalogo.types.ts en el BE).
 
-export interface ItemCarrito {
-  producto: ProductoResumen;
-  cantidad: number;
-  subtotal: number;
-}
+// Un producto o un servicio del armador (armado de PC, instalación de Windows...).
+// Los servicios van una sola vez y no tienen stock.
+export type ItemCarrito =
+  | { tipo: "PRODUCTO"; producto: ProductoResumen; servicio: null; cantidad: number; subtotal: number }
+  | { tipo: "SERVICIO"; producto: null; servicio: ServicioArmado; cantidad: number; subtotal: number };
 
 export interface CarritoDetalle {
   items: ItemCarrito[];
@@ -37,5 +38,7 @@ export const modificarCantidad = (idProducto: number, cantidad: number) =>
   pedir(`/items/${idProducto}`, "PATCH", { cantidad });
 
 export const quitarDelCarrito = (idProducto: number) => pedir(`/items/${idProducto}`, "DELETE");
+
+export const quitarServicioDelCarrito = (idServicio: number) => pedir(`/servicios/${idServicio}`, "DELETE");
 
 export const vaciarCarrito = () => pedir("", "DELETE");

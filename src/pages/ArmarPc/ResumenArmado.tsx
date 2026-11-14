@@ -15,9 +15,9 @@ import {
   type PasoArmador,
   type PotenciaCalculada,
   type ProductoArmador,
+  type ServicioArmado,
   type ValidacionArmado,
 } from "../../services/armador";
-import type { ProductoResumen } from "../../services/productos";
 import ServiciosArmado from "./ServiciosArmado";
 import BotonPresupuesto from "../../components/Documentos/BotonPresupuesto";
 import { especificacionDe, useTextosArmador } from "./textosArmador";
@@ -26,7 +26,7 @@ import type { Seleccion } from "./ArmarPc";
 interface Props {
   seleccion: Seleccion;
   perifericos: ComponenteElegido[];
-  servicios: ProductoResumen[];
+  servicios: ServicioArmado[];
   validacion: ValidacionArmado | null;
   potencia: PotenciaCalculada | null;
   fuenteSugerida: ProductoArmador | null;
@@ -35,7 +35,7 @@ interface Props {
   onQuitar: (producto: ProductoArmador) => void;
   onQuitarPeriferico: (idProducto: number) => void;
   onElegir: (producto: ProductoArmador) => void;
-  onServicios: Dispatch<SetStateAction<ProductoResumen[]>>;
+  onServicios: Dispatch<SetStateAction<ServicioArmado[]>>;
   onVaciar: () => void;
 }
 
@@ -66,10 +66,12 @@ export default function ResumenArmado({
 
   // Lo que se guarda: los componentes y los periféricos. Al comprar se suman los servicios elegidos.
   const componentes = [...TIPOS_ARMADOR.flatMap((t2) => seleccion[t2] ?? []), ...perifericos];
-  const aComprar = [...componentes, ...servicios.map((producto) => ({ producto, cantidad: 1 }))];
-  const total = aComprar.reduce((acc, c) => acc + c.producto.precio * c.cantidad, 0);
+  const total =
+    componentes.reduce((acc, c) => acc + c.producto.precio * c.cantidad, 0) + servicios.reduce((acc, s) => acc + s.precio, 0);
+  const hayAlgo = componentes.length + servicios.length > 0;
   const faltantes = validacion?.faltantes ?? [];
-  const sinStock = aComprar.filter((c) => c.producto.stock < c.cantidad);
+  // Los servicios no tienen stock
+  const sinStock = componentes.filter((c) => c.producto.stock < c.cantidad);
   // El BE también lo rechaza; acá se deshabilita para no llegar a ese error
   const listo = !verificando && !!validacion?.valida && !!validacion.completa && sinStock.length === 0;
 
@@ -83,7 +85,7 @@ export default function ResumenArmado({
     setError("");
     setAgregando(true);
     try {
-      await agregarArmado(aComprar);
+      await agregarArmado(componentes, servicios);
       mostrarToast(t("armarPc.agregadoCarrito"), "exito");
     } catch (e) {
       setError(e instanceof Error ? e.message : t("armarPc.errorCarrito"));
@@ -96,7 +98,7 @@ export default function ResumenArmado({
     <aside className="w-full rounded-xl border border-line bg-surface p-4 shadow-sm sm:p-6 lg:sticky lg:top-4 lg:w-96">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-xl font-bold text-ink">{t("armarPc.resumen")}</h2>
-        {aComprar.length > 0 && (
+        {hayAlgo && (
           <button
             type="button"
             onClick={limpiar}
@@ -214,10 +216,11 @@ export default function ResumenArmado({
           </button>
           {/* Presupuesto en PDF del armado tal como está (puede estar incompleto), con los servicios elegidos */}
           <BotonPresupuesto
-            disabled={verificando || aComprar.length === 0}
+            disabled={verificando || !hayAlgo}
             origen={() => ({
               origen: "armado",
-              seleccion: aComprar.map((c) => ({ idProducto: c.producto.id, cantidad: c.cantidad })),
+              seleccion: componentes.map((c) => ({ idProducto: c.producto.id, cantidad: c.cantidad })),
+              servicios: servicios.map((s) => s.id),
             })}
             className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-line px-4 py-2 font-semibold text-ink hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:text-muted"
           />

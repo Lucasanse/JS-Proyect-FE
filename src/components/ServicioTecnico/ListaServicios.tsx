@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { SolicitudResumen } from "../../services/servicioTecnico";
+import { nombrePrograma } from "./textosSolicitud";
 
 type Props = {
   solicitud: Pick<
     SolicitudResumen,
-    "servicios" | "tipoEquipo" | "software" | "conBackup" | "conPastaTermica" | "conSSD"
+    "servicios" | "tipoEquipo" | "software" | "conBackup" | "conPastaTermica" | "conSSD" | "precios"
   >;
 };
 
@@ -28,7 +29,7 @@ export default function ListaServicios({ solicitud: s }: Props) {
             {servicio === "FORMATEO" && s.conBackup && <li>{t("servicioTecnico.lista.backup")}</li>}
             {servicio === "OPTIMIZACION" && s.conSSD && <li>{t("servicioTecnico.lista.ssd")}</li>}
             {servicio === "INSTALACION_SOFTWARE" &&
-              s.software.map((p) => <li key={p}>{t(`servicioTecnico.software.${p}`)}</li>)}
+              s.software.map((p) => <li key={p}>{nombrePrograma(t, p, s.precios)}</li>)}
           </Detalles>
         </li>
       ))}

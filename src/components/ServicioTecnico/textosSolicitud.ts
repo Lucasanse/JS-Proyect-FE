@@ -1,5 +1,12 @@
 import type { TFunction } from "i18next";
-import type { SolicitudResumen } from "../../services/servicioTecnico";
+import type { PrecioSolicitud, SolicitudResumen } from "../../services/servicioTecnico";
+
+// Nombre de un programa: traducido si es uno de los de siempre (WIN10, OFFICE...); si lo agregó
+// el admin, el nombre con el que se pidió (queda guardado en los precios de la solicitud).
+export function nombrePrograma(t: TFunction, programa: string, precios?: PrecioSolicitud[], nombre?: string) {
+  const guardado = nombre ?? precios?.find((p) => p.codigo === `SOFTWARE_${programa}`)?.nombre;
+  return t(`servicioTecnico.software.${programa}`, { defaultValue: guardado ?? programa });
+}
 
 // Nombre corto de una solicitud para listados y encabezados, con todos los servicios pedidos:
 // "Reparación de componentes (Notebook)", "Limpieza, Formateo e Instalación de software"...
@@ -19,7 +26,7 @@ export function tituloSolicitud(s: Pick<SolicitudResumen, "servicios" | "tipoEqu
 }
 
 // Una línea con lo que pidió: los programas a instalar o el comienzo de la descripción
-export function resumenSolicitud(s: Pick<SolicitudResumen, "software" | "descripcion">, t: TFunction) {
-  if (s.software.length > 0) return s.software.map((p) => t(`servicioTecnico.software.${p}`)).join(", ");
+export function resumenSolicitud(s: Pick<SolicitudResumen, "software" | "descripcion" | "precios">, t: TFunction) {
+  if (s.software.length > 0) return s.software.map((p) => nombrePrograma(t, p, s.precios)).join(", ");
   return s.descripcion ?? "";
 }

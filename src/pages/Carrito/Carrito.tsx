@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../../components/CarritoProvider/carritoContext";
 import type { ItemCarrito } from "../../services/carrito";
-import { esServicio } from "../../services/productos";
 import Precio from "../../components/Precio/Precio";
 import { useCotizacion } from "../../services/cotizacion";
 import { formatearArs, formatearUsd, useMoneda } from "../../services/moneda";
@@ -64,9 +63,13 @@ export default function Carrito() {
     <Contenedor>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <ul className="flex-1 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
-          {carrito.items.map((item) => (
-            <FilaCarrito key={item.producto.id} item={item} />
-          ))}
+          {carrito.items.map((item) =>
+            item.tipo === "SERVICIO" ? (
+              <FilaServicio key={`s${item.servicio.id}`} item={item} />
+            ) : (
+              <FilaCarrito key={item.producto.id} item={item} />
+            ),
+          )}
         </ul>
 
         <Resumen />
@@ -97,12 +100,61 @@ function Aviso({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FilaCarrito({ item }: { item: ItemCarrito }) {
+// Servicio del armador (armado de PC, instalación de Windows...): va una sola vez y no tiene stock,
+// así que solo se puede quitar
+function FilaServicio({ item }: { item: Extract<ItemCarrito, { tipo: "SERVICIO" }> }) {
+  const { t } = useTranslation();
+  const { quitarServicio } = useCarrito();
+  const { servicio, subtotal } = item;
+  const [ocupado, setOcupado] = useState(false);
+  const [error, setError] = useState("");
+
+  const quitar = async () => {
+    setError("");
+    setOcupado(true);
+    try {
+      await quitarServicio(servicio.id);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t("carrito.errorGenerico"));
+      setOcupado(false);
+    }
+  };
+
+  return (
+    <li className="flex flex-col gap-2 p-4">
+      <div className="flex items-center gap-4">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-surface">
+          <HerramientaIcon />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <p className="line-clamp-2 text-[15px] font-medium text-ink">{servicio.nombre}</p>
+          <p className="text-sm text-muted">{t("carrito.servicio")}</p>
+        </div>
+        <button
+          type="button"
+          onClick={quitar}
+          disabled={ocupado}
+          className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-ink hover:text-primary disabled:opacity-40"
+        >
+          <TrashIcon />
+          {t("carrito.eliminar")}
+        </button>
+        <div className="hidden w-36 flex-col items-end sm:flex">
+          <Precio precio={subtotal} className="text-lg font-bold text-ink" />
+        </div>
+      </div>
+      <div className="text-right sm:hidden">
+        <Precio precio={subtotal} className="text-sm font-bold text-ink" />
+      </div>
+      {error && <p className="text-xs text-primary">{error}</p>}
+    </li>
+  );
+}
+
+function FilaCarrito({ item }: { item: Extract<ItemCarrito, { tipo: "PRODUCTO" }> }) {
   const { t } = useTranslation();
   const { cambiarCantidad, quitar } = useCarrito();
   const { producto, cantidad, subtotal } = item;
-  // Los servicios (armado de PC, instalación de Windows...) no muestran stock
-  const servicio = esServicio(producto);
   const sinStock = producto.stock <= 0;
   const superaStock = cantidad > producto.stock;
   const [ocupado, setOcupado] = useState(false);
@@ -153,8 +205,6 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
               alt={producto.nombre}
               className="h-full w-full object-contain p-1"
             />
-          ) : servicio ? (
-            <HerramientaIcon />
           ) : (
             <span className="text-xs text-muted">{t("carrito.sinImagen")}</span>
           )}
@@ -164,40 +214,33 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
           <p className="line-clamp-2 text-[15px] font-medium text-ink">
             {producto.nombre}
           </p>
-          {servicio ? (
-            <p className="text-sm text-muted">{t("carrito.servicio")}</p>
-          ) : (
-            <p
-              className={`flex items-center gap-1.5 text-sm ${sinStock || superaStock ? "text-primary" : "text-secondary-dark"}`}
-            >
-              <span className="h-2 w-2 rounded-full bg-current" />
-              {sinStock
-                ? t("carrito.sinStock")
-                : superaStock
-                  ? t("carrito.soloQuedan", { count: producto.stock })
-                  : t("carrito.stockDisponible")}
-            </p>
-          )}
+          <p
+            className={`flex items-center gap-1.5 text-sm ${sinStock || superaStock ? "text-primary" : "text-secondary-dark"}`}
+          >
+            <span className="h-2 w-2 rounded-full bg-current" />
+            {sinStock
+              ? t("carrito.sinStock")
+              : superaStock
+                ? t("carrito.soloQuedan", { count: producto.stock })
+                : t("carrito.stockDisponible")}
+          </p>
         </div>
 
         <div className="flex flex-col items-start gap-1">
-          {/* Un servicio va una sola vez: no se le cambia la cantidad, solo se puede quitar */}
-          {!servicio && (
-            <input
-              type="number"
-              aria-label={t("carrito.cantidad")}
-              min={1}
-              max={producto.stock}
-              value={valor}
-              disabled={ocupado || sinStock}
-              onChange={(e) => setValor(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") confirmarCantidad();
-                if (e.key === "Escape") setValor(String(cantidad)); // descarta el cambio
-              }}
-              className={`h-9 w-20 rounded-lg border bg-surface px-3 text-sm text-ink outline-none focus:ring-2 focus:ring-primary-light disabled:opacity-50 ${modificado ? "border-ink" : "border-line focus:border-primary"}`}
-            />
-          )}
+          <input
+            type="number"
+            aria-label={t("carrito.cantidad")}
+            min={1}
+            max={producto.stock}
+            value={valor}
+            disabled={ocupado || sinStock}
+            onChange={(e) => setValor(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") confirmarCantidad();
+              if (e.key === "Escape") setValor(String(cantidad)); // descarta el cambio
+            }}
+            className={`h-9 w-20 rounded-lg border bg-surface px-3 text-sm text-ink outline-none focus:ring-2 focus:ring-primary-light disabled:opacity-50 ${modificado ? "border-ink" : "border-line focus:border-primary"}`}
+          />
           {modificado ? (
             <button
               type="button"
@@ -248,7 +291,7 @@ function Resumen() {
 
   // No se puede confirmar si algún producto quedó sin stock suficiente
   const hayProblemasDeStock = carrito.items.some(
-    (i) => i.cantidad > i.producto.stock,
+    (i) => i.producto !== null && i.cantidad > i.producto.stock,
   );
 
   const eliminarPedido = async () => {

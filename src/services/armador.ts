@@ -80,7 +80,17 @@ export interface ComponenteElegido {
   cantidad: number;
 }
 
-// Lo que se compra con el armado: un componente, un periférico o un servicio (armado, instalación de Windows...)
+// Servicio que se suma al armado (armado de PC, instalación de Windows...). No es un producto:
+// viene de la tabla de servicios del BE, con su precio, y va al carrito una sola vez.
+export interface ServicioArmado {
+  id: number;
+  codigo: string;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+}
+
+// Lo que se compra con el armado: un componente o un periférico (los servicios van aparte)
 export interface ItemArmado {
   producto: ProductoResumen;
   cantidad: number;
@@ -139,10 +149,10 @@ export const validarArmado = (componentes: ComponenteElegido[], signal?: AbortSi
 export const obtenerFuenteSugerida = (componentes: ComponenteElegido[], signal?: AbortSignal) =>
   post<FuenteSugeridaRespuesta>("/fuente-sugerida", { seleccion: aSeleccion(componentes) }, signal);
 
-export const obtenerServicios = (signal?: AbortSignal) => pedir<ProductoResumen[]>("/servicios", { signal });
+export const obtenerServicios = (signal?: AbortSignal) => pedir<ServicioArmado[]>("/servicios", { signal });
 
-export const agregarArmadoAlCarrito = (componentes: ItemArmado[]) =>
-  post<CarritoDetalle>("/carrito", { seleccion: aSeleccion(componentes) });
+export const agregarArmadoAlCarrito = (componentes: ItemArmado[], servicios: ServicioArmado[]) =>
+  post<CarritoDetalle>("/carrito", { seleccion: aSeleccion(componentes), servicios: servicios.map((s) => s.id) });
 
 export const listarPresets = (signal?: AbortSignal) => pedir<PresetArmado[]>("/presets", { signal });
 

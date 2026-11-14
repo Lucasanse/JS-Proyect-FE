@@ -17,8 +17,8 @@ import {
 import PasoComponentes from "./PasoComponentes";
 import PasoPerifericos from "./PasoPerifericos";
 import ResumenArmado from "./ResumenArmado";
+import type { ServicioArmado } from "../../services/armador";
 import { especificacionDe, useTextosArmador } from "./textosArmador";
-import type { ProductoResumen } from "../../services/productos";
 import {
   guardarEnPestana,
   leerPerifericos,
@@ -40,7 +40,7 @@ export default function ArmarPc() {
   // Monitor, mouse, teclado...: no tienen reglas de compatibilidad, así que se cambian sin validar
   const [perifericos, setPerifericos] = useState<ComponenteElegido[]>(leerPerifericos);
   // Armado de la PC, instalación de Windows...: se eligen en el resumen y se compran con el armado
-  const [servicios, setServicios] = useState<ProductoResumen[]>(leerServicios);
+  const [servicios, setServicios] = useState<ServicioArmado[]>(leerServicios);
   const [paso, setPaso] = useState(0);
   const [validacion, setValidacion] = useState<ValidacionArmado | null>(null);
   const [sugerencia, setSugerencia] = useState<FuenteSugeridaRespuesta | null>(null);
