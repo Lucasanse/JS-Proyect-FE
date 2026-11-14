@@ -20,7 +20,7 @@ export interface DocumentoResumen {
 export type OrigenPresupuesto =
   | { origen: "carrito" }
   | { origen: "preset"; idPreset: number }
-  | { origen: "armado"; seleccion: { idProducto: number; cantidad: number }[] };
+  | { origen: "armado"; seleccion: { idProducto: number; cantidad: number }[]; servicios: number[] };
 
 async function errorDe(res: Response, porDefecto: string) {
   const data = await res.json().catch(() => null);

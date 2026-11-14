@@ -1,14 +1,19 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { ApiError } from "../../services/adminProductos";
 import {
   DESCRIPCION_OBLIGATORIA,
   LIMITES,
   SISTEMAS_OPERATIVOS,
-  SOFTWARE,
+  TIPO_SOFTWARE,
   TIPOS_EQUIPO,
   TIPOS_SERVICIO,
+  CODIGOS_EXTRA,
+  codigoSoftware,
   crearSolicitud,
+  obtenerPreciosServicioTecnico,
+  type PrecioServicioTecnico,
+  type PrecioSolicitud,
   type SolicitudDetalle,
   type Software,
   type TipoEquipo,
@@ -17,13 +22,15 @@ import {
 import { useToast } from "../../components/Toast/toastContext";
 import { IconoEquipo, IconoServicio } from "../../components/ServicioTecnico/IconosServicio";
 import AvisoPrecio from "../../components/ServicioTecnico/AvisoPrecio";
+import PrecioEstimado from "../../components/ServicioTecnico/PrecioEstimado";
+import { nombrePrograma } from "../../components/ServicioTecnico/textosSolicitud";
 import { claseInput } from "../Admin/estilosForm";
+import Precio from "../../components/Precio/Precio";
 
 type Campo = "servicios" | "tipoEquipo" | "software" | "descripcion";
 type Errores = Partial<Record<Campo, string>>;
 
 const CAMPOS: Campo[] = ["servicios", "tipoEquipo", "software", "descripcion"];
-const PROGRAMAS = SOFTWARE.filter((s) => !SISTEMAS_OPERATIVOS.includes(s));
 
 // Formulario para que el cliente logueado pida un servicio técnico.
 // Puede elegir uno o varios servicios (ej. limpieza + formateo + instalación) y según
@@ -50,6 +57,34 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
   const [erroresBE, setErroresBE] = useState<Errores>({});
   const [errorGeneral, setErrorGeneral] = useState("");
   const [enviando, setEnviando] = useState(false);
+  // Precio de lo que se ofrece hoy, por código (lo deshabilitado por el admin no está).
+  // null mientras carga; si falla, se muestra todo sin precios (el BE igual valida).
+  const [precios, setPrecios] = useState<Map<string, number | null> | null>(null);
+  // Programas que se pueden instalar (los carga el admin), sin el prefijo SOFTWARE_
+  const [programas, setProgramas] = useState<PrecioServicioTecnico[]>([]);
+  const [sinPrecios, setSinPrecios] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    obtenerPreciosServicioTecnico(controller.signal)
+      .then((lista) => {
+        setPrecios(new Map(lista.map((p) => [p.codigo, p.precio])));
+        setProgramas(lista.filter((p) => p.grupo === "SOFTWARE"));
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setSinPrecios(true);
+      });
+    return () => controller.abort();
+  }, []);
+
+  // Se ofrece si el admin no lo deshabilitó (sin la lista de precios, se ofrece todo).
+  // Instalación de software se ofrece mientras haya algún programa habilitado.
+  const ofrece = (codigo: string) =>
+    !precios || (codigo === TIPO_SOFTWARE ? programas.length > 0 : precios.has(codigo));
+  const programa = (p: PrecioServicioTecnico) => p.codigo.slice("SOFTWARE_".length);
+  const sistemas = programas.filter((p) => SISTEMAS_OPERATIVOS.includes(programa(p)));
+  const otrosProgramas = programas.filter((p) => !SISTEMAS_OPERATIVOS.includes(programa(p)));
+  const precioDe = (codigo: string) => (precios ? precios.get(codigo) : undefined);
 
   const pide = (s: TipoServicio) => servicios.includes(s);
   const descripcionObligatoria = servicios.some((s) => DESCRIPCION_OBLIGATORIA.includes(s));
@@ -71,6 +106,21 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
   };
 
   const errores: Errores = { ...(intentado ? validar() : {}), ...erroresBE };
+
+  const elegidos: PrecioSolicitud[] = precios
+    ? [
+        ...TIPOS_SERVICIO.filter((s) => pide(s) && s !== TIPO_SOFTWARE),
+        ...(pide("LIMPIEZA") && conPastaTermica ? [CODIGOS_EXTRA.conPastaTermica] : []),
+        ...(pide("FORMATEO") && conBackup ? [CODIGOS_EXTRA.conBackup] : []),
+        ...(pide("OPTIMIZACION") && conSSD ? [CODIGOS_EXTRA.conSSD] : []),
+        ...(pide("INSTALACION_SOFTWARE") ? software.map(codigoSoftware) : []),
+      ].map((codigo) => ({
+        codigo,
+        nombre: programas.find((p) => p.codigo === codigo)?.nombre,
+        precio: precios.get(codigo) ?? null,
+      }))
+    : [];
+  const totalEstimado = elegidos.reduce((acc, p) => acc + (p.precio ?? 0), 0);
 
   // Cualquier cambio limpia los errores que había devuelto el BE
   const tocar = () => {
@@ -162,7 +212,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
         </legend>
         <p className="mt-1 mb-3 text-sm text-muted">{t("servicioTecnico.form.variosServicios")}</p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {TIPOS_SERVICIO.map((tipo) => (
+          {TIPOS_SERVICIO.filter(ofrece).map((tipo) => (
             <Opcion
               key={tipo}
               tipo="checkbox"
@@ -171,6 +221,8 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
               icono={<IconoServicio tipo={tipo} />}
               titulo={t(`servicioTecnico.tipos.${tipo}`)}
               ayuda={t(`servicioTecnico.tiposAyuda.${tipo}`)}
+              precio={tipo === TIPO_SOFTWARE && precios ? 0 : precioDe(tipo)}
+              textoCero={tipo === TIPO_SOFTWARE ? t("servicioTecnico.precio.segunProgramas") : undefined}
             />
           ))}
         </div>
@@ -200,7 +252,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
         </fieldset>
       )}
 
-      {pide("LIMPIEZA") && (
+      {pide("LIMPIEZA") && ofrece(CODIGOS_EXTRA.conPastaTermica) && (
         <fieldset className="mt-6" disabled={enviando}>
           <legend className="mb-3 text-base font-bold text-ink">{t("servicioTecnico.form.pasoLimpieza")}</legend>
           <Opcion
@@ -212,11 +264,12 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
             }}
             titulo={t("servicioTecnico.form.conPastaTermica")}
             ayuda={t("servicioTecnico.form.conPastaTermicaAyuda")}
+            precio={precioDe(CODIGOS_EXTRA.conPastaTermica)}
           />
         </fieldset>
       )}
 
-      {pide("FORMATEO") && (
+      {pide("FORMATEO") && ofrece(CODIGOS_EXTRA.conBackup) && (
         <fieldset className="mt-6" disabled={enviando}>
           <legend className="mb-3 text-base font-bold text-ink">{t("servicioTecnico.form.pasoFormateo")}</legend>
           <Opcion
@@ -228,11 +281,12 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
             }}
             titulo={t("servicioTecnico.form.conBackup")}
             ayuda={t("servicioTecnico.form.conBackupAyuda")}
+            precio={precioDe(CODIGOS_EXTRA.conBackup)}
           />
         </fieldset>
       )}
 
-      {pide("OPTIMIZACION") && (
+      {pide("OPTIMIZACION") && ofrece(CODIGOS_EXTRA.conSSD) && (
         <fieldset className="mt-6" disabled={enviando}>
           <legend className="mb-3 text-base font-bold text-ink">{t("servicioTecnico.form.pasoOptimizacion")}</legend>
           <Opcion
@@ -244,6 +298,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
             }}
             titulo={t("servicioTecnico.form.conSSD")}
             ayuda={t("servicioTecnico.form.conSSDAyuda")}
+            precio={precioDe(CODIGOS_EXTRA.conSSD)}
           />
         </fieldset>
       )}
@@ -253,33 +308,43 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
           <legend id="solicitud-software" tabIndex={-1} className="mb-3 text-base font-bold text-ink">
             {t("servicioTecnico.form.pasoSoftware")}
           </legend>
-          <p className="mb-2 text-sm font-medium text-ink">
-            {t("servicioTecnico.form.sistemaOperativo")}{" "}
-            <span className="font-normal text-muted">({t("servicioTecnico.form.soloUno")})</span>
-          </p>
-          <div className="grid grid-cols-2 gap-3">
-            {SISTEMAS_OPERATIVOS.map((so) => (
-              <Opcion
-                key={so}
-                tipo="checkbox"
-                elegida={software.includes(so)}
-                onElegir={() => alternarSoftware(so)}
-                titulo={t(`servicioTecnico.software.${so}`)}
-              />
-            ))}
-          </div>
-          <p className="mt-4 mb-2 text-sm font-medium text-ink">{t("servicioTecnico.form.programas")}</p>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {PROGRAMAS.map((p) => (
-              <Opcion
-                key={p}
-                tipo="checkbox"
-                elegida={software.includes(p)}
-                onElegir={() => alternarSoftware(p)}
-                titulo={t(`servicioTecnico.software.${p}`)}
-              />
-            ))}
-          </div>
+          {sistemas.length > 0 && (
+            <>
+              <p className="mb-2 text-sm font-medium text-ink">
+                {t("servicioTecnico.form.sistemaOperativo")}{" "}
+                <span className="font-normal text-muted">({t("servicioTecnico.form.soloUno")})</span>
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                {sistemas.map((p) => (
+                  <Opcion
+                    key={p.codigo}
+                    tipo="checkbox"
+                    elegida={software.includes(programa(p))}
+                    onElegir={() => alternarSoftware(programa(p))}
+                    titulo={nombrePrograma(t, programa(p), undefined, p.nombre)}
+                    precio={p.precio}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+          {otrosProgramas.length > 0 && (
+            <>
+              <p className="mt-4 mb-2 text-sm font-medium text-ink">{t("servicioTecnico.form.programas")}</p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {otrosProgramas.map((p) => (
+                  <Opcion
+                    key={p.codigo}
+                    tipo="checkbox"
+                    elegida={software.includes(programa(p))}
+                    onElegir={() => alternarSoftware(programa(p))}
+                    titulo={nombrePrograma(t, programa(p), undefined, p.nombre)}
+                    precio={p.precio}
+                  />
+                ))}
+              </div>
+            </>
+          )}
           <ErrorCampo mensaje={errores.software} />
         </fieldset>
       )}
@@ -316,6 +381,9 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
         </div>
       )}
 
+      {elegidos.length > 0 && <PrecioEstimado precios={elegidos} total={totalEstimado} className="mt-6" />}
+      {sinPrecios && <p className="mt-4 text-sm text-muted">{t("servicioTecnico.precio.errorCarga")}</p>}
+
       {errorGeneral && (
         <p role="alert" className="mt-4 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
           {errorGeneral}
@@ -346,6 +414,8 @@ function Opcion({
   titulo,
   ayuda,
   centrada = false,
+  precio,
+  textoCero,
 }: {
   tipo: "radio" | "checkbox";
   nombre?: string;
@@ -355,7 +425,10 @@ function Opcion({
   titulo: string;
   ayuda?: string;
   centrada?: boolean;
+  precio?: number | null; // undefined = sin precio para mostrar; null = a presupuestar
+  textoCero?: string; // qué mostrar si el precio es 0 (por defecto, "Sin cargo")
 }) {
+  const { t } = useTranslation();
   return (
     <label
       className={`relative flex h-full cursor-pointer gap-3 rounded-xl border p-3 transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60 ${
@@ -386,6 +459,17 @@ function Opcion({
       <span className={`min-w-0 ${icono && tipo === "checkbox" ? "pr-5" : ""}`}>
         <span className={`block text-sm font-semibold ${elegida ? "text-primary" : "text-ink"}`}>{titulo}</span>
         {ayuda && <span className="mt-0.5 block text-xs text-muted">{ayuda}</span>}
+        {precio !== undefined && (
+          <span className="mt-1 block text-xs font-semibold text-ink">
+            {precio === null ? (
+              <span className="font-normal italic text-muted">{t("servicioTecnico.precio.aPresupuestar")}</span>
+            ) : precio === 0 ? (
+              <span className="font-normal text-muted">{textoCero ?? t("servicioTecnico.precio.sinCargo")}</span>
+            ) : (
+              <Precio precio={precio} />
+            )}
+          </span>
+        )}
       </span>
     </label>
   );

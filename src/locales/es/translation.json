@@ -263,8 +263,8 @@
     "titulo": "Servicio técnico",
     "intro": "¿Tu equipo tiene un problema? Contanos qué le pasa y te respondemos por acá. Vas a poder seguir el avance de la reparación en todo momento.",
     "avisoPrecio": {
-      "titulo": "El precio del arreglo te lo comunicamos cuando traigas el equipo al local.",
-      "detalle": "Primero lo revisamos y si te confirmamos, te pasamos el presupuesto. No hacemos ningún trabajo sin que lo confirmes."
+      "titulo": "No se paga online: abonás en el local cuando traés el equipo.",
+      "detalle": "Te mostramos el precio de cada servicio. Primero revisamos el equipo y no hacemos ningún trabajo sin que lo confirmes. Reparación y Otro se presupuestan en el local."
     },
     "errorCarga": "No se pudieron cargar tus solicitudes",
     "errorGenerico": "Ocurrió un error",
@@ -407,6 +407,17 @@
       "por": "por {{nombre}}",
       "porCliente": "por el cliente ({{nombre}})",
       "vacio": "Todavía no hay cambios de estado."
+    },
+    "precio": {
+      "titulo": "Precio estimado",
+      "aPresupuestar": "A presupuestar",
+      "sinCargo": "Sin cargo",
+      "segunProgramas": "Según los programas",
+      "total": "Total a abonar en el local",
+      "totalDesde": "Total (sin lo que se presupuesta)",
+      "nota": "Se abona en el local cuando traés el equipo y confirmamos el servicio.",
+      "notaPresupuesto": "Lo que dice \"a presupuestar\" te lo cotizamos al revisar el equipo. Todo se abona en el local, una vez confirmado el servicio.",
+      "errorCarga": "No pudimos cargar los precios. Igual podés enviar la solicitud: te los informamos en el local."
     }
   },
   "aviso": {
@@ -849,10 +860,9 @@
     },
     "serv": {
       "titulo": "Servicios",
-      "subtitulo": "Precios y disponibilidad de los servicios.",
+      "subtitulo": "Acá se modifican los servicios generales de JS.",
       "armado": {
         "titulo": "Armado de PC",
-        "descripcion": "Se ofrecen en el resumen de Armá tu PC y se cobran junto con el armado. Si desactivas una deja de ofrecerse",
         "vacio": "Todavía no hay servicios cargados. Corré el seed del backend para crearlos."
       },
       "precioActual": "Precio actual:",
@@ -863,10 +873,32 @@
       "inactivo": "Inactivo",
       "switchAria": "Ofrecer {{nombre}}",
       "toastPrecio": "Guardamos el nuevo precio de {{nombre}}",
-      "toastActivado": "{{nombre}} se vuelve a ofrecer en el armador",
-      "toastDesactivado": "{{nombre}} ya no se ofrece en el armador",
+      "toastActivado": "{{nombre}} se vuelve a ofrecer",
+      "toastDesactivado": "{{nombre}} ya no se ofrece",
       "errorCarga": "No se pudieron cargar los servicios",
-      "errorGuardar": "No se pudo guardar el cambio"
+      "errorGuardar": "No se pudo guardar el cambio",
+      "tecnico": {
+        "titulo": "Servicio técnico"
+      },
+      "extras": {
+        "titulo": "Servicio técnico: extras"
+      },
+      "software": {
+        "titulo": "Servicio técnico: programas"
+      },
+      "vacio": "No hay servicios en este grupo. Corré las migraciones o el seed del backend.",
+      "aPresupuestar": "Se presupuesta en el local (sin precio fijo).",
+      "precioNegativo": "El precio no puede ser negativo",
+      "nuevoPrograma": {
+        "titulo": "Agregar programa",
+        "nombre": "Nombre del programa",
+        "precio": "Precio de instalación",
+        "placeholder": "Ej.: Adobe Reader",
+        "agregar": "Agregar",
+        "agregando": "Agregando...",
+        "errorNombre": "Escribí el nombre del programa",
+        "toast": "Agregamos {{nombre}} a los programas para instalar"
+      }
     }
   },
   "captura": {

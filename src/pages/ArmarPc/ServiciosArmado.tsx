@@ -1,19 +1,18 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import Precio from "../../components/Precio/Precio";
-import { obtenerServicios } from "../../services/armador";
-import type { ProductoResumen } from "../../services/productos";
+import { obtenerServicios, type ServicioArmado } from "../../services/armador";
 
 interface Props {
-  elegidos: ProductoResumen[];
-  onCambiar: Dispatch<SetStateAction<ProductoResumen[]>>;
+  elegidos: ServicioArmado[];
+  onCambiar: Dispatch<SetStateAction<ServicioArmado[]>>;
 }
 
 // Servicios que se suman al armado: armado de la PC, instalación de Windows, de Office...
-// Son productos de la categoría "Servicios" del BE y van al carrito con el resto.
+// Son servicios del BE (no productos): no tienen stock y van al carrito una sola vez.
 export default function ServiciosArmado({ elegidos, onCambiar }: Props) {
   const { t, i18n } = useTranslation();
-  const [servicios, setServicios] = useState<ProductoResumen[] | null>(null);
+  const [servicios, setServicios] = useState<ServicioArmado[] | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -34,7 +33,7 @@ export default function ServiciosArmado({ elegidos, onCambiar }: Props) {
   if (servicios?.length === 0) return null;
 
   // Se mantiene el orden de la lista, así el carrito queda igual sin importar en qué orden se marcaron
-  const cambiar = (servicio: ProductoResumen, elegido: boolean) =>
+  const cambiar = (servicio: ServicioArmado, elegido: boolean) =>
     onCambiar((actuales) =>
       (servicios ?? []).filter((s) => (s.id === servicio.id ? elegido : actuales.some((a) => a.id === s.id))),
     );

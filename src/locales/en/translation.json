@@ -263,8 +263,8 @@
     "titulo": "Tech Support",
     "intro": "Is your device having trouble? Tell us what is happening and we will reply here. You can follow the repair progress at any time.",
     "avisoPrecio": {
-      "titulo": "We'll tell you the price of the repair when you bring the device to the store.",
-      "detalle": "We check it first and send you a quote. We don't do any work until you confirm it."
+      "titulo": "No online payment: you pay in store when you bring the device.",
+      "detalle": "We show you the price of each service. We check the device first and don't do any work until you confirm. Repair and Other are quoted in store."
     },
     "errorCarga": "Your requests could not be loaded",
     "errorGenerico": "An error occurred",
@@ -407,6 +407,17 @@
       "por": "by {{nombre}}",
       "porCliente": "by the customer ({{nombre}})",
       "vacio": "No status changes yet."
+    },
+    "precio": {
+      "titulo": "Estimated price",
+      "aPresupuestar": "To be quoted",
+      "sinCargo": "Free",
+      "segunProgramas": "Depends on the software",
+      "total": "Total to pay in store",
+      "totalDesde": "Total (excluding what's quoted)",
+      "nota": "Paid in store when you bring the device and we confirm the service.",
+      "notaPresupuesto": "Items marked \"to be quoted\" are priced once we check the device. Everything is paid in store, once the service is confirmed.",
+      "errorCarga": "We couldn't load the prices. You can still send the request: we'll tell you in store."
     }
   },
   "aviso": {
@@ -848,10 +859,9 @@
     },
     "serv": {
       "titulo": "Services",
-      "subtitulo": "Prices and availability of the services. They don't appear in the catalog: they are offered in Build your PC.",
+      "subtitulo": "Manage JS's general services here.",
       "armado": {
-        "titulo": "PC build",
-        "descripcion": "Offered in the Build your PC summary and charged together with the build. If you deactivate one, it is no longer offered.",
+        "titulo": "PC assembly",
         "vacio": "There are no services yet. Run the backend seed to create them."
       },
       "precioActual": "Current price:",
@@ -862,10 +872,32 @@
       "inactivo": "Inactive",
       "switchAria": "Offer {{nombre}}",
       "toastPrecio": "The new price of {{nombre}} was saved",
-      "toastActivado": "{{nombre}} is offered in the PC builder again",
-      "toastDesactivado": "{{nombre}} is no longer offered in the PC builder",
+      "toastActivado": "{{nombre}} is offered again",
+      "toastDesactivado": "{{nombre}} is no longer offered",
       "errorCarga": "The services couldn't be loaded",
-      "errorGuardar": "The change couldn't be saved"
+      "errorGuardar": "The change couldn't be saved",
+      "tecnico": {
+        "titulo": "Tech support"
+      },
+      "extras": {
+        "titulo": "Tech support: extras"
+      },
+      "software": {
+        "titulo": "Tech support: software"
+      },
+      "vacio": "There are no services in this group. Run the backend migrations or seed.",
+      "aPresupuestar": "Quoted in store (no fixed price).",
+      "precioNegativo": "The price can't be negative",
+      "nuevoPrograma": {
+        "titulo": "Add software",
+        "nombre": "Software name",
+        "precio": "Installation price",
+        "placeholder": "E.g.: Adobe Reader",
+        "agregar": "Add",
+        "agregando": "Adding...",
+        "errorNombre": "Enter the software name",
+        "toast": "{{nombre}} was added to the software to install"
+      }
     }
   },
   "captura": {
