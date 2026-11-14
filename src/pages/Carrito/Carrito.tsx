@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../../components/CarritoProvider/carritoContext";
 import type { ItemCarrito } from "../../services/carrito";
+import { esServicio } from "../../services/productos";
 import Precio from "../../components/Precio/Precio";
 import { useCotizacion } from "../../services/cotizacion";
 import { formatearArs, formatearUsd, useMoneda } from "../../services/moneda";
@@ -99,6 +100,8 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
   const { t } = useTranslation();
   const { cambiarCantidad, quitar } = useCarrito();
   const { producto, cantidad, subtotal } = item;
+  // Los servicios (armado de PC, instalación de Windows...) no muestran stock
+  const servicio = esServicio(producto);
   const sinStock = producto.stock <= 0;
   const superaStock = cantidad > producto.stock;
   const [ocupado, setOcupado] = useState(false);
@@ -149,6 +152,8 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
               alt={producto.nombre}
               className="h-full w-full object-contain p-1"
             />
+          ) : servicio ? (
+            <HerramientaIcon />
           ) : (
             <span className="text-xs text-muted">{t("carrito.sinImagen")}</span>
           )}
@@ -158,33 +163,40 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
           <p className="line-clamp-2 text-[15px] font-medium text-ink">
             {producto.nombre}
           </p>
-          <p
-            className={`flex items-center gap-1.5 text-sm ${sinStock || superaStock ? "text-primary" : "text-secondary-dark"}`}
-          >
-            <span className="h-2 w-2 rounded-full bg-current" />
-            {sinStock
-              ? t("carrito.sinStock")
-              : superaStock
-                ? t("carrito.soloQuedan", { count: producto.stock })
-                : t("carrito.stockDisponible")}
-          </p>
+          {servicio ? (
+            <p className="text-sm text-muted">{t("carrito.servicio")}</p>
+          ) : (
+            <p
+              className={`flex items-center gap-1.5 text-sm ${sinStock || superaStock ? "text-primary" : "text-secondary-dark"}`}
+            >
+              <span className="h-2 w-2 rounded-full bg-current" />
+              {sinStock
+                ? t("carrito.sinStock")
+                : superaStock
+                  ? t("carrito.soloQuedan", { count: producto.stock })
+                  : t("carrito.stockDisponible")}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col items-start gap-1">
-          <input
-            type="number"
-            aria-label={t("carrito.cantidad")}
-            min={1}
-            max={producto.stock}
-            value={valor}
-            disabled={ocupado || sinStock}
-            onChange={(e) => setValor(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") confirmarCantidad();
-              if (e.key === "Escape") setValor(String(cantidad)); // descarta el cambio
-            }}
-            className={`h-9 w-20 rounded-lg border bg-surface px-3 text-sm text-ink outline-none focus:ring-2 focus:ring-primary-light disabled:opacity-50 ${modificado ? "border-ink" : "border-line focus:border-primary"}`}
-          />
+          {/* Un servicio va una sola vez: no se le cambia la cantidad, solo se puede quitar */}
+          {!servicio && (
+            <input
+              type="number"
+              aria-label={t("carrito.cantidad")}
+              min={1}
+              max={producto.stock}
+              value={valor}
+              disabled={ocupado || sinStock}
+              onChange={(e) => setValor(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") confirmarCantidad();
+                if (e.key === "Escape") setValor(String(cantidad)); // descarta el cambio
+              }}
+              className={`h-9 w-20 rounded-lg border bg-surface px-3 text-sm text-ink outline-none focus:ring-2 focus:ring-primary-light disabled:opacity-50 ${modificado ? "border-ink" : "border-line focus:border-primary"}`}
+            />
+          )}
           {modificado ? (
             <button
               type="button"
@@ -314,6 +326,24 @@ function CheckIcon() {
       strokeLinejoin="round"
     >
       <path d="M5 12l5 5L20 7" />
+    </svg>
+  );
+}
+
+// Imagen de los servicios, que no tienen foto
+function HerramientaIcon() {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      className="h-9 w-9 text-muted"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4 2.5-2.5z" />
     </svg>
   );
 }

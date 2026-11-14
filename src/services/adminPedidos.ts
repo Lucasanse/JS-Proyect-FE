@@ -39,7 +39,7 @@ export type ProductoVenta = {
   idProducto: number;
   nombre: string;
   precio: number;
-  imagenUrl?: string;
+  imagenUrl: string | null;
 };
 
 export type DetalleVenta = {

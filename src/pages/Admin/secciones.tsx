@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import {
   IconoCaja,
+  IconoEtiqueta,
   IconoHerramienta,
   IconoRecibo,
   IconoUsuarios,
@@ -31,6 +32,13 @@ export const SECCIONES_ADMIN: SeccionAdmin[] = [
     tituloKey: "admin.menu.servicioTecnico",
     descripcionKey: "admin.inicio.servicioTecnico",
     icono: <IconoHerramienta />,
+    disponible: true,
+  },
+  {
+    to: "servicios",
+    tituloKey: "admin.menu.servicios",
+    descripcionKey: "admin.inicio.servicios",
+    icono: <IconoEtiqueta />,
     disponible: true,
   },
   {
