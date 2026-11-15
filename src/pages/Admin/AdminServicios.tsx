@@ -4,6 +4,7 @@ import {
   actualizarServicio,
   crearPrograma,
   listarServiciosAdmin,
+  type CambiosServicio,
   type GrupoServicio,
   type ServicioAdmin,
 } from "../../services/adminServicios";
@@ -190,7 +191,7 @@ function FilaServicio({ servicio, onCambiado }: { servicio: ServicioAdmin; onCam
   const cambioPrecio = precio !== "" && precioNuevo !== servicio.precio;
   const idInput = `precio-servicio-${servicio.id}`;
 
-  const guardar = async (cambios: { precio?: number; activo?: boolean }, mensaje: string) => {
+  const guardar = async (cambios: CambiosServicio, mensaje: string) => {
     setGuardando(true);
     setError("");
     try {
@@ -214,6 +215,10 @@ function FilaServicio({ servicio, onCambiado }: { servicio: ServicioAdmin; onCam
     guardar({ precio: precioNuevo }, t("admin.serv.toastPrecio", { nombre: servicio.nombre }));
   };
 
+  // IVA: se guarda apenas se cambia
+  const cambiarIva = (cambios: Pick<CambiosServicio, "ivaIncluido" | "alicuotaIva">) =>
+    guardar(cambios, t("admin.serv.toastIva", { nombre: servicio.nombre }));
+
   const cambiarActivo = () =>
     guardar(
       { activo: !servicio.activo },
@@ -230,44 +235,82 @@ function FilaServicio({ servicio, onCambiado }: { servicio: ServicioAdmin; onCam
         ) : (
           !cambioPrecio && (
             <p className="mt-0.5 text-xs text-muted">
-              {t("admin.serv.precioActual")} <Precio precio={servicio.precio ?? 0} className="font-semibold text-ink" />
+              {t("admin.serv.pagaCliente")} <Precio precio={servicio.precioFinal ?? 0} className="font-semibold text-ink" />
+              {" · "}
+              {servicio.alicuotaIva === 0
+                ? t("admin.serv.exento")
+                : servicio.ivaIncluido
+                  ? t("admin.serv.ivaIncluidoAl", { alicuota: String(servicio.alicuotaIva).replace(".", ",") })
+                  : t("admin.serv.masIva", { alicuota: String(servicio.alicuotaIva).replace(".", ",") })}
             </p>
           )
         )}
       </div>
 
       {!aPresupuestar && (
-        <form onSubmit={guardarPrecio} className="flex items-start gap-2 sm:w-48">
-          <div className="min-w-0 flex-1">
-            <label htmlFor={idInput} className="sr-only">
-              {t("admin.serv.precio", { nombre: servicio.nombre })}
-            </label>
-            <div className="flex items-center rounded-lg border border-line bg-surface focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-light">
-              <span className="pl-3 text-sm text-muted">$</span>
-              <InputPrecio
-                id={idInput}
-                name="precio"
-                value={precio}
-                onValor={(v) => {
-                  setPrecio(v);
-                  setError("");
-                }}
-                aria-invalid={!!error}
-                aria-describedby={error ? `${idInput}-error` : undefined}
-                className="w-full min-w-0 bg-transparent px-2 py-1.5 text-sm text-ink outline-none"
-              />
+        <div className="flex flex-col gap-2 sm:w-56">
+          <form onSubmit={guardarPrecio} className="flex items-start gap-2">
+            <div className="min-w-0 flex-1">
+              <label htmlFor={idInput} className="sr-only">
+                {t("admin.serv.precio", { nombre: servicio.nombre })}
+              </label>
+              <div className="flex items-center rounded-lg border border-line bg-surface focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-light">
+                <span className="pl-3 text-sm text-muted">$</span>
+                <InputPrecio
+                  id={idInput}
+                  name="precio"
+                  value={precio}
+                  onValor={(v) => {
+                    setPrecio(v);
+                    setError("");
+                  }}
+                  aria-invalid={!!error}
+                  aria-describedby={error ? `${idInput}-error` : undefined}
+                  className="w-full min-w-0 bg-transparent px-2 py-1.5 text-sm text-ink outline-none"
+                />
+              </div>
             </div>
-          </div>
-          {cambioPrecio && (
-            <button
-              type="submit"
-              disabled={guardando}
-              className="cursor-pointer rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
+            {cambioPrecio && (
+              <button
+                type="submit"
+                disabled={guardando}
+                className="cursor-pointer rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {t("admin.serv.guardar")}
+              </button>
+            )}
+          </form>
+          {/* Si el precio cargado incluye IVA y con qué alícuota (o si es exento) */}
+          <div className="flex gap-2">
+            <label className="sr-only" htmlFor={`${idInput}-iva`}>
+              {t("admin.serv.ivaDelPrecio", { nombre: servicio.nombre })}
+            </label>
+            <select
+              id={`${idInput}-iva`}
+              value={servicio.ivaIncluido ? "incluido" : "mas"}
+              disabled={guardando || servicio.alicuotaIva === 0}
+              onChange={(e) => cambiarIva({ ivaIncluido: e.target.value === "incluido" })}
+              className="min-w-0 flex-1 cursor-pointer rounded-lg border border-line bg-surface px-2 py-1.5 text-sm text-ink disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {t("admin.serv.guardar")}
-            </button>
-          )}
-        </form>
+              <option value="mas">{t("admin.serv.opcionMasIva")}</option>
+              <option value="incluido">{t("admin.serv.opcionIvaIncluido")}</option>
+            </select>
+            <label className="sr-only" htmlFor={`${idInput}-alicuota`}>
+              {t("admin.serv.alicuotaDe", { nombre: servicio.nombre })}
+            </label>
+            <select
+              id={`${idInput}-alicuota`}
+              value={String(servicio.alicuotaIva)}
+              disabled={guardando}
+              onChange={(e) => cambiarIva({ alicuotaIva: Number(e.target.value) })}
+              className="w-24 cursor-pointer rounded-lg border border-line bg-surface px-2 py-1.5 text-sm text-ink disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value="21">21%</option>
+              <option value="10.5">10,5%</option>
+              <option value="0">{t("admin.serv.opcionExento")}</option>
+            </select>
+          </div>
+        </div>
       )}
 
       <SwitchActivo

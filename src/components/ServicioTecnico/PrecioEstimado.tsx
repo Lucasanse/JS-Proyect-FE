@@ -26,6 +26,13 @@ export default function PrecioEstimado({ precios: todos, total, className = "" }
   const precios = todos.filter((p) => p.codigo !== TIPO_SOFTWARE);
   if (precios.length === 0) return null;
   const aPresupuestar = precios.some((p) => p.precio === null);
+  // IVA incluido en los precios (las solicitudes viejas no guardaban la alícuota: no se desglosa)
+  const conPrecio = precios.filter((p) => p.precio !== null);
+  const conAlicuota = conPrecio.every((p) => p.alicuotaIva !== undefined);
+  const iva =
+    Math.round(
+      conPrecio.reduce((acc, p) => acc + (p.precio! - p.precio! / (1 + (p.alicuotaIva ?? 0) / 100)), 0) * 100,
+    ) / 100;
 
   return (
     <section className={`rounded-xl border border-line bg-surface-alt p-4 ${className}`} aria-labelledby="precio-estimado">
@@ -46,6 +53,22 @@ export default function PrecioEstimado({ precios: todos, total, className = "" }
           </li>
         ))}
       </ul>
+      {conAlicuota && conPrecio.length > 0 && (
+        <dl className="mt-3 space-y-1 border-t border-line pt-2 text-sm">
+          <div className="flex justify-between gap-3">
+            <dt className="text-muted">{t("servicioTecnico.precio.subtotalSinIva")}</dt>
+            <dd>
+              <Precio precio={Math.round((total - iva) * 100) / 100} className="font-medium text-ink" />
+            </dd>
+          </div>
+          <div className="flex justify-between gap-3">
+            <dt className="text-muted">{t("servicioTecnico.precio.iva")}</dt>
+            <dd>
+              <Precio precio={iva} className="font-medium text-ink" />
+            </dd>
+          </div>
+        </dl>
+      )}
       <div className="mt-3 flex items-baseline justify-between gap-3 border-t border-line pt-2">
         <span className="font-bold text-ink">
           {aPresupuestar ? t("servicioTecnico.precio.totalDesde") : t("servicioTecnico.precio.total")}

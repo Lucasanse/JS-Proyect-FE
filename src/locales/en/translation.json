@@ -413,11 +413,13 @@
       "aPresupuestar": "To be quoted",
       "sinCargo": "Free",
       "segunProgramas": "Depends on the software",
-      "total": "Total to pay in store",
+      "total": "Total to pay in store (incl. VAT)",
       "totalDesde": "Total (excluding what's quoted)",
       "nota": "Paid in store when you bring the device and we confirm the service.",
       "notaPresupuesto": "Items marked \"to be quoted\" are priced once we check the device. Everything is paid in store, once the service is confirmed.",
-      "errorCarga": "We couldn't load the prices. You can still send the request: we'll tell you in store."
+      "errorCarga": "We couldn't load the prices. You can still send the request: we'll tell you in store.",
+      "subtotalSinIva": "Subtotal (excl. VAT)",
+      "iva": "VAT"
     }
   },
   "aviso": {
@@ -454,7 +456,7 @@
     "eliminar": "Remove",
     "errorGenerico": "An error occurred",
     "resumen": "Summary",
-    "subtotal": "Subtotal",
+    "subtotal": "Subtotal (excl. VAT)",
     "totalPagar": "Total to pay in {{moneda}}",
     "ajustarCantidades": "Adjust the quantities of products without enough stock.",
     "confirmarPedido": "Confirm order",
@@ -463,7 +465,8 @@
     "errorEliminar": "Could not delete the order",
     "total": "Total",
     "avisoDebitoPesos": "You are charged in pesos: you will pay {{total}} (rate: 1 USD = {{cotizacion}}). The dollar value is for reference only.",
-    "servicio": "Service"
+    "servicio": "Service",
+    "iva": "VAT"
   },
   "login": {
     "titulo": "Log in",
@@ -643,7 +646,15 @@
       "moneda": "Price currency",
       "equivalePesos": "Charged in pesos: {{pesos}} today. It updates with the exchange rate.",
       "precioUsdAyuda": "The price stays in dollars and the peso value updates with the exchange rate.",
-      "fijarEn": "Fix price in"
+      "fijarEn": "Fix price in",
+      "iva": "Price VAT",
+      "sinIva": "Excl. VAT",
+      "conIva": "Incl. VAT",
+      "alicuota": "VAT rate",
+      "finalEs": "Incl. VAT: {{final}} (what the customer pays)",
+      "netoEs": "Excl. VAT: {{neto}}",
+      "precioCargado": "The entered price is",
+      "pagaCliente": "Incl. VAT (customer pays)"
     },
     "ia": {
       "titulo": "Autofill with AI",
@@ -897,7 +908,17 @@
         "agregando": "Adding...",
         "errorNombre": "Enter the software name",
         "toast": "{{nombre}} was added to the software to install"
-      }
+      },
+      "pagaCliente": "Customer pays:",
+      "exento": "VAT exempt",
+      "masIva": "entered price + {{alicuota}}% VAT",
+      "ivaIncluidoAl": "{{alicuota}}% VAT included",
+      "ivaDelPrecio": "VAT of the {{nombre}} price",
+      "alicuotaDe": "VAT rate of {{nombre}}",
+      "opcionMasIva": "+ VAT",
+      "opcionIvaIncluido": "VAT included",
+      "opcionExento": "Exempt",
+      "toastIva": "{{nombre}} VAT saved"
     }
   },
   "captura": {
@@ -970,7 +991,14 @@
     "desactualizada": "Outdated rate, last updated: {{fecha}}",
     "seCobraEnPesos": "Reference value only, not part of the payment method. You are charged in pesos.",
     "cotizacionDelDia": "rate from {{fecha}}",
-    "moneda": "Currency"
+    "moneda": "Currency",
+    "impuestosIncluidos": "Taxes included",
+    "masIva": "+ VAT {{alicuota}}%",
+    "masImpuestos": "+ taxes",
+    "masImp": "+ tax",
+    "impuestos": "Taxes",
+    "sinImpuestos": "Without taxes",
+    "conImpuestos": "With taxes"
   },
   "documentos": {
     "generarPresupuesto": "Generate quote",

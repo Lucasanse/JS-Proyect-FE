@@ -14,7 +14,10 @@ export interface ServicioAdmin {
   grupo: GrupoServicio;
   nombre: string;
   descripcion: string;
-  precio: number | null; // en pesos; null = a presupuestar (Reparación, Otro): no se puede cambiar
+  precio: number | null; // en pesos, tal como se cargó; null = a presupuestar (Reparación, Otro): no se puede cambiar
+  ivaIncluido: boolean; // si el precio cargado ya incluye el IVA
+  alicuotaIva: number; // 21, 10.5 o 0 (exento)
+  precioFinal: number | null; // con IVA: lo que paga el cliente
   activo: boolean; // inactivo = no se ofrece
 }
 
@@ -24,5 +27,7 @@ export const listarServiciosAdmin = (signal?: AbortSignal) => pedir<ServicioAdmi
 export const crearPrograma = (nombre: string, precio: number) =>
   pedir<ServicioAdmin>("/programas", { method: "POST", body: JSON.stringify({ nombre, precio }) }, urlAdminServicios);
 
-export const actualizarServicio = (id: number, cambios: { precio?: number; activo?: boolean }) =>
+export type CambiosServicio = { precio?: number; activo?: boolean; ivaIncluido?: boolean; alicuotaIva?: number };
+
+export const actualizarServicio = (id: number, cambios: CambiosServicio) =>
   pedir<ServicioAdmin>(`/${id}`, { method: "PATCH", body: JSON.stringify(cambios) }, urlAdminServicios);

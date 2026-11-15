@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import MenuDesplegable from "../MenuDesplegable/MenuDesplegable";
 import { useCotizacion } from "../../services/cotizacion";
-import { cambiarMoneda, formatearUsd, useMoneda, type Moneda } from "../../services/moneda";
+import { cambiarImpuestos, cambiarMoneda, formatearUsd, useConImpuestos, useMoneda, type Moneda } from "../../services/moneda";
 
 const MONEDAS: Moneda[] = ["USD", "ARS"];
 
@@ -10,6 +10,7 @@ const MONEDAS: Moneda[] = ["USD", "ARS"];
 export default function SelectorMoneda() {
   const { t, i18n } = useTranslation();
   const moneda = useMoneda();
+  const conImpuestos = useConImpuestos();
   const cotizacion = useCotizacion();
   const [info, setInfo] = useState(false);
 
@@ -26,9 +27,16 @@ export default function SelectorMoneda() {
   return (
     <div className="relative flex items-center gap-1.5">
       <MenuDesplegable
-        trigger={moneda}
+        trigger={<span className="whitespace-nowrap">{conImpuestos ? `${moneda} ${t("precio.masImp")}` : moneda}</span>}
         ariaLabel={t("precio.moneda")}
-        opciones={MONEDAS.map((m) => ({ clave: m, etiqueta: m, activa: moneda === m, onClick: () => cambiarMoneda(m) }))}
+        opciones={MONEDAS.flatMap((m) =>
+          [false, true].map((imp) => ({
+            clave: `${m}-${imp}`,
+            etiqueta: imp ? `${m} ${t("precio.masImpuestos")}` : m,
+            activa: moneda === m && conImpuestos === imp,
+            onClick: () => cambiarMoneda(m, imp),
+          })),
+        )}
       />
       <button
         type="button"
@@ -59,6 +67,7 @@ export default function SelectorMoneda() {
 export function SelectorMonedaMovil() {
   const { t, i18n } = useTranslation();
   const moneda = useMoneda();
+  const conImpuestos = useConImpuestos();
   const cotizacion = useCotizacion();
   if (!cotizacion) return null;
 
@@ -76,6 +85,15 @@ export function SelectorMonedaMovil() {
         opciones={MONEDAS.map((m) => ({ valor: m, texto: m }))}
         activo={moneda}
         onElegir={(m) => cambiarMoneda(m as Moneda)}
+      />
+      <BotonesSegmentados
+        etiqueta={t("precio.impuestos")}
+        opciones={[
+          { valor: "sin", texto: t("precio.sinImpuestos") },
+          { valor: "con", texto: t("precio.conImpuestos") },
+        ]}
+        activo={conImpuestos ? "con" : "sin"}
+        onElegir={(v) => cambiarImpuestos(v === "con")}
       />
       <p className="px-3 text-xs text-muted">
         {t("precio.cotizacionTiempoReal", { valor: formatearUsd(cotizacion.valor).replace("US$", "USD") })} ·{" "}

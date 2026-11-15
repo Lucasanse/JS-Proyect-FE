@@ -60,6 +60,8 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
   // Precio de lo que se ofrece hoy, por código (lo deshabilitado por el admin no está).
   // null mientras carga; si falla, se muestra todo sin precios (el BE igual valida).
   const [precios, setPrecios] = useState<Map<string, number | null> | null>(null);
+  // Alícuota de IVA de cada uno (el precio de arriba ya la incluye)
+  const [alicuotas, setAlicuotas] = useState<Map<string, number>>(new Map());
   // Programas que se pueden instalar (los carga el admin), sin el prefijo SOFTWARE_
   const [programas, setProgramas] = useState<PrecioServicioTecnico[]>([]);
   const [sinPrecios, setSinPrecios] = useState(false);
@@ -69,6 +71,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
     obtenerPreciosServicioTecnico(controller.signal)
       .then((lista) => {
         setPrecios(new Map(lista.map((p) => [p.codigo, p.precio])));
+        setAlicuotas(new Map(lista.map((p) => [p.codigo, p.alicuotaIva])));
         setProgramas(lista.filter((p) => p.grupo === "SOFTWARE"));
       })
       .catch(() => {
@@ -118,6 +121,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
         codigo,
         nombre: programas.find((p) => p.codigo === codigo)?.nombre,
         precio: precios.get(codigo) ?? null,
+        alicuotaIva: alicuotas.get(codigo),
       }))
     : [];
   const totalEstimado = elegidos.reduce((acc, p) => acc + (p.precio ?? 0), 0);
@@ -222,6 +226,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
               titulo={t(`servicioTecnico.tipos.${tipo}`)}
               ayuda={t(`servicioTecnico.tiposAyuda.${tipo}`)}
               precio={tipo === TIPO_SOFTWARE && precios ? 0 : precioDe(tipo)}
+              alicuota={alicuotas.get(tipo)}
               textoCero={tipo === TIPO_SOFTWARE ? t("servicioTecnico.precio.segunProgramas") : undefined}
             />
           ))}
@@ -265,6 +270,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
             titulo={t("servicioTecnico.form.conPastaTermica")}
             ayuda={t("servicioTecnico.form.conPastaTermicaAyuda")}
             precio={precioDe(CODIGOS_EXTRA.conPastaTermica)}
+            alicuota={alicuotas.get(CODIGOS_EXTRA.conPastaTermica)}
           />
         </fieldset>
       )}
@@ -282,6 +288,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
             titulo={t("servicioTecnico.form.conBackup")}
             ayuda={t("servicioTecnico.form.conBackupAyuda")}
             precio={precioDe(CODIGOS_EXTRA.conBackup)}
+            alicuota={alicuotas.get(CODIGOS_EXTRA.conBackup)}
           />
         </fieldset>
       )}
@@ -299,6 +306,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
             titulo={t("servicioTecnico.form.conSSD")}
             ayuda={t("servicioTecnico.form.conSSDAyuda")}
             precio={precioDe(CODIGOS_EXTRA.conSSD)}
+            alicuota={alicuotas.get(CODIGOS_EXTRA.conSSD)}
           />
         </fieldset>
       )}
@@ -323,6 +331,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
                     onElegir={() => alternarSoftware(programa(p))}
                     titulo={nombrePrograma(t, programa(p), undefined, p.nombre)}
                     precio={p.precio}
+                    alicuota={p.alicuotaIva}
                   />
                 ))}
               </div>
@@ -340,6 +349,7 @@ export default function NuevaSolicitudForm({ onCreada }: { onCreada: (s: Solicit
                     onElegir={() => alternarSoftware(programa(p))}
                     titulo={nombrePrograma(t, programa(p), undefined, p.nombre)}
                     precio={p.precio}
+                    alicuota={p.alicuotaIva}
                   />
                 ))}
               </div>
@@ -415,6 +425,7 @@ function Opcion({
   ayuda,
   centrada = false,
   precio,
+  alicuota,
   textoCero,
 }: {
   tipo: "radio" | "checkbox";
@@ -425,7 +436,8 @@ function Opcion({
   titulo: string;
   ayuda?: string;
   centrada?: boolean;
-  precio?: number | null; // undefined = sin precio para mostrar; null = a presupuestar
+  precio?: number | null; // con IVA. undefined = sin precio para mostrar; null = a presupuestar
+  alicuota?: number; // IVA incluido en precio: se muestra con o sin IVA según el navbar
   textoCero?: string; // qué mostrar si el precio es 0 (por defecto, "Sin cargo")
 }) {
   const { t } = useTranslation();
@@ -466,7 +478,12 @@ function Opcion({
             ) : precio === 0 ? (
               <span className="font-normal text-muted">{textoCero ?? t("servicioTecnico.precio.sinCargo")}</span>
             ) : (
-              <Precio precio={precio} />
+              <Precio
+                precio={alicuota ? Math.round((precio / (1 + alicuota / 100)) * 100) / 100 : precio}
+                precioFinal={precio}
+                alicuota={alicuota ?? 0}
+                etiquetaIva={!!alicuota}
+              />
             )}
           </span>
         )}

@@ -66,8 +66,12 @@ export default function ResumenArmado({
 
   // Lo que se guarda: los componentes y los periféricos. Al comprar se suman los servicios elegidos.
   const componentes = [...TIPOS_ARMADOR.flatMap((t2) => seleccion[t2] ?? []), ...perifericos];
+  // Sin IVA y con IVA: se muestra uno u otro según lo elegido en el navbar
   const total =
     componentes.reduce((acc, c) => acc + c.producto.precio * c.cantidad, 0) + servicios.reduce((acc, s) => acc + s.precio, 0);
+  const totalFinal =
+    componentes.reduce((acc, c) => acc + c.producto.precioFinal * c.cantidad, 0) +
+    servicios.reduce((acc, s) => acc + s.precioFinal, 0);
   const hayAlgo = componentes.length + servicios.length > 0;
   const faltantes = validacion?.faltantes ?? [];
   // Los servicios no tienen stock
@@ -138,7 +142,11 @@ export default function ResumenArmado({
                     {cantidad > 1 && `${cantidad} × `}
                     {producto.nombre}
                   </span>
-                  <Precio precio={producto.precio * cantidad} className="shrink-0 font-semibold text-ink" />
+                  <Precio
+                    precio={producto.precio * cantidad}
+                    precioFinal={producto.precioFinal * cantidad}
+                    className="shrink-0 font-semibold text-ink"
+                  />
                   <button
                     type="button"
                     onClick={() => quitar(producto)}
@@ -159,7 +167,7 @@ export default function ResumenArmado({
 
       <div className="mt-3 flex items-center justify-between border-t border-line pt-3">
         <span className="font-semibold text-ink">{t("armarPc.total")}</span>
-        <Precio precio={total} className="text-xl font-bold text-primary" />
+        <Precio precio={total} precioFinal={totalFinal} etiquetaIva className="text-right text-xl font-bold text-primary" />
       </div>
 
       <IndicadorPotencia potencia={potencia} fuente={seleccion.Fuente?.[0]?.producto} />
@@ -169,7 +177,7 @@ export default function ResumenArmado({
           <p className="font-semibold text-emerald-900">{t("armarPc.fuenteSugerida")}</p>
           <p className="text-emerald-900">
             {fuenteSugerida.nombre} · {especificacionDe(fuenteSugerida, "Potencia")} W ·{" "}
-            <Precio precio={fuenteSugerida.precio} />
+            <Precio precio={fuenteSugerida.precio} precioFinal={fuenteSugerida.precioFinal} />
           </p>
           <button
             type="button"

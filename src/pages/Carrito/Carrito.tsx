@@ -140,11 +140,11 @@ function FilaServicio({ item }: { item: Extract<ItemCarrito, { tipo: "SERVICIO" 
           {t("carrito.eliminar")}
         </button>
         <div className="hidden w-36 flex-col items-end sm:flex">
-          <Precio precio={subtotal} className="text-lg font-bold text-ink" />
+          <Precio precio={subtotal} precioFinal={item.subtotalFinal} className="text-lg font-bold text-ink" />
         </div>
       </div>
       <div className="text-right sm:hidden">
-        <Precio precio={subtotal} className="text-sm font-bold text-ink" />
+        <Precio precio={subtotal} precioFinal={item.subtotalFinal} className="text-sm font-bold text-ink" />
       </div>
       {error && <p className="text-xs text-primary">{error}</p>}
     </li>
@@ -265,14 +265,25 @@ function FilaCarrito({ item }: { item: Extract<ItemCarrito, { tipo: "PRODUCTO" }
         </div>
 
         <div className="hidden w-36 flex-col items-end sm:flex">
-          <Precio precio={producto.precio} className="text-sm text-muted" />
-          <Precio precio={subtotal} className="text-lg font-bold text-ink" />
+          <Precio
+            precio={producto.precio}
+            precioFinal={producto.precioFinal}
+            alicuota={producto.alicuotaIva}
+            className="text-sm text-muted"
+          />
+          <Precio
+            precio={subtotal}
+            precioFinal={item.subtotalFinal}
+            alicuota={producto.alicuotaIva}
+            etiquetaIva
+            className="text-right text-lg font-bold text-ink"
+          />
         </div>
       </div>
 
       {/* En mobile el precio va debajo */}
       <div className="text-right sm:hidden">
-        <Precio precio={subtotal} className="text-sm font-bold text-ink" />
+        <Precio precio={subtotal} precioFinal={item.subtotalFinal} alicuota={producto.alicuotaIva} etiquetaIva className="text-sm font-bold text-ink" />
       </div>
       {error && <p className="text-xs text-primary">{error}</p>}
     </li>
@@ -309,10 +320,17 @@ function Resumen() {
       <h2 className="text-xl font-bold text-ink">{t("carrito.resumen")}</h2>
 
       <dl className="divide-y divide-line text-[15px]">
+        {/* Subtotal sin IVA + IVA = total a pagar (siempre con IVA, se vea como se vea el catálogo) */}
         <div className="flex justify-between py-3">
           <dt className="text-ink">{t("carrito.subtotal")}</dt>
           <dd className="font-semibold text-ink">
-            <Precio precio={carrito.total} />
+            <Precio precio={carrito.subtotal} />
+          </dd>
+        </div>
+        <div className="flex justify-between py-3">
+          <dt className="text-ink">{t("carrito.iva")}</dt>
+          <dd className="font-semibold text-ink">
+            <Precio precio={carrito.iva} />
           </dd>
         </div>
         <div className="flex justify-between py-3">

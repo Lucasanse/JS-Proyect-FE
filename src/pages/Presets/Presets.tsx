@@ -124,6 +124,7 @@ function TarjetaPreset({
     (a, b) => PASOS_ARMADOR.indexOf(a.producto.paso) - PASOS_ARMADOR.indexOf(b.producto.paso),
   );
   const total = componentes.reduce((acc, c) => acc + c.producto.precio * c.cantidad, 0);
+  const totalFinal = componentes.reduce((acc, c) => acc + c.producto.precioFinal * c.cantidad, 0);
 
   return (
     <article className="flex h-full flex-col rounded-xl border border-line bg-surface p-4 shadow-sm">
@@ -149,7 +150,7 @@ function TarjetaPreset({
                 {producto.nombre}
               </p>
             </div>
-            <Precio precio={producto.precio * cantidad} className="shrink-0 text-ink" />
+            <Precio precio={producto.precio * cantidad} precioFinal={producto.precioFinal * cantidad} className="shrink-0 text-ink" />
           </li>
         ))}
       </ul>
@@ -157,7 +158,7 @@ function TarjetaPreset({
       <div className="mt-auto pt-3">
         <div className="flex items-baseline justify-between border-t border-line pt-3">
           <span className="font-semibold text-ink">{t("armarPc.total")}</span>
-          <Precio precio={total} className="text-xl font-bold text-primary" />
+          <Precio precio={total} precioFinal={totalFinal} etiquetaIva className="text-right text-xl font-bold text-primary" />
         </div>
         <div className="mt-3 flex gap-2">
           <button

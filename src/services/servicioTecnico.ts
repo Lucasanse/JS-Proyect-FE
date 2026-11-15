@@ -48,13 +48,16 @@ export interface PrecioServicioTecnico {
   codigo: string;
   nombre: string;
   grupo: "TIPO" | "EXTRA" | "SOFTWARE";
-  precio: number | null; // null = a presupuestar (Reparación, Otro)
+  precio: number | null; // con IVA; null = a presupuestar (Reparación, Otro)
+  precioNeto: number | null; // sin IVA
+  alicuotaIva: number; // 21, 10.5 o 0 (exento)
 }
 
 export interface PrecioSolicitud {
   codigo: string;
   nombre?: string; // como se llamaba al pedirlo (las solicitudes viejas no lo tienen)
-  precio: number | null;
+  precio: number | null; // con IVA
+  alicuotaIva?: number; // IVA incluido en precio (las solicitudes viejas no lo tienen)
 }
 
 // Instalación de software no tiene precio propio: se cobra cada programa

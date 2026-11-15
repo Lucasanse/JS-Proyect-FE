@@ -413,11 +413,13 @@
       "aPresupuestar": "A presupuestar",
       "sinCargo": "Sin cargo",
       "segunProgramas": "Según los programas",
-      "total": "Total a abonar en el local",
+      "total": "Total a abonar en el local (con IVA)",
       "totalDesde": "Total (sin lo que se presupuesta)",
       "nota": "Se abona en el local cuando traés el equipo y confirmamos el servicio.",
       "notaPresupuesto": "Lo que dice \"a presupuestar\" te lo cotizamos al revisar el equipo. Todo se abona en el local, una vez confirmado el servicio.",
-      "errorCarga": "No pudimos cargar los precios. Igual podés enviar la solicitud: te los informamos en el local."
+      "errorCarga": "No pudimos cargar los precios. Igual podés enviar la solicitud: te los informamos en el local.",
+      "subtotalSinIva": "Subtotal (sin IVA)",
+      "iva": "IVA"
     }
   },
   "aviso": {
@@ -454,7 +456,7 @@
     "eliminar": "Eliminar",
     "errorGenerico": "Ocurrió un error",
     "resumen": "Resumen",
-    "subtotal": "Subtotal",
+    "subtotal": "Subtotal (sin IVA)",
     "totalPagar": "Total a pagar en {{moneda}}",
     "ajustarCantidades": "Ajustá las cantidades de los productos sin stock suficiente.",
     "confirmarPedido": "Confirmar pedido",
@@ -463,7 +465,8 @@
     "errorEliminar": "No se pudo eliminar el pedido",
     "total": "Total",
     "avisoDebitoPesos": "Se debita en pesos: vas a pagar {{total}} (cotización: 1 USD = {{cotizacion}}). El valor en dólares es informativo.",
-    "servicio": "Servicio"
+    "servicio": "Servicio",
+    "iva": "IVA"
   },
   "login": {
     "titulo": "Iniciar sesión",
@@ -643,7 +646,15 @@
       "moneda": "Moneda del precio",
       "equivalePesos": "Se cobra en pesos: {{pesos}} hoy. Se actualiza con la cotización.",
       "precioUsdAyuda": "El precio queda en dólares y el valor en pesos se actualiza con la cotización.",
-      "fijarEn": "Fijar precio en"
+      "fijarEn": "Fijar precio en",
+      "iva": "IVA del precio",
+      "sinIva": "Sin IVA",
+      "conIva": "Con IVA",
+      "alicuota": "Alícuota de IVA",
+      "finalEs": "Con IVA: {{final}} (lo que paga el cliente)",
+      "netoEs": "Sin IVA: {{neto}}",
+      "precioCargado": "El precio cargado es",
+      "pagaCliente": "Con IVA (paga el cliente)"
     },
     "ia": {
       "titulo": "Autocompletar con IA",
@@ -898,7 +909,17 @@
         "agregando": "Agregando...",
         "errorNombre": "Escribí el nombre del programa",
         "toast": "Agregamos {{nombre}} a los programas para instalar"
-      }
+      },
+      "pagaCliente": "Paga el cliente:",
+      "exento": "exento de IVA",
+      "masIva": "precio cargado + IVA {{alicuota}}%",
+      "ivaIncluidoAl": "IVA {{alicuota}}% incluido",
+      "ivaDelPrecio": "IVA del precio de {{nombre}}",
+      "alicuotaDe": "Alícuota de IVA de {{nombre}}",
+      "opcionMasIva": "+ IVA",
+      "opcionIvaIncluido": "IVA incluido",
+      "opcionExento": "Exento",
+      "toastIva": "Guardamos el IVA de {{nombre}}"
     }
   },
   "captura": {
@@ -975,7 +996,14 @@
     "desactualizada": "Cotización desactualizada, última actualización: {{fecha}}",
     "seCobraEnPesos": "Valor informativo, no forma parte del método de pago. Se cobra en pesos.",
     "cotizacionDelDia": "cotización del {{fecha}}",
-    "moneda": "Moneda"
+    "moneda": "Moneda",
+    "impuestosIncluidos": "Impuestos incluidos",
+    "masIva": "+ IVA {{alicuota}}%",
+    "masImpuestos": "+ impuestos",
+    "masImp": "+ imp.",
+    "impuestos": "Impuestos",
+    "sinImpuestos": "Sin impuestos",
+    "conImpuestos": "Con impuestos"
   },
   "documentos": {
     "generarPresupuesto": "Generar presupuesto",
