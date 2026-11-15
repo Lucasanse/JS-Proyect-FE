@@ -87,7 +87,9 @@ export interface ServicioArmado {
   codigo: string;
   nombre: string;
   descripcion: string;
-  precio: number;
+  precio: number; // sin IVA
+  precioFinal: number; // con IVA
+  alicuotaIva: number;
 }
 
 // Lo que se compra con el armado: un componente o un periférico (los servicios van aparte)

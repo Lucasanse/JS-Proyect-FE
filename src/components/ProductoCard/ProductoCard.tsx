@@ -89,7 +89,13 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
       </h3>
 
       <div className="mt-auto">
-        <Precio precio={producto.precio} className="text-base font-semibold text-ink sm:text-xl" />
+        <Precio
+          precio={producto.precio}
+          precioFinal={producto.precioFinal}
+          alicuota={producto.alicuotaIva}
+          etiquetaIva
+          className="text-base font-semibold text-ink sm:text-xl"
+        />
       </div>
 
       {/* flex-wrap: si la card es angosta, el botón baja a otra línea en vez de desbordarse */}

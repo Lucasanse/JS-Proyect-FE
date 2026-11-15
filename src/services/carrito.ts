@@ -6,13 +6,17 @@ import type { ServicioArmado } from "./armador";
 
 // Un producto o un servicio del armador (armado de PC, instalación de Windows...).
 // Los servicios van una sola vez y no tienen stock.
+// subtotal: sin IVA; subtotalFinal: con IVA
 export type ItemCarrito =
-  | { tipo: "PRODUCTO"; producto: ProductoResumen; servicio: null; cantidad: number; subtotal: number }
-  | { tipo: "SERVICIO"; producto: null; servicio: ServicioArmado; cantidad: number; subtotal: number };
+  | { tipo: "PRODUCTO"; producto: ProductoResumen; servicio: null; cantidad: number; subtotal: number; subtotalFinal: number }
+  | { tipo: "SERVICIO"; producto: null; servicio: ServicioArmado; cantidad: number; subtotal: number; subtotalFinal: number };
 
+// subtotal (sin IVA) + iva = total (lo que se paga)
 export interface CarritoDetalle {
   items: ItemCarrito[];
   cantidadTotal: number;
+  subtotal: number;
+  iva: number;
   total: number;
 }
 

@@ -17,7 +17,7 @@ interface Props {
 }
 
 const claseOpcion = (activa?: boolean) =>
-  `flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-surface-alt ${activa ? "font-semibold text-primary" : "text-ink"}`;
+  `flex w-full cursor-pointer items-center justify-between gap-3 whitespace-nowrap px-3 py-2 text-left text-sm transition-colors hover:bg-surface-alt ${activa ? "font-semibold text-primary" : "text-ink"}`;
 
 // Texto que al tocarlo abre una lista de opciones (se cierra al elegir, al hacer clic afuera o con Escape)
 export default function MenuDesplegable({ trigger, ariaLabel, opciones, align = "right" }: Props) {

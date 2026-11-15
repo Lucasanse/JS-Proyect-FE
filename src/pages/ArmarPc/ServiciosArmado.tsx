@@ -74,7 +74,12 @@ export default function ServiciosArmado({ elegidos, onCambiar }: Props) {
                     <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z" />
                   </svg>
                   <span className={`min-w-0 flex-1 ${elegido ? "text-ink" : "text-muted"}`}>{servicio.nombre}</span>
-                  <Precio precio={servicio.precio} className="shrink-0 font-semibold text-ink" />
+                  <Precio
+                    precio={servicio.precio}
+                    precioFinal={servicio.precioFinal}
+                    alicuota={servicio.alicuotaIva}
+                    className="shrink-0 font-semibold text-ink"
+                  />
                 </label>
               </li>
             );
