@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { ProductoComparado } from "../../services/comparador.types";
+import { useCotizacion } from "../../services/cotizacion";
+import { aUsd, formatearArs, formatearUsd, useConImpuestos, useMoneda } from "../../services/moneda";
 
 interface TablaComparativaProps {
   productos: ProductoComparado[];
@@ -16,6 +18,10 @@ const FRASES_KEYS = [
 
 export const TablaComparativa = ({ productos }: TablaComparativaProps) => {
   const { t } = useTranslation();
+  // El precio se ve en la moneda elegida y con o sin impuestos, igual que en el resto del sitio
+  const moneda = useMoneda();
+  const conImpuestos = useConImpuestos();
+  const cotizacion = useCotizacion();
 
   const productosNormalizados = useMemo(() => {
     return productos.map((p) => {
@@ -30,16 +36,20 @@ export const TablaComparativa = ({ productos }: TablaComparativaProps) => {
       }
 
       if (p.precio) {
+        const pesos = conImpuestos ? p.precioFinal : p.precio;
+        const monto =
+          moneda === "USD" && cotizacion ? formatearUsd(aUsd(pesos, cotizacion.valor)) : formatearArs(pesos);
+        const alicuota = String(p.alicuotaIva).replace(".", ",");
         atributosCompletos.unshift({
           nombre: t("tablaComparativa.precio", "Precio"),
-          valor: String(p.precio),
-          unidad: "ARS",
+          valor: `${monto} ${conImpuestos ? `(${t("precio.impuestosIncluidos")})` : `(${t("precio.masIva", { alicuota })})`}`,
+          unidad: null,
         });
       }
 
       return { ...p, atributos: atributosCompletos };
     });
-  }, [productos, t]);
+  }, [productos, t, moneda, conImpuestos, cotizacion]);
 
   const atributosUnicos = useMemo(() => {
     const nombres = new Set<string>();

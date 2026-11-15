@@ -22,11 +22,13 @@ function leer(): Moneda {
   }
 }
 
+// Por defecto se ven con impuestos: es el precio final que paga un consumidor final.
+// Solo queda sin impuestos si la persona lo eligió.
 function leerImpuestos(): boolean {
   try {
-    return localStorage.getItem(CLAVE_IMPUESTOS) === "1";
+    return localStorage.getItem(CLAVE_IMPUESTOS) !== "0";
   } catch {
-    return false;
+    return true;
   }
 }
 
