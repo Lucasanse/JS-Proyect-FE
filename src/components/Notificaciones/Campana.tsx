@@ -25,7 +25,7 @@ export const CampanaNotificaciones = ({ idUsuario }: Props) => {
     obtenerNotificacionesUsuario(idUsuario)
       .then(setNotificaciones)
       .catch(console.error);
-  }, [idUsuario]);
+  }, [idUsuario, i18n.resolvedLanguage]);
 
   // Cerrar el menú si el usuario hace clic afuera
   useEffect(() => {

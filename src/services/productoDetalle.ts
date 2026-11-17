@@ -1,5 +1,4 @@
-import i18n from "../i18n";
-
+import i18n from "../locales";
 import { urlProductoDetalle } from "./api";
 
 export async function obtenerProductoPorId(

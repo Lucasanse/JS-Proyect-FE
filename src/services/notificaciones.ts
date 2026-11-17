@@ -1,3 +1,4 @@
+import i18n from "../locales";
 import { urlNotificaciones } from "./api";
 
 // La interfaz que coincide con lo que devuelve nuestro backend
@@ -13,7 +14,8 @@ export interface Notificacion {
 export async function obtenerNotificacionesUsuario(
   idUsuario: number | string,
 ): Promise<Notificacion[]> {
-  const res = await fetch(`${urlNotificaciones}/${idUsuario}`, {
+  const lang = i18n.resolvedLanguage || "es";
+  const res = await fetch(`${urlNotificaciones}/${idUsuario}?lang=${lang}`, {
     credentials: "include",
   });
   if (!res.ok) throw new Error("Error al cargar notificaciones");
