@@ -279,7 +279,13 @@ export function TarjetaProducto({
         )}
 
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-1">
-          <Precio precio={producto.precio} className="font-bold text-ink" />
+          <Precio
+            precio={producto.precio}
+            precioFinal={producto.precioFinal}
+            alicuota={producto.alicuotaIva}
+            etiquetaIva
+            className="font-bold text-ink"
+          />
           {incompatible && onElegir && !sinStock && (
             <button
               type="button"

@@ -1,19 +1,18 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import Precio from "../../components/Precio/Precio";
-import { obtenerServicios } from "../../services/armador";
-import type { ProductoResumen } from "../../services/productos";
+import { obtenerServicios, type ServicioArmado } from "../../services/armador";
 
 interface Props {
-  elegidos: ProductoResumen[];
-  onCambiar: Dispatch<SetStateAction<ProductoResumen[]>>;
+  elegidos: ServicioArmado[];
+  onCambiar: Dispatch<SetStateAction<ServicioArmado[]>>;
 }
 
 // Servicios que se suman al armado: armado de la PC, instalación de Windows, de Office...
-// Son productos de la categoría "Servicios" del BE y van al carrito con el resto.
+// Son servicios del BE (no productos): no tienen stock y van al carrito una sola vez.
 export default function ServiciosArmado({ elegidos, onCambiar }: Props) {
   const { t, i18n } = useTranslation();
-  const [servicios, setServicios] = useState<ProductoResumen[] | null>(null);
+  const [servicios, setServicios] = useState<ServicioArmado[] | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -34,7 +33,7 @@ export default function ServiciosArmado({ elegidos, onCambiar }: Props) {
   if (servicios?.length === 0) return null;
 
   // Se mantiene el orden de la lista, así el carrito queda igual sin importar en qué orden se marcaron
-  const cambiar = (servicio: ProductoResumen, elegido: boolean) =>
+  const cambiar = (servicio: ServicioArmado, elegido: boolean) =>
     onCambiar((actuales) =>
       (servicios ?? []).filter((s) => (s.id === servicio.id ? elegido : actuales.some((a) => a.id === s.id))),
     );
@@ -75,7 +74,12 @@ export default function ServiciosArmado({ elegidos, onCambiar }: Props) {
                     <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z" />
                   </svg>
                   <span className={`min-w-0 flex-1 ${elegido ? "text-ink" : "text-muted"}`}>{servicio.nombre}</span>
-                  <Precio precio={servicio.precio} className="shrink-0 font-semibold text-ink" />
+                  <Precio
+                    precio={servicio.precio}
+                    precioFinal={servicio.precioFinal}
+                    alicuota={servicio.alicuotaIva}
+                    className="shrink-0 font-semibold text-ink"
+                  />
                 </label>
               </li>
             );

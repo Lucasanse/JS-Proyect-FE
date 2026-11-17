@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { SelectorProducto } from "./SelectorProducto";
+import Precio from "../Precio/Precio";
 import type { ProductoComparado } from "../../services/comparador.types";
 
 interface SlotProductoProps {
@@ -87,9 +88,13 @@ export const SlotProducto = ({
                 {producto.nombre}
               </h3>
             </div>
-            <span className="text-lg font-black text-ink mt-2">
-              ${producto.precio.toLocaleString("es-AR")}
-            </span>
+            <Precio
+              precio={producto.precio}
+              precioFinal={producto.precioFinal}
+              alicuota={producto.alicuotaIva}
+              etiquetaIva
+              className="mt-2 text-lg font-black text-ink"
+            />
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center gap-2 h-full text-muted opacity-50">

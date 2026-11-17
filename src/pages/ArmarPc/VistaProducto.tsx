@@ -27,7 +27,13 @@ export default function VistaProducto({ producto, onCerrar }: { producto: Produc
             <span className="text-sm text-muted">{producto.marca}</span>
             {plataforma && <BadgePlataforma plataforma={plataforma} />}
           </div>
-          <Precio precio={producto.precio} className="text-xl font-bold text-primary" />
+          <Precio
+            precio={producto.precio}
+            precioFinal={producto.precioFinal}
+            alicuota={producto.alicuotaIva}
+            etiquetaIva
+            className="text-xl font-bold text-primary"
+          />
         </div>
 
         <p className="mt-3 text-sm leading-relaxed text-ink">{producto.descripcion || t("armarPc.sinDescripcion")}</p>

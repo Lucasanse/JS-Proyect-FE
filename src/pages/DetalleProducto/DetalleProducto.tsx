@@ -231,11 +231,11 @@ export default function Detalles() {
               <div>
                 <Precio
                   precio={producto.precio}
+                  precioFinal={producto.precioFinal}
+                  alicuota={producto.alicuotaIva}
+                  etiquetaIva
                   className="text-3xl sm:text-4xl font-black text-slate-900"
                 />
-                <p className="text-xs text-slate-400 mt-1">
-                  {t("detalle.impuestosIncluidos")}
-                </p>
               </div>
 
               {producto.disponible ? (

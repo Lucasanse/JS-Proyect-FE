@@ -46,7 +46,9 @@ export type DetalleVenta = {
   idDetalleVenta: number;
   cantidad: number;
   precioUnitario: number;
-  producto: ProductoVenta;
+  // Un producto o un servicio del armador (armado de PC, instalación de Windows...)
+  producto: ProductoVenta | null;
+  servicio: { idServicio: number; nombre: string; precio: number } | null;
 };
 
 // Extendemos VentaAdmin para incluir los detalles

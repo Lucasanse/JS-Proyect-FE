@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CATEGORIA_SERVICIOS, obtenerCategorias, type Categoria, type Paginado } from "../../services/productos";
+import { obtenerCategorias, type Categoria, type Paginado } from "../../services/productos";
 import {
   cambiarEstadoProducto,
   listarProductosAdmin,
@@ -79,9 +79,8 @@ export default function AdminProductos() {
 
   useEffect(() => {
     const controller = new AbortController();
-    // Los servicios (armado de PC, instalación de Windows...) se administran en /admin/servicios
     obtenerCategorias(controller.signal)
-      .then((lista) => setCategorias(lista.filter((c) => c.nombre !== CATEGORIA_SERVICIOS)))
+      .then(setCategorias)
       .catch(() => {});
     return () => controller.abort();
   }, []);
