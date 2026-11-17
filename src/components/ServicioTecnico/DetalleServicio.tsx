@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import PrecioEstimado from "./PrecioEstimado";
 import { useTranslation } from "react-i18next";
 import type { SolicitudDetalle } from "../../services/servicioTecnico";
 import EstadoBadge from "./EstadoBadge";
@@ -28,6 +29,8 @@ export default function DetalleServicio({
         {/* Igual que lo ve el cliente: lista numerada, sin íconos ni etiquetas */}
         <Dato etiqueta={t("servicioTecnico.detalle.servicios", { count: s.servicios.length })} ancho>
           <ListaServicios solicitud={s} />
+          {/* Lo que el cliente vio al pedirlo; se cobra en el local */}
+          <PrecioEstimado precios={s.precios} total={s.precioEstimado} className="mt-3" />
         </Dato>
 
         <Dato

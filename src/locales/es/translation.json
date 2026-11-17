@@ -16,7 +16,10 @@
     "carrito": "Carrito",
     "admin": "Admin",
     "idioma": "Idioma",
-    "menuUsuario": "Menú de usuario"
+    "menuUsuario": "Menú de usuario",
+    "misPresupuestos": "Mis presupuestos",
+    "preferencias": "Preferencias",
+    "moneda": "Moneda"
   },
   "detalle": {
     "idInvalido": "El ID del producto no es válido.",
@@ -68,7 +71,9 @@
     "faq": "Preguntas frecuentes",
     "contacto": "Contacto",
     "iniciarSesion": "Iniciar sesión",
-    "misPedidos": "Mis pedidos"
+    "misPedidos": "Mis pedidos",
+    "quienesSomos": "Quiénes somos",
+    "escribirWhatsapp": "Escribinos por WhatsApp"
   },
   "armarPc": {
     "titulo": "Armá tu PC",
@@ -258,8 +263,8 @@
     "titulo": "Servicio técnico",
     "intro": "¿Tu equipo tiene un problema? Contanos qué le pasa y te respondemos por acá. Vas a poder seguir el avance de la reparación en todo momento.",
     "avisoPrecio": {
-      "titulo": "El precio del arreglo te lo comunicamos cuando traigas el equipo al local.",
-      "detalle": "Primero lo revisamos y si te confirmamos, te pasamos el presupuesto. No hacemos ningún trabajo sin que lo confirmes."
+      "titulo": "No se paga online: abonás en el local cuando traés el equipo.",
+      "detalle": "Te mostramos el precio de cada servicio. Primero revisamos el equipo y no hacemos ningún trabajo sin que lo confirmes. Reparación y Otro se presupuestan en el local."
     },
     "errorCarga": "No se pudieron cargar tus solicitudes",
     "errorGenerico": "Ocurrió un error",
@@ -402,6 +407,19 @@
       "por": "por {{nombre}}",
       "porCliente": "por el cliente ({{nombre}})",
       "vacio": "Todavía no hay cambios de estado."
+    },
+    "precio": {
+      "titulo": "Precio estimado",
+      "aPresupuestar": "A presupuestar",
+      "sinCargo": "Sin cargo",
+      "segunProgramas": "Según los programas",
+      "total": "Total a abonar en el local (con IVA)",
+      "totalDesde": "Total (sin lo que se presupuesta)",
+      "nota": "Se abona en el local cuando traés el equipo y confirmamos el servicio.",
+      "notaPresupuesto": "Lo que dice \"a presupuestar\" te lo cotizamos al revisar el equipo. Todo se abona en el local, una vez confirmado el servicio.",
+      "errorCarga": "No pudimos cargar los precios. Igual podés enviar la solicitud: te los informamos en el local.",
+      "subtotalSinIva": "Subtotal (sin IVA)",
+      "iva": "IVA"
     }
   },
   "aviso": {
@@ -438,7 +456,7 @@
     "eliminar": "Eliminar",
     "errorGenerico": "Ocurrió un error",
     "resumen": "Resumen",
-    "subtotal": "Subtotal",
+    "subtotal": "Subtotal (sin IVA)",
     "totalPagar": "Total a pagar en {{moneda}}",
     "ajustarCantidades": "Ajustá las cantidades de los productos sin stock suficiente.",
     "confirmarPedido": "Confirmar pedido",
@@ -447,7 +465,8 @@
     "errorEliminar": "No se pudo eliminar el pedido",
     "total": "Total",
     "avisoDebitoPesos": "Se debita en pesos: vas a pagar {{total}} (cotización: 1 USD = {{cotizacion}}). El valor en dólares es informativo.",
-    "servicio": "Servicio"
+    "servicio": "Servicio",
+    "iva": "IVA"
   },
   "login": {
     "titulo": "Iniciar sesión",
@@ -627,7 +646,15 @@
       "moneda": "Moneda del precio",
       "equivalePesos": "Se cobra en pesos: {{pesos}} hoy. Se actualiza con la cotización.",
       "precioUsdAyuda": "El precio queda en dólares y el valor en pesos se actualiza con la cotización.",
-      "fijarEn": "Fijar precio en"
+      "fijarEn": "Fijar precio en",
+      "iva": "IVA del precio",
+      "sinIva": "Sin IVA",
+      "conIva": "Con IVA",
+      "alicuota": "Alícuota de IVA",
+      "finalEs": "Con IVA: {{final}} (lo que paga el cliente)",
+      "netoEs": "Sin IVA: {{neto}}",
+      "precioCargado": "El precio cargado es",
+      "pagaCliente": "Con IVA (paga el cliente)"
     },
     "ia": {
       "titulo": "Autocompletar con IA",
@@ -844,10 +871,9 @@
     },
     "serv": {
       "titulo": "Servicios",
-      "subtitulo": "Precios y disponibilidad de los servicios.",
+      "subtitulo": "Acá se modifican los servicios generales de JS.",
       "armado": {
         "titulo": "Armado de PC",
-        "descripcion": "Se ofrecen en el resumen de Armá tu PC y se cobran junto con el armado. Si desactivas una deja de ofrecerse",
         "vacio": "Todavía no hay servicios cargados. Corré el seed del backend para crearlos."
       },
       "precioActual": "Precio actual:",
@@ -858,10 +884,42 @@
       "inactivo": "Inactivo",
       "switchAria": "Ofrecer {{nombre}}",
       "toastPrecio": "Guardamos el nuevo precio de {{nombre}}",
-      "toastActivado": "{{nombre}} se vuelve a ofrecer en el armador",
-      "toastDesactivado": "{{nombre}} ya no se ofrece en el armador",
+      "toastActivado": "{{nombre}} se vuelve a ofrecer",
+      "toastDesactivado": "{{nombre}} ya no se ofrece",
       "errorCarga": "No se pudieron cargar los servicios",
-      "errorGuardar": "No se pudo guardar el cambio"
+      "errorGuardar": "No se pudo guardar el cambio",
+      "tecnico": {
+        "titulo": "Servicio técnico"
+      },
+      "extras": {
+        "titulo": "Servicio técnico: extras"
+      },
+      "software": {
+        "titulo": "Servicio técnico: programas"
+      },
+      "vacio": "No hay servicios en este grupo. Corré las migraciones o el seed del backend.",
+      "aPresupuestar": "Se presupuesta en el local (sin precio fijo).",
+      "precioNegativo": "El precio no puede ser negativo",
+      "nuevoPrograma": {
+        "titulo": "Agregar programa",
+        "nombre": "Nombre del programa",
+        "precio": "Precio de instalación",
+        "placeholder": "Ej.: Adobe Reader",
+        "agregar": "Agregar",
+        "agregando": "Agregando...",
+        "errorNombre": "Escribí el nombre del programa",
+        "toast": "Agregamos {{nombre}} a los programas para instalar"
+      },
+      "pagaCliente": "Paga el cliente:",
+      "exento": "exento de IVA",
+      "masIva": "precio cargado + IVA {{alicuota}}%",
+      "ivaIncluidoAl": "IVA {{alicuota}}% incluido",
+      "ivaDelPrecio": "IVA del precio de {{nombre}}",
+      "alicuotaDe": "Alícuota de IVA de {{nombre}}",
+      "opcionMasIva": "+ IVA",
+      "opcionIvaIncluido": "IVA incluido",
+      "opcionExento": "Exento",
+      "toastIva": "Guardamos el IVA de {{nombre}}"
     }
   },
   "captura": {
@@ -888,7 +946,12 @@
       "descripcion": "Tu pago fue procesado con éxito y tu pedido ya está siendo preparado.",
       "comprobante": "Comprobante",
       "orden": "Orden",
-      "botonSeguir": "Seguir comprando"
+      "botonSeguir": "Seguir comprando",
+      "verFactura": "Ver factura",
+      "descargarFactura": "Descargar",
+      "preparandoFactura": "Preparando tu factura...",
+      "facturaMasTarde": "Tu factura va a estar disponible en Mis compras en unos minutos.",
+      "irMisCompras": "Ir a Mis compras"
     },
     "pendiente": {
       "titulo": "Pago pendiente",
@@ -933,7 +996,57 @@
     "desactualizada": "Cotización desactualizada, última actualización: {{fecha}}",
     "seCobraEnPesos": "Valor informativo, no forma parte del método de pago. Se cobra en pesos.",
     "cotizacionDelDia": "cotización del {{fecha}}",
-    "moneda": "Moneda"
+    "moneda": "Moneda",
+    "impuestosIncluidos": "Impuestos incluidos",
+    "masIva": "+ IVA {{alicuota}}%",
+    "masImpuestos": "+ impuestos",
+    "masImp": "+ imp.",
+    "impuestos": "Impuestos",
+    "sinImpuestos": "Sin impuestos",
+    "conImpuestos": "Con impuestos"
+  },
+  "documentos": {
+    "generarPresupuesto": "Generar presupuesto",
+    "generando": "Generando presupuesto...",
+    "presupuestoListo": "Presupuesto N° {{numero}} generado. También lo encontrás en Mis presupuestos.",
+    "errorGenerar": "No se pudo generar el presupuesto.",
+    "descargarFactura": "Descargar factura",
+    "descargando": "Descargando...",
+    "errorDescargar": "No se pudo descargar el archivo.",
+    "misPresupuestos": "Mis presupuestos",
+    "sinPresupuestos": "Todavía no generaste presupuestos. Podés hacerlo desde el carrito o desde Armá tu PC.",
+    "errorPresupuestos": "No se pudieron cargar tus presupuestos.",
+    "presupuestoNumero": "Presupuesto N° {{numero}}",
+    "productos": "{{count}} productos",
+    "productos_one": "{{count}} producto",
+    "productos_other": "{{count}} productos",
+    "descargar": "Descargar PDF",
+    "origen": {
+      "CARRITO": "Desde el carrito",
+      "PRESET": "Armado guardado",
+      "ARMADO": "Armá tu PC",
+      "VENTA": "Compra"
+    },
+    "verDocumento": "Ver en Mis compras",
+    "descargarDocumento": "Descargar PDF"
+  },
+  "quienesSomos": {
+    "titulo": "Quiénes somos",
+    "intro": "Somos un local de computación en Allen. Vendemos insumos para impresoras, accesorios y periféricos, notebooks y PCs, y tenemos servicio técnico propio.",
+    "queHacemos": "Qué hacemos",
+    "rubros": {
+      "insumos": "Insumos para impresoras",
+      "accesorios": "Accesorios y periféricos para computadoras",
+      "notebooks": "Notebooks y PCs",
+      "servicioTecnico": "Servicio técnico"
+    },
+    "horarios": "Horarios",
+    "dias": "Lunes a viernes",
+    "contacto": "Contacto",
+    "direccion": "Dirección",
+    "escribirWhatsapp": "Escribinos por WhatsApp",
+    "dondeEstamos": "Dónde estamos",
+    "mapa": "Mapa de J.S. Computación"
   },
   "comparador": {
     "titulo": "Comparador de Productos",

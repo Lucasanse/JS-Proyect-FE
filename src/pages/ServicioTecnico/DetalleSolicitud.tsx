@@ -15,6 +15,7 @@ import { tituloSolicitud } from "../../components/ServicioTecnico/textosSolicitu
 import { formatoFecha } from "../../components/ServicioTecnico/formatoFecha";
 import ListaServicios from "../../components/ServicioTecnico/ListaServicios";
 import AvisoPrecio from "../../components/ServicioTecnico/AvisoPrecio";
+import PrecioEstimado from "../../components/ServicioTecnico/PrecioEstimado";
 import HistorialEstados from "../../components/ServicioTecnico/HistorialEstados";
 
 // /servicio-tecnico/:id: lo que ve el cliente de una solicitud, todo como texto y listas
@@ -126,6 +127,8 @@ function Detalle({ solicitud: s }: { solicitud: SolicitudDetalle }) {
         }
       >
         <ListaServicios solicitud={s} />
+        {/* Precio al momento de pedirlo: se abona en el local, no online */}
+        {s.estado !== "RECHAZADA" && <PrecioEstimado precios={s.precios} total={s.precioEstimado} className="mt-4" />}
       </Seccion>
 
       {s.descripcion && (
