@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import type { Categoria } from "../../services/productos";
 import { obtenerCategorias } from "../../services/productos";
+import i18n from "../../locales";
 
 interface SelectorCategoriaProps {
   valorSeleccionado: string | number;
@@ -55,7 +56,7 @@ export const SelectorCategoria = ({
     return () => {
       montado = false;
     };
-  }, []);
+  }, [i18n.resolvedLanguage]);
 
   return (
     // 1. Agregamos min-w-0 acá para evitar que desborde el Grid en celulares

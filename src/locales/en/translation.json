@@ -50,7 +50,8 @@
     "especificacionesTitulo": "Technical Specifications",
     "atributosPara": "Compatibility and performance attributes for",
     "consumoRequerido": "Required power: {{watts}} W",
-    "sinAtributos": "No additional technical attributes registered for this component."
+    "sinAtributos": "No additional technical attributes registered for this component.",
+    "comparar": "Compare"
   },
   "footer": {
     "descripcion": "Hardware, components and tech support.",
