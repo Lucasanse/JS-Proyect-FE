@@ -55,6 +55,7 @@
     "atributosPara": "Compatibility and performance attributes for",
     "consumoRequerido": "Required power: {{watts}} W",
     "sinAtributos": "No additional technical attributes registered for this component.",
+    "comparar": "Compare",
     "necesitaGpuTitulo": "Needs a graphics card",
     "necesitaGpu": "This processor has no integrated graphics: the computer needs a graphics card to display anything. If you don't have one, choose it in the PC builder.",
     "armarPc": "Build your PC"

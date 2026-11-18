@@ -69,7 +69,8 @@ export async function obtenerPaginaProductos(
 export async function obtenerCategorias(
   signal?: AbortSignal,
 ): Promise<Categoria[]> {
-  const res = await fetch(urlCategorias, { signal });
+  const lang = i18n.resolvedLanguage || "es";
+  const res = await fetch(`${urlCategorias}?lang=${lang}`, { signal });
   if (!res.ok) throw new Error(`Error ${res.status} al cargar las categorías`);
   return res.json();
 }
