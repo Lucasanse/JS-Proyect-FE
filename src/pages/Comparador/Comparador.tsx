@@ -6,6 +6,7 @@ import { SlotProducto } from "../../components/Comparador/SlotProducto";
 import { TablaComparativa } from "../../components/Comparador/TablaComparativa";
 import type { ProductoComparado } from "../../services/comparador.types";
 import { obtenerProductoPorId } from "../../services/productoDetalle";
+import i18n from "../../locales";
 
 export const ComparadorPage = () => {
   const { t } = useTranslation();
