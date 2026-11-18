@@ -7,6 +7,8 @@ export interface ProductoResumen {
   id: number;
   nombre: string;
   descripcion: string;
+  precioFinal: number; // con IVA (precio es sin IVA)
+  alicuotaIva: number; // 21 o 10.5
   marca: string;
   precio: number;
   stock: number;

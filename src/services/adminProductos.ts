@@ -11,6 +11,8 @@ export interface ProductoAdmin {
   precio: number; // en pesos
   monedaBase: "USD" | "ARS"; // moneda en la que queda fijo el precio
   precioUsd: number | null; // valor fijo en dólares (solo con monedaBase USD)
+  ivaIncluido: boolean; // si precio y precioUsd incluyen el IVA
+  alicuotaIva: number; // 21 o 10.5
   stock: number;
   imagenUrl: string | null;
   activo: boolean;
@@ -57,6 +59,8 @@ export interface ProductoInput {
   idCategoria: number;
   precio: number; // en la moneda elegida
   moneda: "ARS" | "USD";
+  ivaIncluido: boolean; // si el precio cargado ya incluye el IVA
+  alicuotaIva: number; // 21 o 10.5
   stock: number;
   imagenUrl: string | null;
   traduccionEn: { nombre: string; descripcion: string } | null;
