@@ -65,6 +65,8 @@ interface Campos {
   idMarca: string;
   precio: string; // en la moneda elegida
   moneda: "ARS" | "USD";
+  ivaIncluido: boolean; // el precio cargado ya incluye el IVA
+  alicuotaIva: "21" | "10.5";
   stock: string;
   descripcion: string;
   imagenUrl: string;
@@ -107,6 +109,8 @@ const camposIniciales = (p: ProductoAdmin | null): Campos => ({
   // El precio queda fijo en la moneda elegida; en un producto nuevo viene en dólares
   moneda: p ? p.monedaBase : "USD",
   precio: p ? String(p.precioUsd ?? p.precio) : "",
+  ivaIncluido: p ? p.ivaIncluido : false,
+  alicuotaIva: p && p.alicuotaIva === 10.5 ? "10.5" : "21",
   stock: p ? String(p.stock) : "",
   descripcion: p?.descripcion ?? "",
   imagenUrl: p?.imagenUrl ?? "",
@@ -172,6 +176,8 @@ function aInput(c: Campos, valores: Valores, tipo: TipoComponente | undefined): 
     idMarca: Number(c.idMarca),
     precio: Number(c.precio),
     moneda: c.moneda,
+    ivaIncluido: c.ivaIncluido,
+    alicuotaIva: Number(c.alicuotaIva),
     stock: Number(c.stock),
     descripcion: c.descripcion.trim(),
     imagenUrl: c.imagenUrl.trim() || null,
@@ -483,7 +489,7 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
   };
 
   // Props comunes de cada input: valor, cambio y accesibilidad del error
-  const propsDe = (campo: keyof Campos): PropsInput => ({
+  const propsDe = (campo: Exclude<keyof Campos, "ivaIncluido">): PropsInput => ({
     id: `campo-${campo}`,
     name: campo,
     value: campos[campo],
@@ -667,42 +673,94 @@ export default function ProductoFormModal({ producto, categorias, onCerrar, onGu
                   />
                 </Campo>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <Campo id="campo-precio" label={t("admin.form.precio")} error={errores.precio} requerido>
-                  <div className="flex gap-2">
-                    <div className="relative min-w-0 flex-1">
-                      <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">
-                        {moneda === "USD" ? "US$" : "$"}
-                      </span>
-                      <InputPrecio
-                        {...propsDe("precio")}
-                        onValor={(v) => cambiar("precio", v)}
-                        className={`${propsDe("precio").className} ${moneda === "USD" ? "pl-11" : "pl-7"}`}
-                      />
-                    </div>
-                    <div className="inline-flex shrink-0 self-start rounded-lg border border-line bg-surface-alt p-1 text-xs font-semibold" role="group" aria-label={t("admin.form.fijarEn")}>
-                      {(["ARS", "USD"] as const).map((m) => (
-                        <button
-                          key={m}
-                          type="button"
-                          aria-pressed={moneda === m}
-                          onClick={() => cambiar("moneda", m)}
-                          disabled={m === "USD" && !cotizacion}
-                          className={`cursor-pointer rounded-md px-2.5 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${moneda === m ? "bg-primary text-surface" : "text-muted hover:text-ink"}`}
-                        >
-                          {m}
-                        </button>
-                      ))}
-                    </div>
+              {/* Precio: monto y moneda; si lo cargado incluye IVA y con qué alícuota; y cuánto queda sin y con IVA */}
+              <Campo id="campo-precio" label={t("admin.form.precio")} error={errores.precio} requerido>
+                <div className="flex gap-2">
+                  <div className="relative min-w-0 flex-1">
+                    <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">
+                      {moneda === "USD" ? "US$" : "$"}
+                    </span>
+                    <InputPrecio
+                      {...propsDe("precio")}
+                      onValor={(v) => cambiar("precio", v)}
+                      className={`${propsDe("precio").className} ${moneda === "USD" ? "pl-11" : "pl-7"}`}
+                    />
                   </div>
-                  {moneda === "USD" && cotizacion && (
-                    <p className="mt-1 text-xs text-muted">
-                      {Number(campos.precio) > 0
-                        ? t("admin.form.equivalePesos", { pesos: formatearArs(Math.round(Number(campos.precio) * cotizacion.valor * 100) / 100) })
-                        : t("admin.form.precioUsdAyuda")}
-                    </p>
-                  )}
-                </Campo>
+                  <Segmentado
+                    etiqueta={t("admin.form.fijarEn")}
+                    opciones={[
+                      { valor: "ARS" as const, texto: "ARS" },
+                      { valor: "USD" as const, texto: "USD", deshabilitado: !cotizacion },
+                    ]}
+                    valor={moneda}
+                    onCambiar={(m) => cambiar("moneda", m)}
+                    className="w-28 shrink-0"
+                  />
+                </div>
+
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <p className="mb-1 text-xs font-semibold text-muted">{t("admin.form.precioCargado")}</p>
+                    <Segmentado
+                      etiqueta={t("admin.form.precioCargado")}
+                      opciones={[
+                        { valor: false, texto: t("admin.form.sinIva") },
+                        { valor: true, texto: t("admin.form.conIva") },
+                      ]}
+                      valor={campos.ivaIncluido}
+                      onCambiar={(v) => cambiar("ivaIncluido", v)}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-xs font-semibold text-muted">{t("admin.form.alicuota")}</p>
+                    <Segmentado
+                      etiqueta={t("admin.form.alicuota")}
+                      opciones={[
+                        { valor: "21" as const, texto: "21%" },
+                        { valor: "10.5" as const, texto: "10,5%" },
+                      ]}
+                      valor={campos.alicuotaIva}
+                      onCambiar={(v) => cambiar("alicuotaIva", v)}
+                    />
+                  </div>
+                </div>
+
+                {/* Lo que queda sin IVA y lo que paga el cliente (siempre con IVA) */}
+                {Number(campos.precio) > 0 ? (
+                  (() => {
+                    const base = Number(campos.precio);
+                    const factor = 1 + Number(campos.alicuotaIva) / 100;
+                    const r = (n: number) => Math.round(n * 100) / 100;
+                    const neto = r(campos.ivaIncluido ? base / factor : base);
+                    const final = r(campos.ivaIncluido ? base : base * factor);
+                    const fmt = (n: number) =>
+                      moneda === "USD" ? `US$ ${n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : formatearArs(n);
+                    return (
+                      <div className="mt-3 rounded-lg border border-line bg-surface-alt px-3 py-2.5">
+                        <dl className="grid grid-cols-2 gap-3">
+                          <div className="min-w-0">
+                            <dt className="text-xs text-muted">{t("admin.form.sinIva")}</dt>
+                            <dd className="truncate font-semibold text-ink">{fmt(neto)}</dd>
+                          </div>
+                          <div className="min-w-0">
+                            <dt className="text-xs text-muted">{t("admin.form.pagaCliente")}</dt>
+                            <dd className="truncate font-bold text-primary">{fmt(final)}</dd>
+                          </div>
+                        </dl>
+                        {moneda === "USD" && cotizacion && (
+                          <p className="mt-2 border-t border-line pt-2 text-xs text-muted">
+                            {t("admin.form.equivalePesos", { pesos: formatearArs(r(final * cotizacion.valor)) })}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })()
+                ) : (
+                  moneda === "USD" && cotizacion && <p className="mt-2 text-xs text-muted">{t("admin.form.precioUsdAyuda")}</p>
+                )}
+              </Campo>
+
+              <div className="grid gap-4 sm:grid-cols-2">
                 <Campo id="campo-stock" label={t("admin.form.stock")} error={errores.stock} requerido>
                   <input {...propsDe("stock")} type="number" inputMode="numeric" min="0" step="1" placeholder="0" />
                 </Campo>
@@ -907,6 +965,40 @@ function SelectorImagen({
           {error}
         </p>
       )}
+    </div>
+  );
+}
+
+// Grupo de botones donde se elige una opción (moneda, IVA incluido, alícuota). Ocupa el ancho disponible.
+function Segmentado<T extends string | boolean>({
+  etiqueta,
+  opciones,
+  valor,
+  onCambiar,
+  className = "",
+}: {
+  etiqueta: string;
+  opciones: { valor: T; texto: string; deshabilitado?: boolean }[];
+  valor: T;
+  onCambiar: (v: T) => void;
+  className?: string;
+}) {
+  return (
+    <div role="group" aria-label={etiqueta} className={`flex h-10 rounded-lg border border-line bg-surface-alt p-1 text-sm font-semibold ${className}`}>
+      {opciones.map((o) => (
+        <button
+          key={String(o.valor)}
+          type="button"
+          aria-pressed={valor === o.valor}
+          disabled={o.deshabilitado}
+          onClick={() => onCambiar(o.valor)}
+          className={`flex-1 cursor-pointer rounded-md px-2 transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+            valor === o.valor ? "bg-primary text-surface shadow-sm" : "text-muted hover:text-ink"
+          }`}
+        >
+          {o.texto}
+        </button>
+      ))}
     </div>
   );
 }

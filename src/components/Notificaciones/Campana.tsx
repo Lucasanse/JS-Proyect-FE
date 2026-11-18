@@ -6,6 +6,7 @@ import {
   marcarNotificacionLeida,
 } from "../../services/notificaciones";
 import { formatearFechaNotificacion } from "./formateadorFechas";
+import { descargarFactura, descargarPresupuesto } from "../../services/documentos";
 import { useTranslation } from "react-i18next";
 
 interface Props {
@@ -39,6 +40,24 @@ export const CampanaNotificaciones = ({ idUsuario }: Props) => {
   }, []);
 
   const noLeidas = notificaciones.filter((n) => !n.leida).length;
+  const [descargando, setDescargando] = useState<number | null>(null);
+
+  // Presupuesto o factura disponible: descarga el PDF y marca la notificación como leída
+  const descargarDocumento = async (notif: Notificacion) => {
+    const doc = notif.documento;
+    if (!doc) return;
+    setDescargando(notif.id);
+    try {
+      if (doc.tipo === "FACTURA" && doc.idVenta) await descargarFactura(doc.idVenta);
+      else await descargarPresupuesto(doc);
+      if (!notif.leida) handleMarcarLeida(notif.id);
+    } catch (error) {
+      console.error("No se pudo descargar el documento", error);
+      window.alert(error instanceof Error ? error.message : t("documentos.errorDescargar"));
+    } finally {
+      setDescargando(null);
+    }
+  };
 
   const handleMarcarLeida = async (idNotificacion: number) => {
     // 1. Actualización optimista en el frontend
@@ -90,7 +109,7 @@ export const CampanaNotificaciones = ({ idUsuario }: Props) => {
 
       {/* Menú Desplegable */}
       {abierto && (
-        <div className="absolute right-0 mt-2 w-80 bg-surface border border-line rounded-xl shadow-lg overflow-hidden z-50">
+        <div className="fixed inset-x-2 top-16 sm:absolute sm:inset-x-auto sm:top-auto sm:right-0 mt-2 sm:w-80 bg-surface border border-line rounded-xl shadow-lg overflow-hidden z-50">
           <div className="p-3 border-b border-line bg-surface-alt">
             <h3 className="font-bold text-ink text-sm">Notificaciones</h3>
           </div>
@@ -127,6 +146,18 @@ export const CampanaNotificaciones = ({ idUsuario }: Props) => {
                           >
                             Ver detalle
                           </Link>
+                        )}
+                        {notif.documento && (
+                          <button
+                            type="button"
+                            onClick={() => descargarDocumento(notif)}
+                            disabled={descargando === notif.id}
+                            className="text-[11px] text-accent hover:underline font-medium disabled:opacity-50"
+                          >
+                            {descargando === notif.id
+                              ? t("documentos.descargando")
+                              : t("documentos.descargarDocumento")}
+                          </button>
                         )}
                         {!notif.leida && (
                           <button

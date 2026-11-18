@@ -50,7 +50,9 @@ export default function SearchBar({ filtros, onChange }: Props) {
   // Opciones de los selects. Si fallan, solo queda la opción "Todas".
   useEffect(() => {
     const controller = new AbortController();
-    obtenerCategorias(controller.signal).then(setCategorias).catch(() => {});
+    obtenerCategorias(controller.signal)
+      .then(setCategorias)
+      .catch(() => {});
     return () => controller.abort();
   }, []);
 

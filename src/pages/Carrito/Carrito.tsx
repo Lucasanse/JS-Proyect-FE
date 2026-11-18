@@ -8,6 +8,7 @@ import Precio from "../../components/Precio/Precio";
 import { useCotizacion } from "../../services/cotizacion";
 import { formatearArs, formatearUsd, useMoneda } from "../../services/moneda";
 import { ContenedorCompraCarrito } from "../../components/Comprar/ComprarUnidad";
+import BotonPresupuesto from "../../components/Documentos/BotonPresupuesto";
 
 // Los precios se ven en la moneda elegida en el navbar, pero el cobro es siempre en pesos
 const MONEDA = "ARS";
@@ -62,9 +63,13 @@ export default function Carrito() {
     <Contenedor>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <ul className="flex-1 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
-          {carrito.items.map((item) => (
-            <FilaCarrito key={item.producto.id} item={item} />
-          ))}
+          {carrito.items.map((item) =>
+            item.tipo === "SERVICIO" ? (
+              <FilaServicio key={`s${item.servicio.id}`} item={item} />
+            ) : (
+              <FilaCarrito key={item.producto.id} item={item} />
+            ),
+          )}
         </ul>
 
         <Resumen />
@@ -95,7 +100,58 @@ function Aviso({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FilaCarrito({ item }: { item: ItemCarrito }) {
+// Servicio del armador (armado de PC, instalación de Windows...): va una sola vez y no tiene stock,
+// así que solo se puede quitar
+function FilaServicio({ item }: { item: Extract<ItemCarrito, { tipo: "SERVICIO" }> }) {
+  const { t } = useTranslation();
+  const { quitarServicio } = useCarrito();
+  const { servicio, subtotal } = item;
+  const [ocupado, setOcupado] = useState(false);
+  const [error, setError] = useState("");
+
+  const quitar = async () => {
+    setError("");
+    setOcupado(true);
+    try {
+      await quitarServicio(servicio.id);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t("carrito.errorGenerico"));
+      setOcupado(false);
+    }
+  };
+
+  return (
+    <li className="flex flex-col gap-2 p-4">
+      <div className="flex items-center gap-4">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-surface">
+          <HerramientaIcon />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <p className="line-clamp-2 text-[15px] font-medium text-ink">{servicio.nombre}</p>
+          <p className="text-sm text-muted">{t("carrito.servicio")}</p>
+        </div>
+        <button
+          type="button"
+          onClick={quitar}
+          disabled={ocupado}
+          className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-ink hover:text-primary disabled:opacity-40"
+        >
+          <TrashIcon />
+          {t("carrito.eliminar")}
+        </button>
+        <div className="hidden w-36 flex-col items-end sm:flex">
+          <Precio precio={subtotal} precioFinal={item.subtotalFinal} className="text-lg font-bold text-ink" />
+        </div>
+      </div>
+      <div className="text-right sm:hidden">
+        <Precio precio={subtotal} precioFinal={item.subtotalFinal} className="text-sm font-bold text-ink" />
+      </div>
+      {error && <p className="text-xs text-primary">{error}</p>}
+    </li>
+  );
+}
+
+function FilaCarrito({ item }: { item: Extract<ItemCarrito, { tipo: "PRODUCTO" }> }) {
   const { t } = useTranslation();
   const { cambiarCantidad, quitar } = useCarrito();
   const { producto, cantidad, subtotal } = item;
@@ -209,14 +265,25 @@ function FilaCarrito({ item }: { item: ItemCarrito }) {
         </div>
 
         <div className="hidden w-36 flex-col items-end sm:flex">
-          <Precio precio={producto.precio} className="text-sm text-muted" />
-          <Precio precio={subtotal} className="text-lg font-bold text-ink" />
+          <Precio
+            precio={producto.precio}
+            precioFinal={producto.precioFinal}
+            alicuota={producto.alicuotaIva}
+            className="text-sm text-muted"
+          />
+          <Precio
+            precio={subtotal}
+            precioFinal={item.subtotalFinal}
+            alicuota={producto.alicuotaIva}
+            etiquetaIva
+            className="text-right text-lg font-bold text-ink"
+          />
         </div>
       </div>
 
       {/* En mobile el precio va debajo */}
       <div className="text-right sm:hidden">
-        <Precio precio={subtotal} className="text-sm font-bold text-ink" />
+        <Precio precio={subtotal} precioFinal={item.subtotalFinal} alicuota={producto.alicuotaIva} etiquetaIva className="text-sm font-bold text-ink" />
       </div>
       {error && <p className="text-xs text-primary">{error}</p>}
     </li>
@@ -235,7 +302,7 @@ function Resumen() {
 
   // No se puede confirmar si algún producto quedó sin stock suficiente
   const hayProblemasDeStock = carrito.items.some(
-    (i) => i.cantidad > i.producto.stock,
+    (i) => i.producto !== null && i.cantidad > i.producto.stock,
   );
 
   const eliminarPedido = async () => {
@@ -253,10 +320,17 @@ function Resumen() {
       <h2 className="text-xl font-bold text-ink">{t("carrito.resumen")}</h2>
 
       <dl className="divide-y divide-line text-[15px]">
+        {/* Subtotal sin IVA + IVA = total a pagar (siempre con IVA, se vea como se vea el catálogo) */}
         <div className="flex justify-between py-3">
           <dt className="text-ink">{t("carrito.subtotal")}</dt>
           <dd className="font-semibold text-ink">
-            <Precio precio={carrito.total} />
+            <Precio precio={carrito.subtotal} />
+          </dd>
+        </div>
+        <div className="flex justify-between py-3">
+          <dt className="text-ink">{t("carrito.iva")}</dt>
+          <dd className="font-semibold text-ink">
+            <Precio precio={carrito.iva} />
           </dd>
         </div>
         <div className="flex justify-between py-3">
@@ -289,6 +363,9 @@ function Resumen() {
           disabled={hayProblemasDeStock}
         ></ContenedorCompraCarrito>
 
+        {/* Presupuesto en PDF con lo que hay en el carrito, sin comprar */}
+        <BotonPresupuesto origen={() => ({ origen: "carrito" })} />
+
         <button
           type="button"
           onClick={eliminarPedido}
@@ -314,6 +391,24 @@ function CheckIcon() {
       strokeLinejoin="round"
     >
       <path d="M5 12l5 5L20 7" />
+    </svg>
+  );
+}
+
+// Imagen de los servicios, que no tienen foto
+function HerramientaIcon() {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      className="h-9 w-9 text-muted"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4 2.5-2.5z" />
     </svg>
   );
 }
