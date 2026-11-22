@@ -12,10 +12,35 @@ import {
 } from "../../services/notificaciones";
 import { descargarFactura, descargarPresupuesto } from "../../services/documentos";
 import { formatearFechaNotificacion } from "../../components/Notificaciones/formateadorFechas";
+import IconoNotificacion from "../../components/Notificaciones/IconoNotificacion";
 
 type Filtro = "todas" | "noLeidas";
 
 const POR_PAGINA = 20;
+
+type Grupo = "hoy" | "ayer" | "semana" | "anteriores";
+
+// Agrupa (ya ordenadas de más nueva a más vieja) en Hoy, Ayer, Esta semana y Anteriores
+function agruparPorFecha(items: Notificacion[]) {
+  const inicioHoy = new Date();
+  inicioHoy.setHours(0, 0, 0, 0);
+  const DIA = 24 * 60 * 60 * 1000;
+  const grupoDe = (fecha: string): Grupo => {
+    const t = new Date(fecha).getTime();
+    if (t >= inicioHoy.getTime()) return "hoy";
+    if (t >= inicioHoy.getTime() - DIA) return "ayer";
+    if (t >= inicioHoy.getTime() - 6 * DIA) return "semana";
+    return "anteriores";
+  };
+  const grupos: { grupo: Grupo; items: Notificacion[] }[] = [];
+  for (const notif of items) {
+    const grupo = grupoDe(notif.fecha);
+    const ultimo = grupos[grupos.length - 1];
+    if (ultimo?.grupo === grupo) ultimo.items.push(notif);
+    else grupos.push({ grupo, items: [notif] });
+  }
+  return grupos;
+}
 
 // Historial completo de notificaciones del usuario (se llega con "Ver todas" desde la campana).
 // Las nuevas aparecen arriba sin recargar mientras se está en la primera página.
@@ -231,68 +256,69 @@ export default function Notificaciones() {
           {filtro === "noLeidas" ? t("notificaciones.vacioNoLeidas") : t("notificaciones.vacio")}
         </p>
       ) : (
-        <ul
-          className={`divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface shadow-sm transition-opacity ${
-            cargando ? "opacity-60" : ""
-          }`}
-          aria-busy={cargando}
-        >
-          {actual.items.map((notif) => (
-            <li key={notif.id} className={`flex gap-3 p-4 ${notif.leida ? "" : "bg-primary/5"}`}>
-              <span
-                className={`mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${notif.leida ? "bg-transparent" : "bg-primary"}`}
-                aria-hidden="true"
-              />
-              <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <span className={`${notif.leida ? "font-medium text-muted" : "font-bold text-ink"}`}>
-                    <span className="sr-only">{notif.leida ? "" : `${t("notificaciones.sinLeer")}: `}</span>
-                    {notif.titulo}
-                  </span>
-                  <time
-                    dateTime={notif.fecha}
-                    title={new Date(notif.fecha).toLocaleString(idioma)}
-                    className="text-xs text-muted"
-                  >
-                    {formatearFechaNotificacion(notif.fecha, idioma)}
-                  </time>
-                </div>
-                <p className={`text-sm ${notif.leida ? "text-muted" : "text-ink"}`}>{notif.mensaje}</p>
+        <div className={`flex flex-col gap-6 transition-opacity ${cargando ? "opacity-60" : ""}`} aria-busy={cargando}>
+          {agruparPorFecha(actual.items).map(({ grupo, items }) => (
+            <section key={grupo}>
+              <h2 className="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">
+                {t(`notificaciones.grupos.${grupo}`)}
+              </h2>
+              <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
+              {items.map((notif) => (
+                <li key={notif.id} className={`flex gap-3 p-4 ${notif.leida ? "" : "bg-primary/5"}`}>
+                  <IconoNotificacion notif={notif} tamano="lg" />
+                  <div className="flex min-w-0 flex-1 flex-col gap-1">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+                      <span className={`${notif.leida ? "font-medium text-muted" : "font-bold text-ink"}`}>
+                        <span className="sr-only">{notif.leida ? "" : `${t("notificaciones.sinLeer")}: `}</span>
+                        {notif.titulo}
+                      </span>
+                      <time
+                        dateTime={notif.fecha}
+                        title={new Date(notif.fecha).toLocaleString(idioma)}
+                        className="text-xs text-muted"
+                      >
+                        {formatearFechaNotificacion(notif.fecha, idioma)}
+                      </time>
+                    </div>
+                    <p className={`text-sm ${notif.leida ? "text-muted" : "text-ink"}`}>{notif.mensaje}</p>
 
-                <div className="mt-1 flex flex-wrap gap-4 text-sm">
-                  {notif.referencia && (
-                    <button
-                      type="button"
-                      onClick={() => abrir(notif)}
-                      className="font-medium text-primary hover:underline"
-                    >
-                      {t(`notificaciones.ver.${notif.referencia.tipo}`)}
-                    </button>
-                  )}
-                  {notif.documento && (
-                    <button
-                      type="button"
-                      onClick={() => descargarDocumento(notif)}
-                      disabled={descargando === notif.id}
-                      className="font-medium text-accent hover:underline disabled:opacity-50"
-                    >
-                      {descargando === notif.id ? t("documentos.descargando") : t("documentos.descargarDocumento")}
-                    </button>
-                  )}
-                  {!notif.leida && (
-                    <button
-                      type="button"
-                      onClick={() => marcarLeida(notif)}
-                      className="font-medium text-muted hover:text-primary hover:underline"
-                    >
-                      {t("notificaciones.marcarLeida")}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </li>
+                    <div className="mt-1 flex flex-wrap gap-4 text-sm">
+                      {notif.referencia && (
+                        <button
+                          type="button"
+                          onClick={() => abrir(notif)}
+                          className="font-medium text-primary hover:underline"
+                        >
+                          {t(`notificaciones.ver.${notif.referencia.tipo}`)}
+                        </button>
+                      )}
+                      {notif.documento && (
+                        <button
+                          type="button"
+                          onClick={() => descargarDocumento(notif)}
+                          disabled={descargando === notif.id}
+                          className="font-medium text-accent hover:underline disabled:opacity-50"
+                        >
+                          {descargando === notif.id ? t("documentos.descargando") : t("documentos.descargarDocumento")}
+                        </button>
+                      )}
+                      {!notif.leida && (
+                        <button
+                          type="button"
+                          onClick={() => marcarLeida(notif)}
+                          className="font-medium text-muted hover:text-primary hover:underline"
+                        >
+                          {t("notificaciones.marcarLeida")}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ))}
+              </ul>
+            </section>
           ))}
-        </ul>
+        </div>
       )}
 
       {actual && actual.totalPages > 1 && (

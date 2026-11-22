@@ -1130,6 +1130,12 @@
       "SOLICITUD": "View request",
       "DOCUMENTO": "View document",
       "PRESET": "View my builds"
+    },
+    "grupos": {
+      "hoy": "Today",
+      "ayer": "Yesterday",
+      "semana": "This week",
+      "anteriores": "Earlier"
     }
   }
 }
