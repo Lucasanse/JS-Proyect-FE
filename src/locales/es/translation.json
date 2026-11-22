@@ -1134,6 +1134,12 @@
       "SOLICITUD": "Ver solicitud",
       "DOCUMENTO": "Ver documento",
       "PRESET": "Ver mis armados"
+    },
+    "grupos": {
+      "hoy": "Hoy",
+      "ayer": "Ayer",
+      "semana": "Esta semana",
+      "anteriores": "Anteriores"
     }
   }
 }

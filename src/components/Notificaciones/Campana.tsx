@@ -10,6 +10,8 @@ import {
 } from "../../services/notificaciones";
 import { formatearFechaNotificacion } from "./formateadorFechas";
 import { descargarFactura, descargarPresupuesto } from "../../services/documentos";
+import { useToast } from "../Toast/toastContext";
+import IconoNotificacion from "./IconoNotificacion";
 
 interface Props {
   idUsuario: string | undefined;
@@ -23,6 +25,7 @@ const POR_PAGINA = 10;
 // El contador y las notificaciones nuevas llegan en tiempo real (SSE), sin recargar.
 export const CampanaNotificaciones = ({ idUsuario }: Props) => {
   const { t, i18n } = useTranslation();
+  const { mostrarToast } = useToast();
   const navigate = useNavigate();
   const idioma = i18n.resolvedLanguage ?? "es";
 
@@ -86,10 +89,23 @@ export const CampanaNotificaciones = ({ idUsuario }: Props) => {
     if (!idUsuario) return;
     return conectarNotificaciones({
       onContador: setNoLeidas,
-      onNotificacion: (nueva) =>
-        setNotificaciones((prev) => (prev.some((n) => n.id === nueva.id) ? prev : [nueva, ...prev])),
+      onNotificacion: (nueva) => {
+        setNotificaciones((prev) => (prev.some((n) => n.id === nueva.id) ? prev : [nueva, ...prev]));
+        // Aviso visible además del contador
+        mostrarToast(`${nueva.titulo}: ${nueva.mensaje}`, "info");
+      },
     });
-  }, [idUsuario, idioma]);
+  }, [idUsuario, idioma, mostrarToast]);
+
+  // Contador en el título de la pestaña: "(3) JS Computación"
+  useEffect(() => {
+    const sinContador = (titulo: string) => titulo.replace(/^\(\d+\+?\) /, "");
+    const base = sinContador(document.title);
+    document.title = idUsuario && noLeidas > 0 ? `(${noLeidas > 99 ? "99+" : noLeidas}) ${base}` : base;
+    return () => {
+      document.title = sinContador(document.title);
+    };
+  }, [noLeidas, idUsuario]);
 
   // Cerrar el panel con click afuera o Escape
   useEffect(() => {
@@ -275,11 +291,7 @@ export const CampanaNotificaciones = ({ idUsuario }: Props) => {
                       notif.leida ? "" : "bg-primary/5"
                     }`}
                   >
-                    {/* Punto de no leída */}
-                    <span
-                      className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${notif.leida ? "bg-transparent" : "bg-primary"}`}
-                      aria-hidden="true"
-                    />
+                    <IconoNotificacion notif={notif} />
                     <div className="flex min-w-0 flex-1 flex-col">
                       <button
                         type="button"
