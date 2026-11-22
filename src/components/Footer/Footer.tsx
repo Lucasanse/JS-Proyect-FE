@@ -13,14 +13,13 @@ const FOOTER_COLUMNS = [
     links: [
       { to: "/productos", label: "footer.productos" },
       { to: "/armar-pc", label: "footer.armarPc" },
+      { to: "/servicio-tecnico", label: "footer.servicioTecnico" },
       { to: "/carrito", label: "footer.carrito" },
     ],
   },
   {
     title: "footer.ayuda",
     links: [
-      { to: "/servicio-tecnico", label: "footer.servicioTecnico" },
-      { to: "/", label: "footer.faq" },
       { to: "/quienes-somos#contacto", label: "footer.contacto" },
       { to: "/quienes-somos", label: "footer.quienesSomos" },
     ],
