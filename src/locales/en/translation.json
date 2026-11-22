@@ -69,7 +69,6 @@
     "armarPc": "Build your PC",
     "carrito": "Cart",
     "servicioTecnico": "Tech Support",
-    "faq": "FAQ",
     "contacto": "Contact",
     "iniciarSesion": "Log in",
     "misPedidos": "My orders",
@@ -724,7 +723,7 @@
       "prontoAyuda": "This section is not available yet",
       "inicio": "Home",
       "usuarios": "Users",
-      "servicios": "Services"
+      "servicios": "Edit services"
     },
     "inicio": {
       "titulo": "What do you want to do?",
@@ -870,7 +869,7 @@
       "ARS": "Fixed in pesos"
     },
     "serv": {
-      "titulo": "Services",
+      "titulo": "Edit services",
       "subtitulo": "Manage JS's general services here.",
       "armado": {
         "titulo": "PC assembly",
@@ -978,12 +977,17 @@
     "estados": {
       "aprobado": "Approved",
       "pendiente": "Pending",
-      "rechazado": "Rejected"
+      "rechazado": "Rejected",
+      "pagado": "Paid",
+      "enPreparacion": "Being prepared",
+      "listoParaEntregar": "Ready for pickup",
+      "retirado": "Picked up",
+      "cancelado": "Cancelled"
     }
   },
   "avisoRetiro": {
     "titulo": "Important pickup information",
-    "descripcion": "All purchases are strictly for in-store pickup. Presenting your invoice or receipt is required when picking up your order."
+    "descripcion": "All purchases are for in-store pickup."
   },
   "precio": {
     "cotizacionTiempoReal": "Real-time exchange rate of {{valor}}",
@@ -1089,6 +1093,43 @@
     "armarUno": "Build your PC",
     "abrir": "Open in the PC builder",
     "confirmarEliminar": "Are you sure you want to delete \"{{nombre}}\"? This can't be undone.",
-    "eliminado": "\"{{nombre}}\" was deleted"
+    "eliminado": "\"{{nombre}}\" was deleted",
+    "sinStockTitulo_one": "1 product in this build is out of stock.",
+    "sinStockTitulo_other": "{{count}} products in this build are out of stock.",
+    "sinStockAyuda": "Open it in the builder to replace them before buying.",
+    "sinStock": "Out of stock",
+    "stockInsuficiente_one": "Only 1 unit left",
+    "stockInsuficiente_other": "Only {{count}} units left",
+    "quitadosSinStock_one": "Opened without 1 product that is out of stock.",
+    "quitadosSinStock_other": "Opened without {{count}} products that are out of stock."
+  },
+  "notificaciones": {
+    "titulo": "Notifications",
+    "todas": "All",
+    "noLeidas": "Unread",
+    "marcarLeida": "Mark as read",
+    "marcarTodas": "Mark all as read",
+    "vacio": "You have no notifications",
+    "vacioNoLeidas": "You have no unread notifications",
+    "error": "Notifications could not be loaded.",
+    "errorAccion": "The notification could not be updated.",
+    "reintentar": "Retry",
+    "cargarMas": "Load more",
+    "cargando": "Loading...",
+    "sinLeer": "Unread",
+    "contador_one": "{{count}} unread notification",
+    "contador_other": "{{count}} unread notifications",
+    "verTodas": "View all",
+    "todoLeido": "You're all caught up: no unread notifications",
+    "paginacion": "Notifications pagination",
+    "anterior": "Previous",
+    "siguiente": "Next",
+    "paginaDe": "Page {{pagina}} of {{total}}",
+    "ver": {
+      "VENTA": "View purchase",
+      "SOLICITUD": "View request",
+      "DOCUMENTO": "View document",
+      "PRESET": "View my builds"
+    }
   }
 }
