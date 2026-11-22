@@ -55,7 +55,7 @@ export default function Navbar() {
           aria-label={open ? t("nav.cerrarMenu") : t("nav.abrirMenu")}
           aria-expanded={open}
           onClick={() => setOpen(!open)}
-          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-ink hover:bg-surface-alt md:hidden"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-ink hover:bg-surface-alt lg:hidden"
         >
           {open ? <CloseIcon /> : <MenuIcon />}
         </button>
@@ -69,7 +69,7 @@ export default function Navbar() {
           <img src={jsLogo} alt="JS" className="h-11 w-11 object-contain" />
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {navLinks.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass}>
               {t(l.labelKey)}
@@ -87,7 +87,7 @@ export default function Navbar() {
             idUsuario={session?.user.id}
           ></CampanaNotificaciones>
 
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             {isPending ? (
               <span className="text-sm text-muted">{t("nav.cargando")}</span>
             ) : session ? (
@@ -111,7 +111,7 @@ export default function Navbar() {
           </div>
 
           {/* En celular, moneda e idioma van dentro del menú hamburguesa (siguen montados para sincronizar el idioma) */}
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-3 lg:flex">
             <SelectorMoneda />
             <SwitchLenguaje />
           </div>
@@ -134,7 +134,7 @@ export default function Navbar() {
 
       {/* Menú desplegable mobile */}
       {open && (
-        <nav className="flex flex-col gap-1 border-t border-line px-4 py-3 md:hidden">
+        <nav className="flex flex-col gap-1 border-t border-line px-4 py-3 lg:hidden">
           {navLinks.map((l) => (
             <NavLink
               key={l.to}
