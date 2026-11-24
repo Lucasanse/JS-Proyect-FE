@@ -262,7 +262,7 @@ export const CampanaNotificaciones = ({ idUsuario }: Props) => {
             </p>
           )}
 
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-[min(24rem,calc(100dvh-17rem))] overflow-y-auto">
             {errorCarga && notificaciones.length === 0 ? (
               <div className="p-4 text-center text-sm">
                 <p className="text-muted">{t("notificaciones.error")}</p>
