@@ -18,6 +18,7 @@
     "idioma": "Idioma",
     "menuUsuario": "Menú de usuario",
     "misPresupuestos": "Mis presupuestos",
+    "misFavoritos": "Mis favoritos",
     "preferencias": "Preferencias",
     "moneda": "Moneda"
   },
@@ -1094,5 +1095,13 @@
     "abrir": "Abrir en el armador",
     "confirmarEliminar": "¿Estás seguro de que querés eliminar \"{{nombre}}\"? No se puede deshacer.",
     "eliminado": "Eliminamos \"{{nombre}}\""
+  },
+  "favoritos": {
+    "titulo": "Mis favoritos",
+    "cantidad_one": "{{count}} producto guardado",
+    "cantidad_other": "{{count}} productos guardados",
+    "vacioTitulo": "Todavía no tenés productos favoritos",
+    "vacioTexto": "Guardá los productos que te interesen desde el catálogo para verlos acá.",
+    "irCatalogo": "Explorar catálogo"
   }
 }

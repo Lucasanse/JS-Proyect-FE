@@ -5,9 +5,16 @@ import jsLogo from "../../assets/js-logo.png";
 import { useSession } from "../../services/auth-client";
 import { useCarrito } from "../CarritoProvider/carritoContext";
 import MenuDesplegable from "../MenuDesplegable/MenuDesplegable";
-import SelectorMoneda, { BotonesSegmentados, SelectorMonedaMovil } from "../SelectorMoneda/SelectorMoneda";
+import SelectorMoneda, {
+  BotonesSegmentados,
+  SelectorMonedaMovil,
+} from "../SelectorMoneda/SelectorMoneda";
 import { SwitchLenguaje } from "../SwitchLenguaje/SwitchLenguaje";
-import { IDIOMAS, useIdioma, type CodigoIdioma } from "../SwitchLenguaje/idioma";
+import {
+  IDIOMAS,
+  useIdioma,
+  type CodigoIdioma,
+} from "../SwitchLenguaje/idioma";
 import { CampanaNotificaciones } from "../Notificaciones/Campana";
 
 // Guardamos la clave de traducción (labelKey) en lugar del texto fijo
@@ -43,7 +50,12 @@ export default function Navbar() {
   // Opciones del menú del usuario ("Hola, ...")
   const opcionesUsuario = [
     { clave: "presets", etiqueta: t("nav.misArmados"), to: "/presets" },
-    { clave: "presupuestos", etiqueta: t("nav.misPresupuestos"), to: "/mis-presupuestos" },
+    {
+      clave: "presupuestos",
+      etiqueta: t("nav.misPresupuestos"),
+      to: "/mis-presupuestos",
+    },
+    { clave: "favoritos", etiqueta: t("nav.misFavoritos"), to: "/favoritos" },
     { clave: "logout", etiqueta: t("nav.cerrarSesion"), to: "/logout" },
   ];
   return (
@@ -94,7 +106,10 @@ export default function Navbar() {
               <MenuDesplegable
                 trigger={
                   <span className="font-medium">
-                    {t("nav.hola")} <strong className="text-primary">{session.user.name}</strong>
+                    {t("nav.hola")}{" "}
+                    <strong className="text-primary">
+                      {session.user.name}
+                    </strong>
                   </span>
                 }
                 ariaLabel={t("nav.menuUsuario")}
@@ -164,7 +179,8 @@ export default function Navbar() {
             ) : session ? (
               <>
                 <span className="px-3 pb-1 text-sm text-muted">
-                  {t("nav.hola")} <strong className="text-primary">{session.user.name}</strong>
+                  {t("nav.hola")}{" "}
+                  <strong className="text-primary">{session.user.name}</strong>
                 </span>
                 {opcionesUsuario.map((o) => (
                   <NavLink
@@ -195,7 +211,10 @@ export default function Navbar() {
             </span>
             <BotonesSegmentados
               etiqueta={t("nav.idioma")}
-              opciones={IDIOMAS.map((i) => ({ valor: i.codigo, texto: i.nombre }))}
+              opciones={IDIOMAS.map((i) => ({
+                valor: i.codigo,
+                texto: i.nombre,
+              }))}
               activo={idiomaActual}
               onElegir={(codigo) => cambiarIdioma(codigo as CodigoIdioma)}
             />

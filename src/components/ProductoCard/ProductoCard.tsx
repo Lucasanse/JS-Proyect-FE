@@ -12,7 +12,11 @@ interface Props {
   onToggleFavorito: (id: number) => void;
 }
 
-export default function ProductoCard({ producto, esFavorito, onToggleFavorito }: Props) {
+export default function ProductoCard({
+  producto,
+  esFavorito,
+  onToggleFavorito,
+}: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: session } = useSession();
@@ -139,7 +143,11 @@ export default function ProductoCard({ producto, esFavorito, onToggleFavorito }:
           className="flex h-9 w-full grow cursor-pointer sm:w-auto sm:basis-28 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-primary px-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
         >
           <CartIcon />
-          {deshabilitado ? t("card.sinStock") : agregando ? t("card.agregando") : t("card.agregar")}
+          {deshabilitado
+            ? t("card.sinStock")
+            : agregando
+              ? t("card.agregando")
+              : t("card.agregar")}
         </button>
       </div>
       {error && <p className="relative z-10 text-xs text-primary">{error}</p>}
