@@ -38,7 +38,13 @@ export default function Presets() {
   }, [userId, reintento, i18n.resolvedLanguage, t]);
 
   const abrir = (preset: PresetArmado) => {
-    const { seleccion, perifericos } = separarArmado(preset.componentes);
+    // Lo que no tiene stock no se lleva al armador; si queda menos de lo guardado, se lleva lo que hay
+    const disponibles = preset.componentes
+      .filter((c) => c.producto.stock > 0)
+      .map((c) => ({ ...c, cantidad: Math.min(c.cantidad, c.producto.stock) }));
+    const quitados = preset.componentes.length - disponibles.length;
+    if (quitados > 0) mostrarToast(t("presets.quitadosSinStock", { count: quitados }), "info");
+    const { seleccion, perifericos } = separarArmado(disponibles);
     // Los servicios elegidos no se guardan en el armado: se mantienen los que ya estaban
     guardarEnPestana(seleccion, perifericos, leerServicios());
     navigate("/armar-pc");
@@ -125,15 +131,35 @@ function TarjetaPreset({
   );
   const total = componentes.reduce((acc, c) => acc + c.producto.precio * c.cantidad, 0);
   const totalFinal = componentes.reduce((acc, c) => acc + c.producto.precioFinal * c.cantidad, 0);
+  // Productos que ya no alcanzan para el armado (sin stock o con menos de lo guardado)
+  const sinStock = componentes.filter((c) => c.producto.stock < c.cantidad);
 
   return (
-    <article className="flex h-full flex-col rounded-xl border border-line bg-surface p-4 shadow-sm">
+    <article
+      className={`flex h-full flex-col rounded-xl border bg-surface p-4 shadow-sm ${
+        sinStock.length > 0 ? "border-primary/40" : "border-line"
+      }`}
+    >
       <h2 className="truncate text-lg font-bold text-ink" title={preset.nombre}>
         {preset.nombre}
       </h2>
       <p className="text-xs text-muted">
         {t("armarPc.resumenArmado", { count: componentes.length, watts: preset.potenciaWatts })}
       </p>
+
+      {sinStock.length > 0 && (
+        <div role="alert" className="mt-3 flex items-start gap-2 rounded-lg border border-primary/20 bg-primary-light p-3 text-sm text-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true">
+            <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+            <path d="M12 9v4" />
+            <path d="M12 17h.01" />
+          </svg>
+          <p>
+            <span className="font-semibold">{t("presets.sinStockTitulo", { count: sinStock.length })}</span>{" "}
+            {t("presets.sinStockAyuda")}
+          </p>
+        </div>
+      )}
 
       <ul className="mt-3 divide-y divide-line text-sm">
         {componentes.map(({ producto, cantidad }) => (
@@ -145,10 +171,17 @@ function TarjetaPreset({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-[11px] font-semibold tracking-wide text-muted uppercase">{textos.tipo(producto.paso)}</p>
-              <p className="truncate text-ink" title={producto.nombre}>
+              <p className={`truncate ${producto.stock < cantidad ? "text-muted" : "text-ink"}`} title={producto.nombre}>
                 {cantidad > 1 && `${cantidad} × `}
                 {producto.nombre}
               </p>
+              {producto.stock < cantidad && (
+                <p className="text-xs font-semibold text-primary">
+                  {producto.stock === 0
+                    ? t("presets.sinStock")
+                    : t("presets.stockInsuficiente", { count: producto.stock })}
+                </p>
+              )}
             </div>
             <Precio precio={producto.precio * cantidad} precioFinal={producto.precioFinal * cantidad} className="shrink-0 text-ink" />
           </li>

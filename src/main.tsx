@@ -30,6 +30,7 @@ import { VentasAdmin } from "./pages/Admin/AdminPedidos.tsx";
 import { VentaDetalleAdmin } from "./pages/Admin/VentaDetalleAdmin.tsx";
 import { ComparadorPage } from "./pages/Comparador/Comparador.tsx";
 import MisFavoritos from "./pages/Favoritos/MisFavoritos.tsx";
+import Notificaciones from "./pages/Notificaciones/Notificaciones.tsx";
 
 // Todas las rutas hijas se muestran dentro de MainLayout (Navbar + Footer)
 const router = createBrowserRouter([
@@ -54,6 +55,7 @@ const router = createBrowserRouter([
       { path: "misCompras", element: <MisCompras /> },
       { path: "mis-presupuestos", element: <MisPresupuestos /> },
       { path: "favoritos", element: <MisFavoritos /> },
+      { path: "notificaciones", element: <Notificaciones /> },
       { path: "quienes-somos", element: <QuienesSomos /> },
       { path: "presets", element: <Presets /> },
       { path: "comparador", element: <ComparadorPage /> },

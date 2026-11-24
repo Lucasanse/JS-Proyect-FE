@@ -127,8 +127,6 @@ function Detalle({ solicitud: s }: { solicitud: SolicitudDetalle }) {
         }
       >
         <ListaServicios solicitud={s} />
-        {/* Precio al momento de pedirlo: se abona en el local, no online */}
-        {s.estado !== "RECHAZADA" && <PrecioEstimado precios={s.precios} total={s.precioEstimado} className="mt-4" />}
       </Seccion>
 
       {s.descripcion && (
@@ -143,6 +141,13 @@ function Detalle({ solicitud: s }: { solicitud: SolicitudDetalle }) {
         >
           <p className="whitespace-pre-wrap break-words text-muted">{s.descripcion}</p>
         </Seccion>
+      )}
+
+      {/* Al final del pedido: precio al momento de pedirlo (se abona en el local, no online) */}
+      {s.estado !== "RECHAZADA" && (
+        <section className="mt-5 border-t border-line pt-5">
+          <PrecioEstimado precios={s.precios} total={s.precioEstimado} />
+        </section>
       )}
 
       {/* Cada cambio de estado con su fecha y hora */}
