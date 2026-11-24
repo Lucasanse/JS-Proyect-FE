@@ -29,10 +29,7 @@ export const AvisoRetiroLocal = () => {
           {t("avisoRetiro.titulo", "Retiro exclusivamente en local")}
         </h4>
         <p className="text-xs text-muted leading-relaxed">
-          {t(
-            "avisoRetiro.descripcion",
-            "Todas las compras se entregan en sucursal. Recordá presentar la factura o comprobante de compra al momento del retiro.",
-          )}
+          {t("avisoRetiro.descripcion", "Todas las compras son con retiro en el local.")}
         </p>
       </div>
     </div>
