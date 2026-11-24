@@ -7,6 +7,8 @@ import {
   type ProductoResumen,
 } from "../../services/productos";
 import { useVersionCatalogo } from "../../services/catalogoEventos";
+import { useSession } from "../../services/auth-client";
+import { useFavoritos } from "../../hooks/useFavoritos";
 
 const CANTIDAD_EN_INICIO = 5;
 
@@ -29,8 +31,6 @@ const SERVICIOS = [
 export default function Home() {
   const { t, i18n } = useTranslation();
   const [productos, setProductos] = useState<ProductoResumen[]>([]);
-  // Favoritos solo en memoria hasta que exista el endpoint en el BE
-  const [favoritos, setFavoritos] = useState<Set<number>>(new Set());
   // Cambia cuando el admin modifica productos: se vuelven a pedir sin recargar la página
   const versionCatalogo = useVersionCatalogo();
 
@@ -43,14 +43,8 @@ export default function Home() {
     return () => controller.abort();
   }, [i18n.resolvedLanguage, versionCatalogo]); // <-- Se vuelve a pedir cuando cambia el idioma o el catálogo
 
-  const toggleFavorito = (id: number) => {
-    setFavoritos((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  const { data: session } = useSession();
+  const { idsFavoritos, toggleFavorito } = useFavoritos(session?.user?.id);
 
   return (
     <>
@@ -117,7 +111,7 @@ export default function Home() {
               <ProductoCard
                 key={p.id}
                 producto={p}
-                esFavorito={favoritos.has(p.id)}
+                esFavorito={idsFavoritos.has(p.id)}
                 onToggleFavorito={toggleFavorito}
               />
             ))}

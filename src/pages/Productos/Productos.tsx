@@ -9,23 +9,16 @@ import {
 } from "../../services/productos";
 import SearchBar from "../../components/Searchbar/Searchbar";
 import { useVersionCatalogo } from "../../services/catalogoEventos";
+import { useFavoritos } from "../../hooks/useFavoritos";
+import { useSession } from "../../services/auth-client";
 
 export default function Productos() {
   const { t } = useTranslation();
   // Los filtros viven en la URL (?q=...&marca=...), así se pueden compartir o recargar la página
   const [searchParams, setSearchParams] = useSearchParams();
   const filtros: FiltrosProductos = Object.fromEntries(searchParams);
-  // Favoritos solo en memoria hasta que exista el endpoint en el BE
-  const [favoritos, setFavoritos] = useState<Set<number>>(new Set());
-
-  const toggleFavorito = (id: number) => {
-    setFavoritos((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  const { data: session } = useSession();
+  const { idsFavoritos, toggleFavorito } = useFavoritos(session?.user?.id);
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -33,13 +26,15 @@ export default function Productos() {
         filtros={filtros}
         onChange={(nuevos) => setSearchParams(nuevos as Record<string, string>)}
       />
-      <h1 className="mt-8 text-3xl font-bold text-primary">{t("productos.titulo")}</h1>
+      <h1 className="mt-8 text-3xl font-bold text-primary">
+        {t("productos.titulo")}
+      </h1>
 
       {/* La key hace que la lista arranque de cero (página 1) cada vez que cambian los filtros */}
       <ListaProductos
         key={searchParams.toString()}
         filtros={filtros}
-        favoritos={favoritos}
+        favoritos={idsFavoritos}
         onToggleFavorito={toggleFavorito}
       />
     </section>
@@ -85,9 +80,7 @@ function ListaProductos({ filtros, favoritos, onToggleFavorito }: ListaProps) {
       .catch((e: unknown) => {
         if (controller.signal.aborted) return;
         setError(
-          e instanceof Error
-            ? e.message
-            : tRef.current("productos.errorCarga"),
+          e instanceof Error ? e.message : tRef.current("productos.errorCarga"),
         );
       })
       .finally(() => {
@@ -99,7 +92,9 @@ function ListaProductos({ filtros, favoritos, onToggleFavorito }: ListaProps) {
   // Vuelve a pedir las páginas ya cargadas y las reemplaza, sin perder el scroll
   const refrescar = useEffectEvent((signal: AbortSignal) => {
     const paginas = Array.from({ length: pagina }, (_, i) => i + 1);
-    Promise.all(paginas.map((p) => obtenerPaginaProductos(p, signal, filtrosIniciales)))
+    Promise.all(
+      paginas.map((p) => obtenerPaginaProductos(p, signal, filtrosIniciales)),
+    )
       .then((respuestas) => {
         setProductos(respuestas.flatMap((r) => r.data));
         setHayMas(respuestas[respuestas.length - 1].paginacion.hasNext);

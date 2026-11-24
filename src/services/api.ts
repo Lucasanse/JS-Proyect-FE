@@ -18,3 +18,4 @@ export const urlPedidosAdmin = `${BASE_URL}/api/admin/ventas`;
 export const urlAdminUsuarios = `${urlAdmin}/usuarios`;
 export const urlAdminServicios = `${urlAdmin}/servicios`;
 export const urlArmador = `${BASE_URL}/api/armador`;
+export const urlFavoritos = `${BASE_URL}/api/favoritos`;

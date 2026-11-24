@@ -18,6 +18,8 @@
     "idioma": "Language",
     "menuUsuario": "User menu",
     "misPresupuestos": "My quotes",
+    "misFavoritos": "My favorites",
+
     "preferencias": "Preferences",
     "moneda": "Currency"
   },
@@ -1090,5 +1092,13 @@
     "abrir": "Open in the PC builder",
     "confirmarEliminar": "Are you sure you want to delete \"{{nombre}}\"? This can't be undone.",
     "eliminado": "\"{{nombre}}\" was deleted"
+  },
+  "favoritos": {
+    "titulo": "My favorites",
+    "cantidad_one": "{{count}} saved product",
+    "cantidad_other": "{{count}} saved products",
+    "vacioTitulo": "You don't have any favorite products yet",
+    "vacioTexto": "Save the products you're interested in from the catalog to view them here.",
+    "irCatalogo": "Explore catalog"
   }
 }

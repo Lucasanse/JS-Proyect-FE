@@ -11,6 +11,7 @@ import {
 } from "../../services/productoDetalle.ts";
 import { useVersionCatalogo } from "../../services/catalogoEventos";
 import { ContenedorCompraUnidad } from "../../components/Comprar/ComprarUnidad.tsx";
+import { useFavoritos } from "../../hooks/useFavoritos.ts";
 
 export default function Detalles() {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +29,47 @@ export default function Detalles() {
   const { agregar, cantidadEnCarrito } = useCarrito();
   // Cambia cuando el admin modifica productos: precio y stock se actualizan sin recargar
   const versionCatalogo = useVersionCatalogo();
+
+  //Favoritos
+
+  const { idsFavoritos, toggleFavorito } = useFavoritos(session?.user?.id);
+  const esFavorito = idsFavoritos.has(Number(id));
+
+  const handleToggleFavorito = () => {
+    if (!session) {
+      navigate("/login");
+      return;
+    }
+    if (producto) toggleFavorito(producto.id);
+  };
+  function HeartIcon({ filled }: { filled: boolean }) {
+    return (
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill={filled ? "currentColor" : "none"}
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      >
+        <path d="M12 20.5s-7.5-4.6-9.2-9.4C1.7 7.9 3.9 4.5 7.3 4.5c2 0 3.6 1.1 4.7 2.8 1.1-1.7 2.7-2.8 4.7-2.8 3.4 0 5.6 3.4 4.5 6.6-1.7 4.8-9.2 9.4-9.2 9.4z" />
+      </svg>
+    );
+  }
+  <button
+    type="button"
+    aria-label={
+      esFavorito ? t("card.quitarFavoritos") : t("card.agregarFavoritos")
+    }
+    aria-pressed={esFavorito}
+    onClick={handleToggleFavorito}
+    className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white shadow-sm transition-colors hover:border-indigo-300 ${
+      esFavorito ? "text-primary" : "text-muted hover:text-primary"
+    }`}
+  >
+    <HeartIcon filled={esFavorito} />
+  </button>;
 
   const handleAgregar = async () => {
     if (!producto) return;
@@ -137,7 +179,11 @@ export default function Detalles() {
   // Mismo dato que usa el armador para exigir la GPU
   const necesitaGpu =
     producto.tipoComponente === "CPU" &&
-    producto.atributos.some((a) => a.nombre === "Graficos integrados" && a.valor.trim().toLowerCase() === "no");
+    producto.atributos.some(
+      (a) =>
+        a.nombre === "Graficos integrados" &&
+        a.valor.trim().toLowerCase() === "no",
+    );
 
   // VISTA PRINCIPAL DEL PRODUCTO
   return (
@@ -219,6 +265,21 @@ export default function Detalles() {
                 />
                 {t("detalle.comparar", "Comparar")}
               </button>
+              <button
+                type="button"
+                aria-label={
+                  esFavorito
+                    ? t("card.quitarFavoritos")
+                    : t("card.agregarFavoritos")
+                }
+                aria-pressed={esFavorito}
+                onClick={handleToggleFavorito}
+                className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white shadow-sm transition-colors hover:border-indigo-300 ${
+                  esFavorito ? "text-primary" : "text-muted hover:text-primary"
+                }`}
+              >
+                <HeartIcon filled={esFavorito} />
+              </button>
             </div>
 
             {/* Título */}
@@ -267,10 +328,15 @@ export default function Detalles() {
                 role="note"
                 className="mt-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
               >
-                <p className="font-semibold">{t("detalle.necesitaGpuTitulo")}</p>
+                <p className="font-semibold">
+                  {t("detalle.necesitaGpuTitulo")}
+                </p>
                 <p className="mt-1">
                   {t("detalle.necesitaGpu")}{" "}
-                  <Link to="/armar-pc" className="font-semibold underline hover:text-amber-700">
+                  <Link
+                    to="/armar-pc"
+                    className="font-semibold underline hover:text-amber-700"
+                  >
                     {t("detalle.armarPc")}
                   </Link>
                 </p>
