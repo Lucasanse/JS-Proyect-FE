@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import { obtenerPedidos, type Compra } from "../../services/pedidos";
 import { useSession } from "../../services/auth-client";
 import Precio from "../../components/Precio/Precio";
 import AvisoCarrito from "../../components/AvisoCarrito/AvisoCarrito";
 import { AvisoRetiroLocal } from "../../components/AvisoDomicilio/AvisoDomicilio";
 import BotonDescarga from "../../components/Documentos/BotonDescarga";
+import EstadoCompra from "../../components/EstadoCompra/EstadoCompra";
 import { descargarFactura } from "../../services/documentos";
 export const MisCompras = () => {
   const { t } = useTranslation();
@@ -14,6 +16,12 @@ export const MisCompras = () => {
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
   const idUsuario = session?.user?.id;
+  // Desde una notificación se llega con #venta-<id>: se lleva la vista a esa compra
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (!hash.startsWith("#venta-") || compras.length === 0) return;
+    document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [hash, compras]);
   useEffect(() => {
     // Usamos AbortController para cancelar el fetch si el componente se desmonta
     const controller = new AbortController();
@@ -46,38 +54,6 @@ export const MisCompras = () => {
   }, [idUsuario, t]);
 
   // Función para darle color al estado
-  const formatearEstado = (estado: string) => {
-    switch (estado.toLowerCase()) {
-      case "approved":
-      case "aprobado":
-        return (
-          <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-200">
-            {t("historial.estados.aprobado")}
-          </span>
-        );
-      case "in_process":
-      case "pending":
-      case "pendiente":
-        return (
-          <span className="px-3 py-1 bg-surface-alt text-accent text-xs font-bold rounded-full border border-line">
-            {t("historial.estados.pendiente")}
-          </span>
-        );
-      case "rejected":
-      case "rechazado":
-        return (
-          <span className="px-3 py-1 bg-primary-light text-primary text-xs font-bold rounded-full border border-primary/20">
-            {t("historial.estados.rechazado")}
-          </span>
-        );
-      default:
-        return (
-          <span className="px-3 py-1 bg-surface-alt text-muted text-xs font-bold rounded-full border border-line">
-            {estado}
-          </span>
-        );
-    }
-  };
 
   if (!idUsuario) return null;
 
@@ -114,7 +90,10 @@ export const MisCompras = () => {
           {compras.map((compra) => (
             <div
               key={compra.id}
-              className="flex flex-col p-5 bg-surface border border-line rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              id={`venta-${compra.id}`}
+              className={`flex flex-col p-5 bg-surface border rounded-xl shadow-sm hover:shadow-md transition-shadow scroll-mt-24 ${
+                hash === `#venta-${compra.id}` ? "border-accent ring-2 ring-accent/30" : "border-line"
+              }`}
             >
               {/* Encabezado de la Tarjeta */}
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-line pb-4 mb-4 gap-3">
@@ -133,7 +112,7 @@ export const MisCompras = () => {
                   ) : (
                     <span className="text-lg font-bold text-ink">${compra.total}</span>
                   )}
-                  {formatearEstado(compra.status)}
+                  <EstadoCompra estado={compra.status} />
                 </div>
               </div>
 

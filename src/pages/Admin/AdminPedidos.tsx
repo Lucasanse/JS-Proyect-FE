@@ -6,6 +6,7 @@ import type {
   FiltrosVenta,
 } from "../../services/adminPedidos";
 import { obtenerVentasAdmin } from "../../services/adminPedidos";
+import EstadoCompra from "../../components/EstadoCompra/EstadoCompra";
 
 export const VentasAdmin = () => {
   const [ventas, setVentas] = useState<VentaAdmin[]>([]);
@@ -154,17 +155,7 @@ export const VentasAdmin = () => {
                     </span>
                   </td>
                   <td className="p-3 text-sm">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        venta.estado === "Pagado"
-                          ? "bg-accent/10 text-accent"
-                          : venta.estado === "Entregado"
-                            ? "bg-green-500/10 text-green-600"
-                            : "bg-red-500/10 text-red-600"
-                      }`}
-                    >
-                      {venta.estado}
-                    </span>
+                    <EstadoCompra estado={venta.estado} />
                   </td>
                   <td className="p-3 text-sm font-bold text-ink">
                     ${venta.total}
