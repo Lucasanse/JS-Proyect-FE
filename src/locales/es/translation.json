@@ -69,7 +69,6 @@
     "armarPc": "Armá tu PC",
     "carrito": "Carrito",
     "servicioTecnico": "Servicio técnico",
-    "faq": "Preguntas frecuentes",
     "contacto": "Contacto",
     "iniciarSesion": "Iniciar sesión",
     "misPedidos": "Mis pedidos",
@@ -725,7 +724,7 @@
       "inicio": "Inicio",
       "usuarios": "Usuarios",
       "misCompras": "Mis compras",
-      "servicios": "Servicios"
+      "servicios": "Modificar servicios"
     },
     "inicio": {
       "titulo": "¿Qué querés hacer?",
@@ -871,7 +870,7 @@
       "ARS": "Fijo en pesos"
     },
     "serv": {
-      "titulo": "Servicios",
+      "titulo": "Modificar servicios",
       "subtitulo": "Acá se modifican los servicios generales de JS.",
       "armado": {
         "titulo": "Armado de PC",
@@ -983,12 +982,17 @@
     "estados": {
       "aprobado": "Aprobado",
       "pendiente": "Pendiente",
-      "rechazado": "Rechazado"
+      "rechazado": "Rechazado",
+      "pagado": "Pagado",
+      "enPreparacion": "En preparación",
+      "listoParaEntregar": "Listo para entregar",
+      "retirado": "Retirado",
+      "cancelado": "Cancelado"
     }
   },
   "avisoRetiro": {
     "titulo": "Información importante sobre tu pedido",
-    "descripcion": "Todas las compras son con retiro en el local. Para retirar es indispensable presentar la factura o comprobante de compra."
+    "descripcion": "Todas las compras son con retiro en el local."
   },
   "precio": {
     "cotizacionTiempoReal": "Cotización en tiempo real de {{valor}}",
@@ -1094,7 +1098,50 @@
     "armarUno": "Armá tu PC",
     "abrir": "Abrir en el armador",
     "confirmarEliminar": "¿Estás seguro de que querés eliminar \"{{nombre}}\"? No se puede deshacer.",
-    "eliminado": "Eliminamos \"{{nombre}}\""
+    "eliminado": "Eliminamos \"{{nombre}}\"",
+    "sinStockTitulo_one": "1 producto de este armado ya no tiene stock suficiente.",
+    "sinStockTitulo_other": "{{count}} productos de este armado ya no tienen stock suficiente.",
+    "sinStockAyuda": "Abrilo en el armador para reemplazarlos antes de comprar.",
+    "sinStock": "Sin stock",
+    "stockInsuficiente_one": "Solo queda 1 unidad",
+    "stockInsuficiente_other": "Solo quedan {{count}} unidades",
+    "quitadosSinStock_one": "Se abrió sin 1 producto que no tiene stock.",
+    "quitadosSinStock_other": "Se abrió sin {{count}} productos que no tienen stock."
+  },
+  "notificaciones": {
+    "titulo": "Notificaciones",
+    "todas": "Todas",
+    "noLeidas": "No leídas",
+    "marcarLeida": "Marcar como leída",
+    "marcarTodas": "Marcar todas como leídas",
+    "vacio": "No tenés notificaciones",
+    "vacioNoLeidas": "No tenés notificaciones sin leer",
+    "error": "No se pudieron cargar las notificaciones.",
+    "errorAccion": "No se pudo actualizar la notificación.",
+    "reintentar": "Reintentar",
+    "cargarMas": "Cargar más",
+    "cargando": "Cargando...",
+    "sinLeer": "Sin leer",
+    "contador_one": "{{count}} notificación sin leer",
+    "contador_other": "{{count}} notificaciones sin leer",
+    "verTodas": "Ver todas",
+    "todoLeido": "Estás al día: no tenés notificaciones sin leer",
+    "paginacion": "Paginación de notificaciones",
+    "anterior": "Anterior",
+    "siguiente": "Siguiente",
+    "paginaDe": "Página {{pagina}} de {{total}}",
+    "ver": {
+      "VENTA": "Ver compra",
+      "SOLICITUD": "Ver solicitud",
+      "DOCUMENTO": "Ver documento",
+      "PRESET": "Ver mis armados"
+    },
+    "grupos": {
+      "hoy": "Hoy",
+      "ayer": "Ayer",
+      "semana": "Esta semana",
+      "anteriores": "Anteriores"
+    }
   },
   "favoritos": {
     "titulo": "Mis favoritos",

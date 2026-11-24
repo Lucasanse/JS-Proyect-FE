@@ -29,8 +29,6 @@ export default function DetalleServicio({
         {/* Igual que lo ve el cliente: lista numerada, sin íconos ni etiquetas */}
         <Dato etiqueta={t("servicioTecnico.detalle.servicios", { count: s.servicios.length })} ancho>
           <ListaServicios solicitud={s} />
-          {/* Lo que el cliente vio al pedirlo; se cobra en el local */}
-          <PrecioEstimado precios={s.precios} total={s.precioEstimado} className="mt-3" />
         </Dato>
 
         <Dato
@@ -46,6 +44,9 @@ export default function DetalleServicio({
           )}
         </Dato>
       </dl>
+
+      {/* Al final: lo que el cliente vio al pedirlo; se cobra en el local */}
+      <PrecioEstimado precios={s.precios} total={s.precioEstimado} className="mt-4" />
     </div>
   );
 }

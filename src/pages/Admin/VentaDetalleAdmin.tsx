@@ -5,6 +5,7 @@ import {
   obtenerVentaAdminPorId,
   actualizarEstadoVentaAdmin,
 } from "../../services/adminPedidos";
+import EstadoCompra from "../../components/EstadoCompra/EstadoCompra";
 
 export const VentaDetalleAdmin = () => {
   const { id } = useParams<{ id: string }>();
@@ -63,17 +64,7 @@ export const VentaDetalleAdmin = () => {
           &larr; Volver
         </Link>
         <h1 className="text-2xl font-bold text-ink">Pedido #{venta.idVenta}</h1>
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-            venta.estado === "Pagado"
-              ? "bg-accent/10 text-accent"
-              : venta.estado === "Entregado"
-                ? "bg-green-500/10 text-green-600"
-                : "bg-red-500/10 text-red-600"
-          }`}
-        >
-          {venta.estado}
-        </span>
+        <EstadoCompra estado={venta.estado} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
