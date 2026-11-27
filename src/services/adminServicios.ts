@@ -17,8 +17,8 @@ export interface ServicioAdmin {
   precio: number | null; // en pesos, tal como se cargó; null = a presupuestar (Reparación, Otro): no se puede cambiar
   ivaIncluido: boolean; // si el precio cargado ya incluye el IVA
   alicuotaIva: number; // 21, 10.5 o 0 (exento)
-  precioFinal: number | null; // con IVA: lo que paga el cliente
-  activo: boolean; // inactivo = no se ofrece
+  precioFinal: number | null; // con IVA: lo que paga el cliente 
+  activo: boolean; // inactivo = no se ofrece e
 }
 
 export const listarServiciosAdmin = (signal?: AbortSignal) => pedir<ServicioAdmin[]>("", { signal }, urlAdminServicios);
